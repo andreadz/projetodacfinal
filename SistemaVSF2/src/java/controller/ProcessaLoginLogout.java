@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import models.*;
-import dao.ClienteDAO;
+import dao.*;
 
 /**
  *
@@ -27,22 +27,21 @@ public class ProcessaLoginLogout extends HttpServlet {
             throws ServletException, IOException {
         String action = request.getParameter("action");
         ClienteDAO dao = new ClienteDAO();
-        Conta conta = new Conta();
+        ContaDAO daoconta = new ContaDAO();
         RequestDispatcher rd = getServletContext().getRequestDispatcher("/");
         if ("acessar".equals(action)) {
             String agencia = request.getParameter("agencia").isEmpty() ? "" : request.getParameter("agencia");
             int numConta = request.getParameter("conta").isEmpty() ? 0 : Integer.parseInt(request.getParameter("numConta"));
             String senha = request.getParameter("senha").isEmpty() ? "" : request.getParameter("senha");
             Cliente cliente = dao.login(agencia, numConta, senha);
+            Conta conta = daoconta.pegarContaByCliente(agencia, numConta, cliente);
             if (cliente == null) {
                 request.setAttribute("msg", "Login e/ou senha incorretos.");
                 rd.forward(request, response);
             } else {
                 HttpSession session = request.getSession();
-                session.setAttribute("agencia", agencia);
                 session.setAttribute("conta", conta);
                 session.setAttribute("cliente", cliente);
-
                 rd = getServletContext().getRequestDispatcher("/portal.jsp");
             }
         }
