@@ -26,10 +26,10 @@ public class ClienteDAO {
     private final String stmAlteraSenha = "UPDATE clientes SET senha = ? WHERE id=?";
     private final String stmInativarCliente = "UPDATE contas SET statusConta = ? where idCliente = ?";
     
-    private final String stmLogin = "SELECT *, clientes.id, clientes.nome, clientes.cpf, clientes.cnpj, clientes.rg, "
-            + " clientes.endereco, clientes.cep, clientes.telefone, clientes.email, clientes.renda, clientes.senha FROM contas "
-            + " INNER JOIN clientes ON contas.idCliente = clientes.id  "
-            + " WHERE agencia=? AND conta=? AND clientes.senha = ? AND contas.idCliente = clientes.id";
+    private final String stmLogin = "SELECT clientes.id, clientes.nome, clientes.cpf, clientes.cnpj, clientes.rg, "
+            + " clientes.endereco, clientes.cep, clientes.telefone, clientes.email, clientes.renda, clientes.senha FROM clientes "
+            + " INNER JOIN contas ON contas.idCliente = clientes.id  "
+            + " WHERE contas.agencia=? AND contas.conta=? AND clientes.senha = ? AND contas.idCliente = clientes.id";
     private final String stmPegaClienteIdF = "SELECT id from clientes where cpf=?";
     private final String stmPegaClienteIdJ = "SELECT id from clientes where cnpj=?";
     private final String stmVerificaUsuarioFisico = "SELECT nome,cpf FROM clientes WHERE cpf = ?";    
@@ -41,6 +41,42 @@ public class ClienteDAO {
             + " con.id as idConta, con.agencia,con.conta,con.saldo,con.limite,con.statusConta, con.tipoConta "
             + "FROM clientes cli JOIN contas con ON con.idCliente = cli.id WHERE clientes.cpf = ? ";
     private final String stmSaldoAtualTotal = "SELECT saldo, limite FROM contas where idCliente=?";
+    
+    public Cliente login(String agencia, int numConta, String senha){
+        Connection conexao =  null;PreparedStatement pstmt = null;
+        Cliente cliente = new Cliente(); Conta conta = new Conta();
+        try{
+            conexao = DbConexao.getConection();
+            
+            pstmt = conexao.prepareStatement(stmLogin, Statement.RETURN_GENERATED_KEYS);
+            pstmt.setString(1, agencia); 
+            pstmt.setInt(2, numConta); 
+            pstmt.setString(3, senha);
+            ResultSet rs = pstmt.executeQuery();            
+            
+            if(rs.next()){  
+                cliente.setId(rs.getInt("id"));
+                cliente.setNome(rs.getString("nome"));
+                cliente.setCpf(rs.getString("cpf"));  
+                cliente.setCnpj(rs.getString("cnpj"));  
+                cliente.setEndereco(rs.getString("endereco"));  
+                cliente.setCep(rs.getString("cep"));  
+                cliente.setEmail(rs.getString("email"));  
+                cliente.setTelefone(rs.getString("telefone"));  
+                cliente.setRenda(rs.getDouble("renda"));  
+                cliente.setSenha(rs.getString("senha"));  
+            }else{
+                cliente = null;
+            }
+            
+        }catch (SQLException e){
+            throw  new RuntimeException(e);
+        }finally{
+            try{pstmt.close();} catch(Exception ex){System.out.println("Erro:" + ex.getMessage());}
+            try{conexao.close();} catch(Exception ex){System.out.println("Erro:" + ex.getMessage());}
+        }
+        return cliente;        
+    }
     
     public Cliente cadastrarCliente(Cliente cliente){
         Connection conexao =  null;PreparedStatement pstmt = null;
@@ -307,41 +343,7 @@ public class ClienteDAO {
 //        
 //    }
     
-    public Cliente login(String agencia, int numConta, String senha){
-        Connection conexao =  null;PreparedStatement pstmt = null;
-        Cliente cliente = new Cliente(); Conta conta = new Conta();
-        try{
-            conexao = DbConexao.getConection();
-            
-            pstmt = conexao.prepareStatement(stmLogin, Statement.RETURN_GENERATED_KEYS);
-            pstmt.setString(1, agencia); 
-            pstmt.setInt(2, numConta); 
-            pstmt.setString(3, senha);
-            ResultSet rs = pstmt.executeQuery();            
-            
-            if(rs.next()){  
-                cliente.setId(rs.getInt("id"));
-                cliente.setNome(rs.getString("nome"));
-                cliente.setCpf(rs.getString("cpf"));  
-                cliente.setCnpj(rs.getString("cnpj"));  
-                cliente.setEndereco(rs.getString("endereco"));  
-                cliente.setCep(rs.getString("cep"));  
-                cliente.setEmail(rs.getString("email"));  
-                cliente.setTelefone(rs.getString("telefone"));  
-                cliente.setRenda(rs.getDouble("renda"));  
-                cliente.setSenha(rs.getString("senha"));  
-            }else{
-                cliente = null;
-            }
-            
-        }catch (SQLException e){
-            throw  new RuntimeException(e);
-        }finally{
-            try{pstmt.close();} catch(Exception ex){System.out.println("Erro:" + ex.getMessage());}
-            try{conexao.close();} catch(Exception ex){System.out.println("Erro:" + ex.getMessage());}
-        }
-        return cliente;        
-    }
+    
     
     public Boolean logout(){
         return true;
