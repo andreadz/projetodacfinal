@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import models.*;
 import dao.*;
+import java.util.ArrayList;
 
 /**
  *
@@ -34,12 +35,19 @@ public class ProcessaLoginLogout extends HttpServlet {
             int numConta = request.getParameter("numConta").isEmpty() ? 0 : Integer.parseInt(request.getParameter("numConta"));
             String senha = request.getParameter("senha").isEmpty() ? "" : request.getParameter("senha");
             Cliente cliente = dao.login(agencia, numConta, senha);
-            Conta conta = daoconta.pegarContaByCliente(agencia, numConta, cliente);
+            Conta conta = daoconta.pegarContaByCliente(agencia, numConta, cliente);            
             if (cliente == null) {
                 request.setAttribute("msg", "Login e/ou senha incorretos.");
                 rd.forward(request, response);
             } else {
                 HttpSession session = request.getSession();
+                ArrayList<Conta> contas = daoconta.pegarTodasContasByCliente(cliente);
+                double totalSaldos = totalSaldos = somaSaldos(contas);                
+                if(contas.size() > 1){                    
+                    session.setAttribute("contas", contas);
+                }
+                request.setAttribute("totalSaldos", totalSaldos);
+                request.setAttribute("qtdeContas", contas.size());
                 session.setAttribute("conta", conta);
                 session.setAttribute("cliente", cliente);
                 rd = getServletContext().getRequestDispatcher("/portal.jsp");
@@ -57,6 +65,14 @@ public class ProcessaLoginLogout extends HttpServlet {
             rd = getServletContext().getRequestDispatcher("/index.jsp");
         }
         rd.forward(request, response);
+    }
+    
+    public double somaSaldos(ArrayList<Conta> contas){
+        double somaSaldoContas = 0.00;
+        for (Conta conta : contas) {
+            somaSaldoContas = somaSaldoContas + conta.getSaldo();
+        }
+        return somaSaldoContas;
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

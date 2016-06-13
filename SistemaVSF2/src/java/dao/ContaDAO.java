@@ -26,6 +26,7 @@ public class ContaDAO {
     private final String stmTransferirTerceiros = "UPDATE contas SET saldo = ? WHERE agencia = ? AND conta=? AND idCliente = (SELECT id FROM clientes where cpf=?)";
 
     private final String stmGetContaByCliente = "SELECT * FROM contas WHERE agencia = ? AND conta = ?";
+    private final String stmTodasContas = "SELECT * FROM contas WHERE idCliente=?";
     private final String stmVerificaContaExistente = "SELECT MAX(conta) AS conta FROM contas WHERE agencia = ?";
     private final String stmSaldoAtual = "SELECT saldo, limite FROM contas where agencia=? AND conta=? ";
     private final String stmExtratoCompleto = "SELECT * FROM transacoes WHERE idConta=? AND idClienteConta=? ";
@@ -125,8 +126,7 @@ public class ContaDAO {
                 conta.setTipoConta(rs.getString("tipoConta"));
                 conta.setStatusConta(rs.getBoolean("statusConta"));
                 conta.setCliente(cliente);
-            }
-            else{
+            } else {
                 conta = null;
             }
 
@@ -145,6 +145,50 @@ public class ContaDAO {
             }
         }
         return conta;
+    }
+
+    public ArrayList<Conta> pegarTodasContasByCliente(Cliente cliente) {
+        Connection conexao = null;
+        PreparedStatement pstmt = null;
+        ArrayList<Conta> contas = new ArrayList<Conta>();
+        Conta conta;
+        try {
+            conexao = DbConexao.getConection();
+            pstmt = conexao.prepareStatement(stmTodasContas, Statement.RETURN_GENERATED_KEYS);
+            pstmt.setInt(1, cliente.getId());
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                if (cliente.getCpf() == null) {
+                    conta = new ContaPj();
+                } else {
+                    conta = new ContaPf();
+                }
+                conta.setId(rs.getInt("id"));
+                conta.setSaldo(rs.getDouble("saldo"));
+                conta.setLimite(rs.getDouble("limite"));
+                conta.setNumConta(rs.getInt("conta"));
+                conta.setNumAgencia(rs.getString("agencia"));
+                conta.setTipoConta(rs.getString("tipoConta"));
+                conta.setStatusConta(rs.getBoolean("statusConta"));
+                conta.setCliente(cliente);
+                contas.add(conta);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                pstmt.close();
+            } catch (Exception ex) {
+                System.out.println("Erro:" + ex.getMessage());
+            }
+            try {
+                conexao.close();
+            } catch (Exception ex) {
+                System.out.println("Erro:" + ex.getMessage());
+            }
+        }
+        return contas;
     }
 
     public Conta criarConta(String agencia, Cliente cliente, double limite) {
