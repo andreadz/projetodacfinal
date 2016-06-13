@@ -400,10 +400,10 @@ public class ContaDAO {
         }
     }
 
-    public ArrayList<Transacoes> extratoCompleto(Conta conta) {
+    public ArrayList<Transacao> extratoCompleto(Conta conta) {
         Connection conexao = null;
         PreparedStatement pstmt = null;
-        ArrayList<Transacoes> trans = new ArrayList<Transacoes>();
+        ArrayList<Transacao> trans = new ArrayList<Transacao>();
         try {
             conexao = DbConexao.getConection();
             pstmt = conexao.prepareStatement(stmExtratoCompleto, Statement.RETURN_GENERATED_KEYS);
@@ -412,7 +412,7 @@ public class ContaDAO {
             ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
-                Transacoes transacao = new Transacoes();
+                Transacao transacao = new Transacao();
                 transacao.setTipoTransacao(rs.getInt("tipoTransacao"));
                 transacao.setValor(rs.getDouble("valor"));
                 transacao.setDataTransacao(rs.getDate("dataTransacao"));
@@ -440,10 +440,10 @@ public class ContaDAO {
         return trans;
     }
 
-    public ArrayList<Transacoes> extratoIntervalo(Conta conta, Date dataTrans) {
+    public ArrayList<Transacao> extratoIntervalo(Conta conta, Date dataTrans) {
         Connection conexao = null;
         PreparedStatement pstmt = null;
-        ArrayList<Transacoes> trans = new ArrayList<Transacoes>();
+        ArrayList<Transacao> trans = new ArrayList<Transacao>();
         try {
             conexao = DbConexao.getConection();
             pstmt = conexao.prepareStatement(stmExtratoCompleto, Statement.RETURN_GENERATED_KEYS);
@@ -453,7 +453,7 @@ public class ContaDAO {
             ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
-                Transacoes transacao = new Transacoes();
+                Transacao transacao = new Transacao();
                 transacao.setTipoTransacao(rs.getInt("tipoTransacao"));
                 transacao.setValor(rs.getDouble("valor"));
                 transacao.setDataTransacao(rs.getDate("dataTransacao"));

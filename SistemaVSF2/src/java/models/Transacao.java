@@ -12,31 +12,15 @@ import java.sql.Date;
  * @author André
  */
 
-public class Transacoes {
+public class Transacao {
     private int id;
     private int tipoTransacao;
     private double valor;
-    private Date dataTransacao;       
-    private int idCliente1;
-    private int idCliente2;
+    private Date dataTransacao;      
     private int idConta1;
     private int idConta2;
 
-    public int getIdCliente1() {
-        return idCliente1;
-    }
-
-    public void setIdCliente1(int idCliente1) {
-        this.idCliente1 = idCliente1;
-    }
-
-    public int getIdCliente2() {
-        return idCliente2;
-    }
-
-    public void setIdCliente2(int idCliente2) {
-        this.idCliente2 = idCliente2;
-    }
+    
 
     public int getIdConta1() {
         return idConta1;
@@ -53,10 +37,7 @@ public class Transacoes {
     public void setIdConta2(int idConta2) {
         this.idConta2 = idConta2;
     }
-    
-    public Transacoes() {
-    }   
-    
+        
     public int getId() {
         return id;
     }

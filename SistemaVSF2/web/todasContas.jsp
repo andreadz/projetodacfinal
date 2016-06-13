@@ -1,11 +1,11 @@
 <%-- 
-    Document   : portal
-    Created on : Jun 13, 2016, 12:21:26 AM
+    Document   : todasContas
+    Created on : Jun 13, 2016, 2:50:33 PM
     Author     : Andre
 --%>
 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %> 
 <!DOCTYPE html>
 <html>
     <head>
@@ -15,7 +15,7 @@
         <title>Banco VSF</title>
     </head>
     <body>
-        <div class="container theme-showcase" role="main" style="padding-top: 100px;">
+         <div class="container theme-showcase" role="main" style="padding-top: 100px;">
             <div class="jumbotron" style="padding-left: 250px;">
                 <h3>Banco VSF - Virtude do Sistema Financeiro</h1>
                     <div>
@@ -50,27 +50,15 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                <c:forEach var="contaCli" items="${contas}" >                                
                                 <tr>
-                                    <td style="padding: 5px;"> ${conta.numConta} </td>
-                                    <td style="padding: 5px;"> ${conta.saldo} </td>
-                                    <td style="padding: 5px;"> ${conta.limite} </td>
+                                    <td style="padding: 5px;"> ${contaCli.numConta} </td>
+                                    <td style="padding: 5px;"> ${contaCli.saldo} </td>
+                                    <td style="padding: 5px;"> ${contaCli.limite} </td>
                                 </tr>
+                                </c:forEach>
                             </tbody>
-                        </table>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th style="padding: 5px;">Todas as suas contas</th>
-                                    <th style="padding: 5px;">Saldo</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td style="padding: 5px;">${qtdeContas}</td>
-                                    <td style="padding: 5px;">${totalSaldos}</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        </table>                       
                     </div>
                     <div>
                         <a href="todasContas.jsp" >Todas Contas</a> |

@@ -5,13 +5,17 @@
  */
 package controller;
 
+import dao.*;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.util.ArrayList;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import models.*;
 
 /**
  *
@@ -22,7 +26,28 @@ public class Portal extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        RequestDispatcher rd = request.getRequestDispatcher("");
+        String action = request.getParameter("action");
+        ContaDAO daoConta = new ContaDAO();
+        ArrayList<Transacao> transacoes = new ArrayList<Transacao>();
+        TransacaoDAO daoTrans = new TransacaoDAO();
         
+        if ("extratos".equals(action)) {
+            int periodo = request.getParameter("extrato").isEmpty() ? 0 : Integer.parseInt(request.getParameter("extrato"));  
+            if(periodo == 30){
+                transacoes = daoTrans.pegarTransacoes(periodo);
+            }
+            else if(periodo == 15){
+                transacoes = daoTrans.pegarTransacoes(periodo);
+            }
+            else{
+                transacoes = daoTrans.pegarTransacoes(periodo);
+            }
+
+            request.setAttribute("msg", "");
+            rd = getServletContext().getRequestDispatcher("/cadastroconta.jsp");
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
