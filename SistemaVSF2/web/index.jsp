@@ -29,7 +29,7 @@
                                         </td>
                                         <td style="padding: 10px;">
                                             <label>Conta</label>
-                                            <input type="text" name="conta" maxlength="6" size="6" /> 
+                                            <input type="text" name="numConta" maxlength="6" size="6" /> 
                                         </td>
                                         <td style="padding: 10px;">
                                             <label>Senha</label>

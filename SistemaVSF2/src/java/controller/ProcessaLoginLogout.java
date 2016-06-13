@@ -31,7 +31,7 @@ public class ProcessaLoginLogout extends HttpServlet {
         RequestDispatcher rd = getServletContext().getRequestDispatcher("/");
         if ("acessar".equals(action)) {
             String agencia = request.getParameter("agencia").isEmpty() ? "" : request.getParameter("agencia");
-            int numConta = request.getParameter("conta").isEmpty() ? 0 : Integer.parseInt(request.getParameter("numConta"));
+            int numConta = request.getParameter("numConta").isEmpty() ? 0 : Integer.parseInt(request.getParameter("numConta"));
             String senha = request.getParameter("senha").isEmpty() ? "" : request.getParameter("senha");
             Cliente cliente = dao.login(agencia, numConta, senha);
             Conta conta = daoconta.pegarContaByCliente(agencia, numConta, cliente);
@@ -45,13 +45,14 @@ public class ProcessaLoginLogout extends HttpServlet {
                 rd = getServletContext().getRequestDispatcher("/portal.jsp");
             }
         }
-        if ("logout".equals(action)) {
+        else if ("logout".equals(action)) {
             HttpSession session = request.getSession(false);
             if (session != null) {
                 session.invalidate();
             }
             rd = getServletContext().getRequestDispatcher("/index.jsp");
-        } else {
+        }
+        else {
             request.setAttribute("msg", "Login e senha incorretos.");
             rd = getServletContext().getRequestDispatcher("/index.jsp");
         }

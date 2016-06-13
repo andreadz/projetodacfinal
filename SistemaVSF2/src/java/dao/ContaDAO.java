@@ -110,7 +110,7 @@ public class ContaDAO {
             pstmt.setInt(2, numConta);
             ResultSet rs = pstmt.executeQuery();
 
-            if (cliente.getCpf().isEmpty()) {
+            if (cliente.getCpf() == null) {
                 conta = new ContaPj();
             } else {
                 conta = new ContaPf();
