@@ -11,7 +11,7 @@ public class ContaPf extends Conta implements Serializable{
     
     private String cpf;
 
-    public ContaPf(String cpf, int id, Cliente cliente, String numConta, String numAgencia, double saldo, 
+    public ContaPf(String cpf, int id, Cliente cliente, int numConta, String numAgencia, double saldo, 
             double limite, String tipoConta, Boolean statusConta) {
         super(id, cliente, numConta, numAgencia, saldo, limite, tipoConta, statusConta);
         this.cpf = cpf;

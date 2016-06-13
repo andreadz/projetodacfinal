@@ -5,6 +5,7 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -44,12 +45,14 @@
                                         </td>
                                         <td colspan="3"></td>                                        
                                     </tr>
-                                    <br/><br/>
-                                    <tr>
-                                        ${msg}
-                                    </tr>
                                 </tbody>
                             </table>
+                            ${msg} </br>
+                            <c:if test="${conta != null}">
+                                Dados conta: </br>
+                                Agência: <c:out value="${conta.numAgencia}"/> </br>
+                                Conta: <c:out value="${conta.numConta}"/> 
+                            </c:if>
                         </form>
                     </div>
             </div>

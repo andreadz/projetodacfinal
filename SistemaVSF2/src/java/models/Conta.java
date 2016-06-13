@@ -7,14 +7,14 @@ public class Conta implements Serializable {
 
     private int id;
     private Cliente cliente;
-    private String numConta;
+    private int numConta;
     private String numAgencia;
     private double saldo;
     private double limite;
     private String tipoConta;
     public Boolean statusConta;
 
-    public Conta(int id, Cliente cliente, String numConta, String numAgencia, double saldo, double limite, String tipoConta, Boolean statusConta) {
+    public Conta(int id, Cliente cliente, int numConta, String numAgencia, double saldo, double limite, String tipoConta, Boolean statusConta) {
         this.id = id;
         this.cliente = cliente;
         this.numConta = numConta;
@@ -44,11 +44,11 @@ public class Conta implements Serializable {
         this.cliente = cliente;
     }
 
-    public String getNumConta() {
+    public int getNumConta() {
         return numConta;
     }
 
-    public void setNumConta(String numConta) {
+    public void setNumConta(int numConta) {
         this.numConta = numConta;
     }
 

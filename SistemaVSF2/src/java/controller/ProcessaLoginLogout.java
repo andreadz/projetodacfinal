@@ -31,7 +31,7 @@ public class ProcessaLoginLogout extends HttpServlet {
         RequestDispatcher rd = getServletContext().getRequestDispatcher("/");
         if ("acessar".equals(action)) {
             String agencia = request.getParameter("agencia").isEmpty() ? "" : request.getParameter("agencia");
-            String numConta = request.getParameter("conta").isEmpty() ? "" : request.getParameter("numConta");
+            int numConta = request.getParameter("conta").isEmpty() ? 0 : Integer.parseInt(request.getParameter("numConta"));
             String senha = request.getParameter("senha").isEmpty() ? "" : request.getParameter("senha");
             Cliente cliente = dao.login(agencia, numConta, senha);
             if (cliente == null) {

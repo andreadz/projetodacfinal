@@ -33,7 +33,7 @@ public class ClienteDAO {
     private final String stmPegaClienteIdF = "SELECT id from clientes where cpf=?";
     private final String stmPegaClienteIdJ = "SELECT id from clientes where cnpj=?";
     private final String stmVerificaUsuarioFisico = "SELECT nome,cpf FROM clientes WHERE cpf = ?";    
-    private final String stmVerificaUsuarioJuridico = "SELECT cli.nome, con.cnpj FROM clientes cli JOIN contas con ON cli.id = con.idCliente WHERE con.cnpj = ?";    
+    private final String stmVerificaUsuarioJuridico = "SELECT nome, cnpj FROM clientes WHERE cnpj = ?";    
     private final String stmVerificaLoco = "SELECT cli.nome as Nome ,con.cnpj As CNPJ, cli.rg as RG, cli.endereco as Endereco, "
             + "cli.cep as CEP, cli.telefone, cli.email, cli.renda FROM clientes cli JOIN contas con "
             + "ON cli.id = con.idCliente WHERE con.cnpj = ?";    
@@ -121,7 +121,7 @@ public class ClienteDAO {
             pstmt = conexao.prepareStatement(stmAbrirContaCorrente, Statement.RETURN_GENERATED_KEYS);
             
             pstmt.setString(1, contapf.getNumAgencia());
-            pstmt.setString(2, contapf.getNumConta());
+            pstmt.setInt(2, contapf.getNumConta());
             pstmt.setDouble(3, contapf.getSaldo());            
             pstmt.setDouble(4, contapf.getLimite());            
             pstmt.setBoolean(5, contapf.getStatusConta());            
@@ -149,7 +149,7 @@ public class ClienteDAO {
             pstmt = conexao.prepareStatement(stmAbrirContaCorrente, Statement.RETURN_GENERATED_KEYS);
             
             pstmt.setString(1, contaPj.getNumAgencia());
-            pstmt.setString(2, contaPj.getNumConta());
+            pstmt.setInt(2, contaPj.getNumConta());
             pstmt.setDouble(3, contaPj.getSaldo());            
             pstmt.setDouble(4, contaPj.getLimite());            
             pstmt.setBoolean(5, contaPj.getStatusConta());            
@@ -291,7 +291,7 @@ public class ClienteDAO {
                 conta.setLimite(rs.getDouble("limite"));
                 conta.setSaldo(rs.getDouble("saldo"));
                 conta.setNumAgencia(rs.getString("agencia"));
-                conta.setNumConta(rs.getString("conta"));
+                conta.setNumConta(rs.getInt("conta"));
                 conta.setStatusConta(rs.getBoolean("statusConta"));
                 conta.setTipoConta(rs.getString("tipoConta"));
             }
@@ -307,7 +307,7 @@ public class ClienteDAO {
 //        
 //    }
     
-    public Cliente login(String agencia, String numConta, String senha){
+    public Cliente login(String agencia, int numConta, String senha){
         Connection conexao =  null;PreparedStatement pstmt = null;
         Cliente cliente = new Cliente(); Conta conta = new Conta();
         try{
@@ -315,7 +315,7 @@ public class ClienteDAO {
             
             pstmt = conexao.prepareStatement(stmLogin, Statement.RETURN_GENERATED_KEYS);
             pstmt.setString(1, agencia); 
-            pstmt.setString(2, numConta); 
+            pstmt.setInt(2, numConta); 
             pstmt.setString(3, senha);
             ResultSet rs = pstmt.executeQuery();            
             

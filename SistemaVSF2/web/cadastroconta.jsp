@@ -5,6 +5,7 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %> 
 <!DOCTYPE html>
 <html>
     <head>
@@ -27,13 +28,17 @@
                                         <td class="col-md-2">
                                             <select name="agencia" class="focus">
                                                 <option value="7859">Agência Agrárias - </option>
-                                                <option value="1569">Agência Santos Andrade - Centro</option>
-                                                <option value="4411">Agência Reitoria - Centro</option>
-                                                <option value="0616">Agência SEPT - Jardim das Américas</option>
-                                                <option value="2316">Agência Politécnico - Jardim das Américas</option>
+                                                <option value="7055">Agência Santos Andrade - Centro</option>
+                                                <option value="7089">Agência Reitoria - Centro</option>
+                                                <option value="6599">Agência SEPT - Jardim das Américas</option>
+                                                <option value="6523">Agência Politécnico - Jardim das Américas</option>
                                             </select>
                                         </td> 
-                                    </tr>                                    
+                                    </tr>     
+                                    <tr>
+                                        ${msg}
+                                    </tr>
+                                        
                                     <tr>
                                         <td>
                                             <input type="reset" class="btn btn-sm btn-default" value="Cancelar" />

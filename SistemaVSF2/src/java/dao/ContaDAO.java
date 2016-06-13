@@ -16,7 +16,8 @@ import models.*;
  */
 public class ContaDAO {
 
-    private final String stmInserirConta = "INSERT INTO contas values (?,?,?,?,?,?,?)";
+    private final String stmInserirConta = "INSERT INTO contas "
+            + " (agencia,conta,saldo,limite,statusConta,tipoConta,idCliente) values (?,?,?,?,?,?,?)";
 
     private final String stmEncerrarConta = "UPDATE contas SET statusConta = ? where agencia= ? AND conta = ?";
     private final String stmDepositar = "UPDATE contas SET saldo = ? WHERE agencia = ? AND conta=?";
@@ -24,7 +25,7 @@ public class ContaDAO {
     private final String stmClienteCPF = "SELECT id, nome FROM clientes where cpf=?";
     private final String stmTransferirTerceiros = "UPDATE contas SET saldo = ? WHERE agencia = ? AND conta=? AND idCliente = (SELECT id FROM clientes where cpf=?)";
 
-    private final String stmVerificaContaExistente = "SELECT MAX(conta) FROM contas WHERE agencia = ?";
+    private final String stmVerificaContaExistente = "SELECT MAX(conta) AS conta FROM contas WHERE agencia = ?";
     private final String stmSaldoAtual = "SELECT saldo, limite FROM contas where agencia=? AND conta=? ";
     private final String stmExtratoCompleto = "SELECT * FROM transacoes WHERE idConta=? AND idClienteConta=? ";
     private final String stmExtratoIntervalo = "SELECT * FROM transacoes WHERE idConta=? AND idClienteConta=? AND (dataTransacao BETWEEN '?' AND Date(now()))";
@@ -74,7 +75,7 @@ public class ContaDAO {
             conexao = DbConexao.getConection();
             pstmt = conexao.prepareStatement(stmSaldoAtual, Statement.RETURN_GENERATED_KEYS);
             pstmt.setString(1, conta.getNumAgencia());
-            pstmt.setString(2, conta.getNumConta());
+            pstmt.setInt(2, conta.getNumConta());
             ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
@@ -108,12 +109,10 @@ public class ContaDAO {
             pstmt.setString(1, agencia);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                valorconta = Integer.parseInt(rs.getString("conta"));
+                valorconta = rs.getInt("conta");
             }
             pstmt.clearParameters();
-            valorconta++;
-//            String padded = ;
-            String numConta = String.format("%06d", valorconta);
+            valorconta = valorconta + 1;
             if (cliente.getCpf().isEmpty()) {
                 conta = new ContaPj();
                 conta.setTipoConta("J");
@@ -121,7 +120,7 @@ public class ContaDAO {
                 conta = new ContaPf();
                 conta.setTipoConta("F");
             }
-            conta.setNumConta(numConta);
+            conta.setNumConta(valorconta);
             conta.setNumAgencia(agencia);
             conta.setSaldo(0.00);
             conta.setLimite(limite);
@@ -130,7 +129,7 @@ public class ContaDAO {
 
             pstmt = conexao.prepareStatement(stmInserirConta, Statement.RETURN_GENERATED_KEYS);
             pstmt.setString(1, conta.getNumAgencia());
-            pstmt.setString(2, conta.getNumConta());
+            pstmt.setInt(2, conta.getNumConta());
             pstmt.setDouble(3, conta.getSaldo());
             pstmt.setDouble(4, conta.getLimite());
             pstmt.setBoolean(5, conta.getStatusConta());
@@ -167,7 +166,7 @@ public class ContaDAO {
             pstmt = conexao.prepareStatement(stmEncerrarConta, Statement.RETURN_GENERATED_KEYS);
             pstmt.setBoolean(1, conta.getStatusConta());
             pstmt.setString(2, conta.getNumAgencia());
-            pstmt.setString(3, conta.getNumConta());
+            pstmt.setInt(3, conta.getNumConta());
             pstmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -193,11 +192,11 @@ public class ContaDAO {
             pstmt = conexao.prepareStatement(stmDepositar, Statement.RETURN_GENERATED_KEYS);
             pstmt.setDouble(1, contaRetirada.getSaldo());
             pstmt.setString(2, contaRetirada.getNumAgencia());
-            pstmt.setString(3, contaRetirada.getNumConta());
+            pstmt.setInt(3, contaRetirada.getNumConta());
             pstmt.executeUpdate();
             pstmt.setDouble(1, contaDeposito.getSaldo());
             pstmt.setString(2, contaDeposito.getNumAgencia());
-            pstmt.setString(3, contaDeposito.getNumConta());
+            pstmt.setInt(3, contaDeposito.getNumConta());
             pstmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -224,11 +223,11 @@ public class ContaDAO {
             pstmt = conexao.prepareStatement(stmTransferir, Statement.RETURN_GENERATED_KEYS);
             pstmt.setDouble(1, contaRetirada.getSaldo());
             pstmt.setString(2, contaRetirada.getNumAgencia());
-            pstmt.setString(3, contaRetirada.getNumConta());
+            pstmt.setInt(3, contaRetirada.getNumConta());
             pstmt.executeUpdate();
             pstmt.setDouble(1, contaDeposito.getSaldo());
             pstmt.setString(2, contaDeposito.getNumAgencia());
-            pstmt.setString(3, contaDeposito.getNumConta());
+            pstmt.setInt(3, contaDeposito.getNumConta());
             pstmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -284,12 +283,12 @@ public class ContaDAO {
             pstmt = conexao.prepareStatement(stmTransferirTerceiros, Statement.RETURN_GENERATED_KEYS);
             pstmt.setDouble(1, contaRetirada.getSaldo());
             pstmt.setString(2, contaRetirada.getNumAgencia());
-            pstmt.setString(3, contaRetirada.getNumConta());
+            pstmt.setInt(3, contaRetirada.getNumConta());
             //pstmt.setInt(4, contaRetirada.getCliente());           
             pstmt.executeUpdate();
             pstmt.setDouble(1, contaDeposito.getSaldo());
             pstmt.setString(2, contaDeposito.getNumAgencia());
-            pstmt.setString(3, contaDeposito.getNumConta());
+            pstmt.setInt(3, contaDeposito.getNumConta());
             // pstmt.setInt(4, contaDeposito.getCliente());
             pstmt.executeUpdate();
         } catch (SQLException e) {

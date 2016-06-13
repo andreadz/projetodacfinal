@@ -63,6 +63,9 @@ public class Cadastros extends HttpServlet {
             
             double limite = verificaLimite(cliente.getRenda());
             Conta conta = daoConta.criarConta(agencia, cliente, limite );
+            request.setAttribute("msg", "Conta cadastrada com sucesso.");
+            request.setAttribute("conta", conta);
+            rd = getServletContext().getRequestDispatcher("/index.jsp");
         }
         rd.forward(request, response);
     }

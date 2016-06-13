@@ -12,7 +12,7 @@ public class ContaPj extends Conta implements Serializable {
     public ContaPj() {
     }
 
-    public ContaPj(String cnpj, int id, Cliente cliente, String numConta, String numAgencia, double saldo, 
+    public ContaPj(String cnpj, int id, Cliente cliente, int numConta, String numAgencia, double saldo, 
             double limite, String tipoConta,Boolean statusConta) {
         super(id, cliente, numConta, numAgencia, saldo, limite, tipoConta, statusConta);
         this.cnpj = cnpj;
