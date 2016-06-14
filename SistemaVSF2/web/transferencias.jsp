@@ -46,13 +46,14 @@
                             <select name="contaTransferir">
                                 <c:forEach  var="minhaConta" items="${contas}">
                                     <c:if test="${minhaConta.numConta == conta.numConta}">
-                                        <option disabled="true" value="${minhaConta.numAgencia} ' - ' ${minhaConta.numConta}"/>
+                                        <option disabled="true" value="${minhaConta.id}">${minhaConta.numAgencia}  -  ${minhaConta.numConta}</option>
                                     </c:if>
                                     <c:if test="${minhaConta.numConta != conta.numConta}">
-                                        <option value="${minhaConta.numAgencia} ' - ' ${minhaConta.numConta}"/>
+                                        <option value="${minhaConta.id}">${minhaConta.numAgencia}  -  ${minhaConta.numConta}</option>
                                     </c:if>
                                 </c:forEach>                            
-                            </select>                          
+                            </select>    
+                            
                             </br>
                             Valor: <input type="text" name="valor" /></br>
                             Token: <input type="text" name="token" /></br>
