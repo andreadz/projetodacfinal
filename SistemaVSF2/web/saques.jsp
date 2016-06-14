@@ -67,7 +67,7 @@
                         <c:if test="${conta.tipoConta == 'J'}" > 
                             <a href="#" >Saque</a> | 
                         </c:if> 
-                        <a href="encerrar" >Encerramento Conta-Corrente</a>
+                        <a href="${encerrar}" >Encerramento Conta-Corrente</a>
                     </div>
             </div>
         </div>
