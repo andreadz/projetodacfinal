@@ -15,7 +15,8 @@
         <title>Banco VSF</title>
     </head>
     <body>
-         <div class="container theme-showcase" role="main" style="padding-top: 100px;">
+        
+        <div class="container theme-showcase" role="main" style="padding-top: 100px;">
             <div class="jumbotron" style="padding-left: 250px;">
                 <h3>Banco VSF - Virtude do Sistema Financeiro</h1>
                     <div>
@@ -44,31 +45,51 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th style="padding: 5px;">Conta Atual</th>
+                                    <th style="padding: 5px;">Agência</th>
+                                    <th style="padding: 5px;">Conta</th>
                                     <th style="padding: 5px;">Saldo</th>
                                     <th style="padding: 5px;">Limite</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <c:forEach var="contaCli" items="${contas}" >                                
-                                <tr>
-                                    <td style="padding: 5px;"> ${contaCli.numConta} </td>
-                                    <td style="padding: 5px;"> ${contaCli.saldo} </td>
-                                    <td style="padding: 5px;"> ${contaCli.limite} </td>
-                                </tr>
+                                <c:forEach var="contaCli" items="${contas}"  >                                
+                                    <tr>
+                                        <td style="padding: 5px;"> ${contaCli.numAgencia} </td>
+                                        <td style="padding: 5px;"> ${contaCli.numConta} </td>
+                                        <td style="padding: 5px;"> ${contaCli.saldo} </td>
+                                        <td style="padding: 5px;"> ${contaCli.limite} </td>
+                                    </tr>
                                 </c:forEach>
                             </tbody>
                         </table>                       
                     </div>
                     <div>
-                        <a href="todasContas.jsp" >Todas Contas</a> |
-                        <a href="extratos.jsp" >Extratos</a> | 
-                        <a href="transferencias.jsp" >Transferências</a> |
-                        <a href="depositos.jsp" >Depósito</a> | 
+                        <c:url var="allContas" value="Portal?action=todasContas" />
+                        <c:url var="transfers" value="transferencias.jsp" />
+                        <c:url var="transfTerc" value="transfTerceiros.jsp" />
+                        <c:url var="depositos" value="depositos.jsp" />
+                        <c:url var="encerrar" value="encerramento.jsp" />
+                        <c:url var="sacar" value="saques.jsp" />
+                        <c:url var="extCompleto" value="Portal?action=extratos" >
+                            <param name="extrato" value="" />
+                        </c:url>
+                        <c:url var="extQuinzeDias" value="Portal?action=extratos" >
+                            <param name="extrato" value="15" />
+                        </c:url>
+                        <c:url var="extTrintaDias" value="Portal?action=extratos" >
+                            <param name="extrato" value="30" />
+                        </c:url>
+                        <a href="${allContas}" >Todas Contas</a> |
+                        <a href="${extCompleto}"  >Extrato Completo</a> |
+                        <a href="${extQuinzeDias}" >Extrato Últimos 15 dias</a> | 
+                        <a href="${extTrintaDias}" >Extrato Últimos 30 dias</a>
+                        <a href="${transfers}" >Transferências para minha conta</a> |
+                        <a href="${transfTerc}" >Transferências para Terceiros</a> |
+                        <a href="${depositos}" >Depósito</a> | 
                         <c:if test="${conta.tipoConta == 'J'}" > 
-                            <a href="saques.jsp" >Saque</a> | 
+                            <a href="sacar" >Saque</a> | 
                         </c:if> 
-                            <a href="Portal?action=encerramento" >Encerramento Conta-Corrente</a>
+                        <a href="encerrar" >Encerramento Conta-Corrente</a>
                     </div>
             </div>
         </div>

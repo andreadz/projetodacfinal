@@ -73,27 +73,32 @@
                         </table>
                     </div>
                     <div>
-                        <form method="POST" action="Portal?action=extratos" >
-                            <c:url var="extCompleto" value="Portal?action=extratos" >
-                                <param name="extrato" value="" />
-                            </c:url>
-                            <c:url var="extQuinzeDias" value="Portal?action=extratos" >
-                                <param name="extrato" value="15" />
-                            </c:url>
-                            <c:url var="extTrintaDias" value="Portal?action=extratos" >
-                                <param name="extrato" value="30" />
-                            </c:url>
-                            <a href="todasContas.jsp" >Todas Contas</a> |
-                            <a href="${extCompleto}"  >Extrato Completo</a> |
-                            <a href="${extQuinzeDias}" >Extrato Últimos 15 dias</a> | 
-                            <a href="${extTrintaDias}" >Extrato Últimos 30 dias</a>
-                            <a href="transferencias.jsp" >Transferências</a> |
-                            <a href="depositos.jsp" >Depósito</a> | 
-                            <c:if test="${conta.tipoConta == 'J'}" > 
-                                <a href="saques.jsp" >Saque</a> | 
-                            </c:if> 
-                            <a href="Portal?action=encerramento" >Encerramento Conta-Corrente</a>
-                        </form>
+                        <c:url var="allContas" value="Portal?action=todasContas" />
+                        <c:url var="transfers" value="transferencias.jsp" />
+                        <c:url var="transfTerc" value="transfTerceiros.jsp" />
+                        <c:url var="depositos" value="depositos.jsp" />
+                        <c:url var="encerrar" value="encerramento.jsp" />
+                        <c:url var="sacar" value="saques.jsp" />
+                        <c:url var="extCompleto" value="Portal?action=extratos" >
+                            <param name="extrato" value="" />
+                        </c:url>
+                        <c:url var="extQuinzeDias" value="Portal?action=extratos" >
+                            <param name="extrato" value="15" />
+                        </c:url>
+                        <c:url var="extTrintaDias" value="Portal?action=extratos" >
+                            <param name="extrato" value="30" />
+                        </c:url>
+                        <a href="${allContas}" >Todas Contas</a> |
+                        <a href="${extCompleto}"  >Extrato Completo</a> |
+                        <a href="${extQuinzeDias}" >Extrato Últimos 15 dias</a> | 
+                        <a href="${extTrintaDias}" >Extrato Últimos 30 dias</a> |
+                        <a href="${transfers}" >Transferências para minha conta</a> |
+                        <a href="${transfTerc}" >Transferências para Terceiros</a> |
+                        <a href="${depositos}" >Depósito</a> | 
+                        <c:if test="${conta.tipoConta == 'J'}" > 
+                            <a href="sacar" >Saque</a> | 
+                        </c:if> 
+                        <a href="encerrar" >Encerramento Conta-Corrente</a>
                     </div>
             </div>
         </div>

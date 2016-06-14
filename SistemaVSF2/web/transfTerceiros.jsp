@@ -1,11 +1,11 @@
 <%-- 
-    Document   : extratos
-    Created on : Jun 13, 2016, 2:50:43 PM
+    Document   : transfTerceiros
+    Created on : Jun 14, 2016, 3:03:17 PM
     Author     : Andre
 --%>
 
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -15,11 +15,12 @@
         <title>Banco VSF</title>
     </head>
     <body>
+
         <div class="container theme-showcase" role="main" style="padding-top: 100px;">
             <div class="jumbotron" style="padding-left: 250px;">
                 <h3>Banco VSF - Virtude do Sistema Financeiro</h1>
                     <div>
-                        <form>
+                        <form action="Portal?action=acessar" method="POST">
                             <table>
                                 <tbody>
                                     <tr>
@@ -39,48 +40,19 @@
                                 </tbody>
                             </table>
                         </form>
+                    </div>  
+                    <div>
+                        <form method="POST" action="Portal?action=transferir">
+                            Minha Conta: <input type="text" value="${conta.numAgencia} - ${conta.numConta}" readonly="true" /></br>
+                            Agência/Conta Destino: <input type="text" name="agenciaDestino" /> - <input type="text" name="contaDestino" />
+                            </br>
+                            Valor: <input type="text" name="valor" /></br>
+                            Token: <input type="text" name="token" /></br>
+                            <input type="reset" class="btn btn-sm btn-default" value="Cancelar" /> &nbsp;
+                            <input type="submit" class="btn btn-sm btn-primary" value="Enviar" />
+                        </form>
                     </div>
                     <div>
-                        <table class="table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Data Trans.</th>
-                                    <th>Tipo Transação</th>
-                                    <th>Valor</th>
-                                    <th>Conta Operação</th>
-                                    <th>Conta Beneficiada</th>
-                                    <th>Saldo </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <c:forEach var="transac" items="${transacoes}">
-                                    <tr>
-                                        <td style="padding: 10px;">${transac.dataTransacao}</td>
-                                        <c:choose>
-                                            <c:when test="${transac.tipoTransacao == 1}">
-                                               <td style="padding: 10px;">Depósito</td>
-                                            </c:when>
-                                            <c:when test="${transac.tipoTransacao == 2}">
-                                              <td style="padding: 10px;">Transferência para minha conta</td>
-                                            </c:when>
-                                            <c:when test="${transac.tipoTransacao == 3}">
-                                                <td style="padding: 10px;">Transferência para terceiros</td>
-                                            </c:when>
-                                            <c:when test="${transac.tipoTransacao == 4}">
-                                                <td style="padding: 10px;">Saque</td>
-                                            </c:when>
-                                        </c:choose>                                        
-                                        <td style="padding: 10px;">${transac.valor}</td>
-                                        <td style="padding: 10px;">${transac.idConta1}</td>
-                                        <td style="padding: 10px;">${transac.idConta2}</td>
-                                        <td style="padding: 10px;">${transac.saldoConta}</td>
-                                    </tr>
-                                </c:forEach>
-
-                            </tbody>
-                        </table>
-                    </div>
-                   <div>
                         <c:url var="allContas" value="Portal?action=todasContas" />
                         <c:url var="transfers" value="transferencias.jsp" />
                         <c:url var="transfTerc" value="transfTerceiros.jsp" />
@@ -101,7 +73,7 @@
                         <a href="${extQuinzeDias}" >Extrato Últimos 15 dias</a> | 
                         <a href="${extTrintaDias}" >Extrato Últimos 30 dias</a>
                         <a href="${transfers}" >Transferências para minha conta</a> |
-                        <a href="${transfTerc}" >Transferências para Terceiros</a> |
+                        <a href="#" >Transferências para Terceiros</a> |
                         <a href="${depositos}" >Depósito</a> | 
                         <c:if test="${conta.tipoConta == 'J'}" > 
                             <a href="sacar" >Saque</a> | 
