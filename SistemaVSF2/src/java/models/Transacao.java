@@ -19,7 +19,33 @@ public class Transacao {
     private Date dataTransacao;      
     private int idConta1;
     private int idConta2;
+    private Conta ContaOperacao;
+    private Conta ContaRecepcao;
+    private double saldoConta;
 
+    public double getSaldoConta() {
+        return saldoConta;
+    }
+
+    public void setSaldoConta(double saldoConta) {
+        this.saldoConta = saldoConta;
+    }
+
+    public Conta getContaOperacao() {
+        return ContaOperacao;
+    }
+
+    public void setContaOperacao(Conta ContaOperacao) {
+        this.ContaOperacao = ContaOperacao;
+    }
+
+    public Conta getContaRecepcao() {
+        return ContaRecepcao;
+    }
+
+    public void setContaRecepcao(Conta ContaRecepcao) {
+        this.ContaRecepcao = ContaRecepcao;
+    }
     
 
     public int getIdConta1() {

@@ -4,6 +4,7 @@
     Author     : Andre
 --%>
 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -18,41 +19,67 @@
             <div class="jumbotron" style="padding-left: 250px;">
                 <h3>Banco VSF - Virtude do Sistema Financeiro</h1>
                     <div>
-                        <form action="Portal" method="POST">
+                        <form>
                             <table>
                                 <tbody>
                                     <tr>
                                         <td style="padding: 10px;">
                                             Olá, <c:out value="${cliente.nome}"  />                                            
-                                </td>
-                                <td style="padding: 10px;">
-                                <c:out value="${conta.numAgencia}"  />
-                                </td>
-                                <td style="padding: 10px;">
-                                <c:out value="${conta.numConta}"  />
-                                </td>
-                                <td style="padding: 10px;">
-                                    <a href="ProcessaLoginLogout?action=logout" >Logout</a> <br/>
-                                </td>                                        
-                                </tr>                                    
+                                        </td>
+                                        <td style="padding: 10px;">
+                                            <c:out value="${conta.numAgencia}"  />
+                                        </td>
+                                        <td style="padding: 10px;">
+                                            <c:out value="${conta.numConta}"  />
+                                        </td>
+                                        <td style="padding: 10px;">
+                                            <a href="ProcessaLoginLogout?action=logout" >Logout</a> <br/>
+                                        </td>                                        
+                                    </tr>                                    
                                 </tbody>
                             </table>
                         </form>
                     </div>
                     <div>
-                            <c:url var="extCompleto" value="Portal?action=extratos" >
-                                <param name="extrato" value="" />
-                            </c:url>
-                            <c:url var="extQuinzeDias" value="Portal?action=extratos" >
-                                <param name="extrato" value="15" />
-                            </c:url>
-                            <c:url var="extTrintaDias" value="Portal?action=extratos" >
-                                <param name="extrato" value="30" />
-                            </c:url>
-                            <a href="extCompleto" style="" >Completo</a> |
-                            <a href="extQuinzeDias" >Últimos 15 dias</a> | 
-                            <a href="extTrintaDias" >Últimos 30 dias</a>
-                    </div>                    
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Data Trans.</th>
+                                    <th>Tipo Transação</th>
+                                    <th>Valor</th>
+                                    <th>Conta Operação</th>
+                                    <th>Conta Beneficiada</th>
+                                    <th>Saldo </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <c:forEach var="transac" items="${transacoes}">
+                                    <tr>
+                                        <td>${transac.dataTransacao}</td>
+                                        <c:choose>
+                                            <c:when test="${transac.tipoTransacao} == 1">
+                                                <td>Depósito</td>
+                                            </c:when>
+                                            <c:when test="${transac.tipoTransacao} == 2">
+                                                <td>Transferência para minha conta</td>
+                                            </c:when>
+                                            <c:when test="${transac.tipoTransacao} == 3">
+                                                <td>Transferência para terceiros</td>
+                                            </c:when>
+                                            <c:when test="${transac.tipoTransacao} == 4">
+                                                <td>Saque</td>
+                                            </c:when>
+                                        </c:choose>                                        
+                                        <td>${transac.valor}</td>
+                                        <td>${transac.idConta1}</td>
+                                        <td>${transac.idConta2}</td>
+                                        <td>${transac.saldoConta}</td>
+                                    </tr>
+                                </c:forEach>
+
+                            </tbody>
+                        </table>
+                    </div>
                     <div>
                         <a href="todasContas.jsp" >Todas Contas</a> |
                         <a href="extratos.jsp" >Extratos</a> | 

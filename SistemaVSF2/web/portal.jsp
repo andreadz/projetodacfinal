@@ -19,7 +19,7 @@
             <div class="jumbotron" style="padding-left: 250px;">
                 <h3>Banco VSF - Virtude do Sistema Financeiro</h1>
                     <div>
-                        <form action="Portal?action=acessar" method="POST">
+                        <form acti method="POST">
                             <table>
                                 <tbody>
                                     <tr>
@@ -73,14 +73,27 @@
                         </table>
                     </div>
                     <div>
-                        <a href="todasContas.jsp" >Todas Contas</a> |
-                        <a href="extratos.jsp" >Extratos</a> | 
-                        <a href="transferencias.jsp" >Transferências</a> |
-                        <a href="depositos.jsp" >Depósito</a> | 
-                        <c:if test="${conta.tipoConta == 'J'}" > 
-                            <a href="saques.jsp" >Saque</a> | 
-                        </c:if> 
+                        <form method="POST" action="Portal?action=extratos" >
+                            <c:url var="extCompleto" value="Portal?action=extratos" >
+                                <param name="extrato" value="" />
+                            </c:url>
+                            <c:url var="extQuinzeDias" value="Portal?action=extratos" >
+                                <param name="extrato" value="15" />
+                            </c:url>
+                            <c:url var="extTrintaDias" value="Portal?action=extratos" >
+                                <param name="extrato" value="30" />
+                            </c:url>
+                            <a href="todasContas.jsp" >Todas Contas</a> |
+                            <a href="${extCompleto}"  >Extrato Completo</a> |
+                            <a href="${extQuinzeDias}" >Extrato Últimos 15 dias</a> | 
+                            <a href="${extTrintaDias}" >Extrato Últimos 30 dias</a>
+                            <a href="transferencias.jsp" >Transferências</a> |
+                            <a href="depositos.jsp" >Depósito</a> | 
+                            <c:if test="${conta.tipoConta == 'J'}" > 
+                                <a href="saques.jsp" >Saque</a> | 
+                            </c:if> 
                             <a href="Portal?action=encerramento" >Encerramento Conta-Corrente</a>
+                        </form>
                     </div>
             </div>
         </div>

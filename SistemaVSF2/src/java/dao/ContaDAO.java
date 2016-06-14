@@ -417,9 +417,7 @@ public class ContaDAO {
                 transacao.setValor(rs.getDouble("valor"));
                 transacao.setDataTransacao(rs.getDate("dataTransacao"));
                 transacao.setIdConta1(rs.getInt("idConta"));
-                transacao.setIdCliente1(rs.getInt("idClienteConta"));
                 transacao.setIdConta2(rs.getInt("idConta2"));
-                transacao.setIdCliente2(rs.getInt("idClienteConta2"));
 
                 trans.add(transacao);
             }
@@ -458,9 +456,7 @@ public class ContaDAO {
                 transacao.setValor(rs.getDouble("valor"));
                 transacao.setDataTransacao(rs.getDate("dataTransacao"));
                 transacao.setIdConta1(rs.getInt("idConta"));
-                transacao.setIdCliente1(rs.getInt("idClienteConta"));
                 transacao.setIdConta2(rs.getInt("idConta2"));
-                transacao.setIdCliente2(rs.getInt("idClienteConta2"));
 
                 trans.add(transacao);
             }

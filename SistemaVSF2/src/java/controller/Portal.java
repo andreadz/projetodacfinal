@@ -29,27 +29,32 @@ public class Portal extends HttpServlet {
         HttpSession session = request.getSession();
         RequestDispatcher rd = request.getRequestDispatcher("");
         String action = request.getParameter("action");
-        ContaDAO daoConta = new ContaDAO();
-        ArrayList<Transacao> transacoes = new ArrayList<Transacao>();
+        ContaDAO daoConta = new ContaDAO();        
         TransacaoDAO daoTrans = new TransacaoDAO();
-        
+       
         if ("extratos".equals(action)) {
-            int periodo = request.getParameter("extrato").isEmpty() ? 0 : Integer.parseInt(request.getParameter("extrato"));  
+            ArrayList<Transacao> transacoes = new ArrayList();
+            int periodo = request.getParameter("extrato")== null || request.getParameter("extrato").isEmpty() ? 0 : Integer.parseInt(request.getParameter("extrato"));  
+            Conta conta = (Conta) session.getAttribute("conta");
             if(periodo == 30){
-                transacoes = daoTrans.pegarTransacoes(periodo);
+                transacoes = daoTrans.pegarTransacoes(periodo, conta.getId());
             }
             else if(periodo == 15){
-                transacoes = daoTrans.pegarTransacoes(periodo);
+                transacoes = daoTrans.pegarTransacoes(periodo, conta.getId());
             }
             else{
-                transacoes = daoTrans.pegarTransacoes(periodo);
+                transacoes = daoTrans.pegarTransacoes(conta.getId());
             }
-
+            
             request.setAttribute("msg", "");
-            rd = getServletContext().getRequestDispatcher("/cadastroconta.jsp");
+            request.setAttribute("transacoes", transacoes);
+            rd = getServletContext().getRequestDispatcher("/extratos.jsp");
         }
+        
+        rd.forward(request, response);
     }
-
+    
+    
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
