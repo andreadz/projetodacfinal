@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import models.*;
 
@@ -25,14 +26,17 @@ public class ContaDAO {
     private final String stmTransferir = "UPDATE contas SET saldo = ? WHERE agencia = ? AND conta=?";
     private final String stmClienteCPF = "SELECT id, nome FROM clientes where cpf=?";
     private final String stmTransferirTerceiros = "UPDATE contas SET saldo = ? WHERE agencia = ? AND conta=? AND idCliente = (SELECT id FROM clientes where cpf=?)";
-
+    
     private final String stmGetContaByCliente = "SELECT * FROM contas WHERE agencia = ? AND conta = ?";
     private final String stmTodasContas = "SELECT * FROM contas WHERE idCliente=?";
     private final String stmVerificaContaExistente = "SELECT MAX(conta) AS conta FROM contas WHERE agencia = ?";
     private final String stmSaldoAtual = "SELECT saldo, limite FROM contas where agencia=? AND conta=? ";
-    private final String stmExtratoCompleto = "SELECT * FROM transacoes WHERE idConta=? AND idClienteConta=? ";
-    private final String stmExtratoIntervalo = "SELECT * FROM transacoes WHERE idConta=? AND idClienteConta=? AND (dataTransacao BETWEEN '?' AND Date(now()))";
-
+    //private final String stmExtratoCompleto = "SELECT * FROM transacoes WHERE idConta=? AND idClienteConta=? ";
+    //private final String stmExtratoIntervalo = "SELECT * FROM transacoes WHERE idConta=? AND idClienteConta=? AND (dataTransacao BETWEEN '?' AND Date(now()))";
+    private final String stmExtratoIntervalo = "SELECT * FROM transacoes WHERE idContaOperacao=? AND dataTransacao BETWEEN '?' AND NOW()";
+    private final String stmExtratoCompleto = "SELECT * FROM transacoes WHERE idContaOperacao=?";
+    
+    
     public void inserir(Cliente cliente) {
         Connection conexao = null;
         PreparedStatement pstmt = null;
@@ -409,35 +413,6 @@ public class ContaDAO {
         }
     }
 
-    public void selecionaClienteCPF(String cpf) {
-        Connection conexao = null;
-        PreparedStatement pstmt = null;
-        try {
-            conexao = DbConexao.getConection();
-            pstmt = conexao.prepareStatement(stmClienteCPF, Statement.RETURN_GENERATED_KEYS);
-            pstmt.setString(1, cpf);
-            ResultSet rs = pstmt.executeQuery();
-            Cliente cliente = new Cliente();
-            while (rs.next()) {
-                cliente.setId(rs.getInt("id"));
-                cliente.setNome(rs.getString("nome"));
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } finally {
-            try {
-                pstmt.close();
-            } catch (Exception ex) {
-                System.out.println("Erro:" + ex.getMessage());
-            }
-            try {
-                conexao.close();
-            } catch (Exception ex) {
-                System.out.println("Erro:" + ex.getMessage());
-            }
-        }
-    }
-
     //para terceiros
     public void transferir(Cliente cliente, Conta contaRetirada, Conta contaDeposito) {
         Connection conexao = null;
@@ -472,25 +447,111 @@ public class ContaDAO {
     }
 
     public ArrayList<Transacao> extratoCompleto(Conta conta) {
+//        Connection conexao = null;
+//        PreparedStatement pstmt = null;
+//        ArrayList<Transacao> trans = new ArrayList<Transacao>();
+//        try {
+//            conexao = DbConexao.getConection();
+//            pstmt = conexao.prepareStatement(stmExtratoCompleto, Statement.RETURN_GENERATED_KEYS);
+//            pstmt.setInt(1, conta.getId());
+//            // pstmt.setInt(2, conta.getCliente());  
+//            ResultSet rs = pstmt.executeQuery();
+//
+//            while (rs.next()) {
+//                Transacao transacao = new Transacao();
+//                transacao.setTipoTransacao(rs.getInt("tipoTransacao"));
+//                transacao.setValor(rs.getDouble("valor"));
+//                transacao.setDataTransacao(rs.getDate("dataTransacao"));
+//                transacao.setIdConta1(rs.getInt("idConta"));
+//                transacao.setIdConta2(rs.getInt("idConta2"));
+//
+//                trans.add(transacao);
+//            }
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        } finally {
+//            try {
+//                pstmt.close();
+//            } catch (Exception ex) {
+//                System.out.println("Erro:" + ex.getMessage());
+//            }
+//            try {
+//                conexao.close();
+//            } catch (Exception ex) {
+//                System.out.println("Erro:" + ex.getMessage());
+//            }
+//        }
+//        return trans;
+//    }
+//
+//    public ArrayList<Transacao> extratoIntervalo(Conta conta, Date dataTrans) {
+//        Connection conexao = null;
+//        PreparedStatement pstmt = null;
+//        ArrayList<Transacao> trans = new ArrayList<Transacao>();
+//        try {
+//            conexao = DbConexao.getConection();
+//            pstmt = conexao.prepareStatement(stmExtratoCompleto, Statement.RETURN_GENERATED_KEYS);
+//            pstmt.setInt(1, conta.getId());
+//            // pstmt.setInt(2, conta.getCliente());  
+//            pstmt.setDate(3, dataTrans);
+//            ResultSet rs = pstmt.executeQuery();
+//
+//            while (rs.next()) {
+//                Transacao transacao = new Transacao();
+//                transacao.setTipoTransacao(rs.getInt("tipoTransacao"));
+//                transacao.setValor(rs.getDouble("valor"));
+//                transacao.setDataTransacao(rs.getDate("dataTransacao"));
+//                transacao.setIdConta1(rs.getInt("idConta"));
+//                transacao.setIdConta2(rs.getInt("idConta2"));
+//
+//                trans.add(transacao);
+//            }
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        } finally {
+//            try {
+//                pstmt.close();
+//            } catch (Exception ex) {
+//                System.out.println("Erro:" + ex.getMessage());
+//            }
+//            try {
+//                conexao.close();
+//            } catch (Exception ex) {
+//                System.out.println("Erro:" + ex.getMessage());
+//            }
+//        }
+//        return trans;
+    }
+    
+    public ArrayList<Transacao> extrato(int periodo, int idConta) {
         Connection conexao = null;
         PreparedStatement pstmt = null;
-        ArrayList<Transacao> trans = new ArrayList<Transacao>();
+        ArrayList<Transacao> transacoes = new ArrayList();
+        Transacao transacao;
         try {
             conexao = DbConexao.getConection();
-            pstmt = conexao.prepareStatement(stmExtratoCompleto, Statement.RETURN_GENERATED_KEYS);
-            pstmt.setInt(1, conta.getId());
-            // pstmt.setInt(2, conta.getCliente());  
+            pstmt = conexao.prepareStatement(stmExtratoIntervalo, Statement.RETURN_GENERATED_KEYS);
+            java.util.Date dataAtual = new java.util.Date();            
+            //LocalDate date = LocalDate.now().minusDays(15);            
+            Calendar c = Calendar.getInstance();
+            c.setTime(dataAtual);
+            c.add(Calendar.DATE, -periodo);
+            dataAtual.setTime(c.getTime().getTime());
+            
+            pstmt.setInt(1, idConta);
+            pstmt.setDate(2, new java.sql.Date(dataAtual.getTime()));
             ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
-                Transacao transacao = new Transacao();
+                transacao = new Transacao();
+                transacao.setId(rs.getInt("id"));
                 transacao.setTipoTransacao(rs.getInt("tipoTransacao"));
                 transacao.setValor(rs.getDouble("valor"));
                 transacao.setDataTransacao(rs.getDate("dataTransacao"));
-                transacao.setIdConta1(rs.getInt("idConta"));
-                transacao.setIdConta2(rs.getInt("idConta2"));
-
-                trans.add(transacao);
+                transacao.setIdConta1(rs.getInt("idContaOperacao"));
+                transacao.setIdConta2(rs.getInt("idContaRecepcao"));
+                transacao.setSaldoConta(rs.getDouble("saldoConta"));
+                transacoes.add(transacao);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -506,30 +567,30 @@ public class ContaDAO {
                 System.out.println("Erro:" + ex.getMessage());
             }
         }
-        return trans;
+        return transacoes;
     }
-
-    public ArrayList<Transacao> extratoIntervalo(Conta conta, Date dataTrans) {
+    
+    public ArrayList<Transacao> extrato(int idConta) {
         Connection conexao = null;
         PreparedStatement pstmt = null;
-        ArrayList<Transacao> trans = new ArrayList<Transacao>();
+        ArrayList<Transacao> transacoes = new ArrayList();
+        Transacao transacao;
         try {
             conexao = DbConexao.getConection();
-            pstmt = conexao.prepareStatement(stmExtratoCompleto, Statement.RETURN_GENERATED_KEYS);
-            pstmt.setInt(1, conta.getId());
-            // pstmt.setInt(2, conta.getCliente());  
-            pstmt.setDate(3, dataTrans);
+            pstmt = conexao.prepareStatement(stmExtratoCompleto, Statement.RETURN_GENERATED_KEYS);            
+            pstmt.setInt(1, idConta);
             ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
-                Transacao transacao = new Transacao();
+                transacao = new Transacao();
+                transacao.setId(rs.getInt("id"));
                 transacao.setTipoTransacao(rs.getInt("tipoTransacao"));
                 transacao.setValor(rs.getDouble("valor"));
                 transacao.setDataTransacao(rs.getDate("dataTransacao"));
-                transacao.setIdConta1(rs.getInt("idConta"));
-                transacao.setIdConta2(rs.getInt("idConta2"));
-
-                trans.add(transacao);
+                transacao.setIdConta1(rs.getInt("idContaOperacao"));
+                transacao.setIdConta2(rs.getInt("idContaRecepcao"));
+                transacao.setSaldoConta(rs.getDouble("saldoConta"));
+                transacoes.add(transacao);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -545,7 +606,6 @@ public class ContaDAO {
                 System.out.println("Erro:" + ex.getMessage());
             }
         }
-        return trans;
+        return transacoes;
     }
-
 }

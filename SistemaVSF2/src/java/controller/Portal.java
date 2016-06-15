@@ -55,11 +55,11 @@ public class Portal extends HttpServlet {
         if ("extratos".equals(action)) {
             int periodo = request.getParameter("extrato") == null || request.getParameter("extrato").isEmpty() ? 0 : Integer.parseInt(request.getParameter("extrato"));
             if (periodo == 30) {
-                transacoes = daoTrans.pegarTransacoes(periodo, conta.getId());
+                transacoes = daoConta.extrato(periodo, conta.getId());
             } else if (periodo == 15) {
-                transacoes = daoTrans.pegarTransacoes(periodo, conta.getId());
+                transacoes = daoConta.extrato(periodo, conta.getId());
             } else {
-                transacoes = daoTrans.pegarTransacoes(conta.getId());
+                transacoes = daoConta.extrato(conta.getId());
             }
             request.setAttribute("msg", "");
             request.setAttribute("transacoes", transacoes);
