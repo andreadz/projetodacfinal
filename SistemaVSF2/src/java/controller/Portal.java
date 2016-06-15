@@ -92,6 +92,7 @@ public class Portal extends HttpServlet {
                 request.setAttribute("msg", "Login e/ou senha incorretos.");
                 rd.forward(request, response);
             } else {
+                String contaTransferencia = request.getParameter("contaTransferir");
                 contas = daoConta.pegarTodasContasByCliente(cliente);              
                 if(contas.size() > 0){                    
                     session.setAttribute("contas", contas);
