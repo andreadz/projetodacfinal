@@ -4,6 +4,7 @@
     Author     : Andre
 --%>
 
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
@@ -26,16 +27,7 @@
                                     <tr>
                                         <td style="padding: 10px;">
                                             Olá, <c:out value="${cliente.nome}"  />                                            
-                                        </td>
-                                        <td style="padding: 10px;">
-                                            <c:out value="${conta.numAgencia}"  />
-                                        </td>
-                                        <td style="padding: 10px;">
-                                            <c:out value="${conta.numConta}"  />
-                                        </td>
-                                        <td style="padding: 10px;">
-                                            <a href="ProcessaLoginLogout?action=logout" >Logout</a> <br/>
-                                        </td>                                        
+                                        </td>                                   
                                     </tr>                                    
                                 </tbody>
                             </table>
@@ -49,13 +41,13 @@
                                         <option disabled="true" value="${minhaConta.id}">${minhaConta.numAgencia}  -  ${minhaConta.numConta}</option>
                                     </c:if>
                                     <c:if test="${minhaConta.numConta != conta.numConta}">
-                                        <option value="${minhaConta.id}">${minhaConta.numAgencia}/${minhaConta.numConta}</option>
+                                        <option value="${minhaConta.numAgencia}/${minhaConta.numConta}">${minhaConta.numAgencia}/${minhaConta.numConta}</option>
                                     </c:if>
                                 </c:forEach>                            
                             </select>    
                             
                             </br>
-                            Valor: <input type="text" name="valor" /></br>
+                            Valor: <input type="text" name="valor" ng /></br>
                             <!--Token: <input type="text" name="token" /></br>-->
                             <input type="reset" class="btn btn-sm btn-default" value="Cancelar" /> &nbsp;
                             <input type="submit" class="btn btn-sm btn-warning" value="Transferir" />

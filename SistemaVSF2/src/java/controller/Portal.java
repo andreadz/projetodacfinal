@@ -95,14 +95,24 @@ public class Portal extends HttpServlet {
             String agenciaDeposito = request.getParameter("agenciaDeposito");
             int contaDeposito = Integer.parseInt(request.getParameter("contaDeposito"));
             contaRecebeTransf = daoConta.pegarContaByConta(agenciaDeposito, contaDeposito);
+
             if (contaRecebeTransf == null || !contaRecebeTransf.getStatusConta()) {
                 request.setAttribute("msg", "Conta informada para depósito inexistente ou inativa.");
-                rd = getServletContext().getRequestDispatcher("/depositos.jsp");
-            } else if (conta.getNumAgencia() == contaRecebeTransf.getNumAgencia() && conta.getNumConta() == contaRecebeTransf.getNumConta()) {
+            } else if (conta.getNumAgencia().equals(contaRecebeTransf.getNumAgencia()) && conta.getNumConta() == contaRecebeTransf.getNumConta()) {
                 conta = contaRecebeValor(conta, valor);
+                contaRecebeTransf = null;
+                daoConta.depositar(conta, contaRecebeTransf);
+                trans.setTipoTransacao(1);
+                trans.setValor(valor);
+                trans.setDataTransacao(new java.sql.Date(dataAtual.getTime()));
+                trans.setIdConta1(conta.getId());
+                trans.setIdConta2(conta.getId());
+                trans.setSaldoConta(conta.getSaldo());
+                daoTrans.salvarTransacao(trans);
+                session.setAttribute("conta", conta);
+                request.setAttribute("msg", "Depósito realizado com sucesso, motoboy passará receber o dinheiro");
             } else if (!verificaSaldo(conta, valor)) {
                 request.setAttribute("msg", "Valor de depósito é maior que o saldo e limite disponíveis.");
-                rd = getServletContext().getRequestDispatcher("/depositos.jsp");
             } else {
                 conta = operacoes(conta, valor);
                 contaRecebeTransf = contaRecebeValor(contaRecebeTransf, valor);
@@ -111,13 +121,14 @@ public class Portal extends HttpServlet {
                 trans.setValor(valor);
                 trans.setDataTransacao(new java.sql.Date(dataAtual.getTime()));
                 trans.setIdConta1(conta.getId());
-                trans.setIdConta2(0);
+                trans.setIdConta2(contaRecebeTransf.getId());
                 trans.setSaldoConta(conta.getSaldo());
                 daoTrans.salvarTransacao(trans);
                 session.setAttribute("conta", conta);
                 request.setAttribute("msg", "Depósito realizado com sucesso, motoboy passará receber o dinheiro");
-                rd = getServletContext().getRequestDispatcher("/depositos.jsp");
             }
+            rd = getServletContext().getRequestDispatcher("/depositos.jsp");
+
         } else if ("transferir".equals(action)) {
             double valor = Double.parseDouble(request.getParameter("valor"));
             if (!verificaSaldo(conta, valor)) {
@@ -125,7 +136,7 @@ public class Portal extends HttpServlet {
                 rd = getServletContext().getRequestDispatcher("/transferencias.jsp");
                 rd.forward(request, response);
             } else {
-                String agenciaTransferencia = request.getParameter("contaTransferir").substring(0, 3);
+                String agenciaTransferencia = request.getParameter("contaTransferir").substring(0, 4);
                 int contaTransferencia = Integer.parseInt(request.getParameter("contaTransferir").substring(5));
                 contaRecebeTransf = daoConta.pegarContaByConta(agenciaTransferencia, contaTransferencia);
                 if (contaRecebeTransf == null || !contaRecebeTransf.getStatusConta()) {
@@ -168,7 +179,7 @@ public class Portal extends HttpServlet {
                 trans.setValor(valor);
                 trans.setDataTransacao(new java.sql.Date(dataAtual.getTime()));
                 trans.setIdConta1(conta.getId());
-                trans.setIdConta2(0);
+                trans.setIdConta2(contaRecebeTransf.getId());
                 trans.setSaldoConta(conta.getSaldo());
                 daoTrans.salvarTransacao(trans);
                 session.setAttribute("conta", conta);

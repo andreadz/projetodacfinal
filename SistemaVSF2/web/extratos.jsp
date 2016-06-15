@@ -4,6 +4,7 @@
     Author     : Andre
 --%>
 
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -54,8 +55,8 @@
                             </thead>
                             <tbody>
                                 <c:forEach var="transac" items="${transacoes}">
-                                    <tr>
-                                        <td style="padding: 10px;">${transac.dataTransacao}</td>
+                                    <tr>                                        
+                                        <td style="padding: 10px;"><fmt:formatDate value="${transac.dataTransacao}" pattern="dd/MM/yyyy" /></td>
                                         <c:choose>
                                             <c:when test="${transac.tipoTransacao == 1}">
                                                <td style="padding: 10px;">Depósito</td>
@@ -70,10 +71,10 @@
                                                 <td style="padding: 10px;">Saque</td>
                                             </c:when>
                                         </c:choose>                                        
-                                        <td style="padding: 10px;">${transac.valor}</td>
+                                                <td style="padding: 10px;"><fmt:formatNumber value="${transac.valor}" type="currency" /></td>
                                         <td style="padding: 10px;">${transac.idConta1}</td>
                                         <td style="padding: 10px;">${transac.idConta2}</td>
-                                        <td style="padding: 10px;">${transac.saldoConta}</td>
+                                        <td style="padding: 10px;"><fmt:formatNumber value="${transac.saldoConta}" type="currency" /></td>
                                     </tr>
                                 </c:forEach>
 

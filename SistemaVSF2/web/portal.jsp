@@ -27,12 +27,6 @@
                                             Olá, <c:out value="${cliente.nome}"  />                                            
                                         </td>
                                         <td style="padding: 10px;">
-                                            <c:out value="${conta.numAgencia}"  />
-                                        </td>
-                                        <td style="padding: 10px;">
-                                            <c:out value="${conta.numConta}"  />
-                                        </td>
-                                        <td style="padding: 10px;">
                                             <a href="ProcessaLoginLogout?action=logout" >Logout</a> <br/>
                                         </td>                                        
                                     </tr>                                    
@@ -66,7 +60,7 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td style="padding: 5px;">${qtdeContas}</td>
+                                    <td style="padding: 5px;">${contas.size()}</td>
                                     <td style="padding: 5px;">${totalSaldos}</td>
                                 </tr>
                             </tbody>
