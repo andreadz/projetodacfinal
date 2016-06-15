@@ -28,12 +28,6 @@
                                             Olá, <c:out value="${cliente.nome}"  />                                            
                                         </td>
                                         <td style="padding: 10px;">
-                                            <c:out value="${conta.numAgencia}"  />
-                                        </td>
-                                        <td style="padding: 10px;">
-                                            <c:out value="${conta.numConta}"  />
-                                        </td>
-                                        <td style="padding: 10px;">
                                             <a href="ProcessaLoginLogout?action=logout" >Logout</a> <br/>
                                         </td>                                        
                                     </tr>                                    
@@ -42,14 +36,14 @@
                         </form>
                     </div>  
                     <div>
-                        <form method="POST" action="Portal?action=transferir">
+                        <form method="POST" action="Portal?action=transferirTerceiros">
                             Minha Conta: <input type="text" value="${conta.numAgencia} - ${conta.numConta}" readonly="true" /></br>
-                            Agência/Conta Destino: <input type="text" name="agenciaDestino" /> - <input type="text" name="contaDestino" />
+                            Agência/Conta Destino: <input type="text"  name="agenciaDestino" />/<input type="text" name="contaDestino" />
                             </br>
                             Valor: <input type="text" name="valor" /></br>
-                            Token: <input type="text" name="token" /></br>
+                            <!--Token: <input type="text" name="token" /></br> -->
                             <input type="reset" class="btn btn-sm btn-default" value="Cancelar" /> &nbsp;
-                            <input type="submit" class="btn btn-sm btn-primary" value="Enviar" />
+                            <input type="submit" class="btn btn-sm btn-warning" value="Transferir" />
                         </form>
                     </div>
                     <div>

@@ -28,86 +28,116 @@ public class Portal extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         RequestDispatcher rd = request.getRequestDispatcher("");
-        String action = request.getParameter("action");
-        ContaDAO daoConta = new ContaDAO();        
+        String action = request.getParameter("action");        
+        Conta conta = (Conta) session.getAttribute("conta");        
+        Cliente cliente = (Cliente) session.getAttribute("cliente");
+        
+        ContaDAO daoConta = new ContaDAO();
         TransacaoDAO daoTrans = new TransacaoDAO();
+        
+        Conta contaRecebeTransf;
         ArrayList<Conta> contas;
         ArrayList<Transacao> transacoes;
-        Cliente cliente = (Cliente) session.getAttribute("cliente");
-        if ("extratos".equals(action)) {            
-            int periodo = request.getParameter("extrato")== null || request.getParameter("extrato").isEmpty() ? 0 : Integer.parseInt(request.getParameter("extrato"));  
-            Conta conta = (Conta) session.getAttribute("conta");
-            if(periodo == 30){
+        
+        if (cliente == null) {
+            request.setAttribute("msg", "Não há nenhuma sessão inicializada.");
+            rd = getServletContext().getRequestDispatcher("/index.jsp");
+            rd.forward(request, response);
+        }
+        if ("extratos".equals(action)) {
+            int periodo = request.getParameter("extrato") == null || request.getParameter("extrato").isEmpty() ? 0 : Integer.parseInt(request.getParameter("extrato"));
+            if (periodo == 30) {
                 transacoes = daoTrans.pegarTransacoes(periodo, conta.getId());
-            }
-            else if(periodo == 15){
+            } else if (periodo == 15) {
                 transacoes = daoTrans.pegarTransacoes(periodo, conta.getId());
-            }
-            else{
+            } else {
                 transacoes = daoTrans.pegarTransacoes(conta.getId());
             }
-            
+
             request.setAttribute("msg", "");
             request.setAttribute("transacoes", transacoes);
             rd = getServletContext().getRequestDispatcher("/extratos.jsp");
-        }
-        else if ("todasContas".equals(action)) {
-            if (cliente == null) {
-                request.setAttribute("msg", "Login e/ou senha incorretos.");
-                rd.forward(request, response);
-            } else {
-                contas = daoConta.pegarTodasContasByCliente(cliente);              
-                if(contas.size() > 0){                    
-                    session.setAttribute("contas", contas);
-                } 
-                rd = getServletContext().getRequestDispatcher("/todasContas.jsp");
+        } else if ("todasContas".equals(action)) {
+            contas = daoConta.pegarTodasContasByCliente(cliente);
+            if (contas.size() > 0) {
+                session.setAttribute("contas", contas);
             }
-        }
-        else if ("sacar".equals(action)) {
-            if (cliente == null) {
-                request.setAttribute("msg", "Login e/ou senha incorretos.");
-                rd.forward(request, response);
-            } else {
-                contas = daoConta.pegarTodasContasByCliente(cliente);              
-                if(contas.size() > 0){                    
-                    session.setAttribute("contas", contas);
-                } 
-                rd = getServletContext().getRequestDispatcher("/todasContas.jsp");
+            rd = getServletContext().getRequestDispatcher("/todasContas.jsp");
+
+        } else if ("sacar".equals(action)) {
+            contas = daoConta.pegarTodasContasByCliente(cliente);
+            if (contas.size() > 0) {
+                session.setAttribute("contas", contas);
             }
-        }
-        else if ("depositar".equals(action)) {
-            if (cliente == null) {
-                request.setAttribute("msg", "Login e/ou senha incorretos.");
-                rd.forward(request, response);
-            } else {
-                contas = daoConta.pegarTodasContasByCliente(cliente);              
-                if(contas.size() > 0){                    
-                    session.setAttribute("contas", contas);
-                } 
-                rd = getServletContext().getRequestDispatcher("/todasContas.jsp");
+            rd = getServletContext().getRequestDispatcher("/todasContas.jsp");
+        } else if ("depositar".equals(action)) {
+            contas = daoConta.pegarTodasContasByCliente(cliente);
+            if (contas.size() > 0) {
+                session.setAttribute("contas", contas);
             }
-        }
-        else if ("transferir".equals(action)) {
-            if (cliente == null) {
-                request.setAttribute("msg", "Login e/ou senha incorretos.");
+            rd = getServletContext().getRequestDispatcher("/todasContas.jsp");
+        } else if ("transferir".equals(action)) {
+            double valor = Double.parseDouble(request.getParameter("valor"));
+            if (!verificaSaldo(conta, valor)) {
+                request.setAttribute("msg", "Valor de transferência maior que o saldo e limite disponíveis.");
+                rd = getServletContext().getRequestDispatcher("/transferencias.jsp");
                 rd.forward(request, response);
-            } else {
-                String contaTransferencia = request.getParameter("contaTransferir");
-                contas = daoConta.pegarTodasContasByCliente(cliente);              
-                if(contas.size() > 0){                    
-                    session.setAttribute("contas", contas);
-                } 
-                rd = getServletContext().getRequestDispatcher("/todasContas.jsp");
+            }               
+            String agenciaTransferencia = request.getParameter("contaTransferir").substring(0, 3);
+            int contaTransferencia = Integer.parseInt(request.getParameter("contaTransferir").substring(5));
+            contaRecebeTransf = daoConta.pegarContaByConta(agenciaTransferencia, contaTransferencia);
+            if(contaRecebeTransf == null || !contaRecebeTransf.getStatusConta()){
+                request.setAttribute("msg", "Conta informada para transferência inexistente.");
+                rd = getServletContext().getRequestDispatcher("/transferencias.jsp");
+                rd.forward(request, response);
             }
-        }
-        else{
-            request.setAttribute("msg", "Não há nenhuma sessão inicializada.");
-            rd = getServletContext().getRequestDispatcher("/index.jsp");
-        }        
+            conta = operacoesSaqueTransf(conta, valor);      
+            contaRecebeTransf = contaRecebeValor(contaRecebeTransf, valor);
+            daoConta.transferir(conta, contaRecebeTransf);
+            request.setAttribute("msg", "Transferência realizada com sucesso");
+            rd = getServletContext().getRequestDispatcher("/transferencias.jsp");
+
+        } else if ("transferirTerceiros".equals(action)) {
+            double valor = Double.parseDouble(request.getParameter("valor"));
+            if (!verificaSaldo(conta, valor)) {
+                request.setAttribute("msg", "Valor de transferência maior que o saldo e limite disponíveis.");
+                rd = getServletContext().getRequestDispatcher("/transferencias.jsp");
+                rd.forward(request, response);
+            }
+            String agenciaDestino = request.getParameter("agenciaDestino");
+            int contaDestino = Integer.parseInt(request.getParameter("contaDestino"));
+            contaRecebeTransf = daoConta.pegarContaByConta(agenciaDestino, contaDestino);
+            if(contaRecebeTransf == null || !contaRecebeTransf.getStatusConta()){
+                request.setAttribute("msg", "Conta informada para transferência inexistente ou inativa.");
+                rd = getServletContext().getRequestDispatcher("/transferencias.jsp");
+                rd.forward(request, response);
+            }
+            conta = operacoesSaqueTransf(conta, valor);      
+            contaRecebeTransf = contaRecebeValor(contaRecebeTransf, valor);
+            daoConta.transferir(conta, contaRecebeTransf);
+            request.setAttribute("msg", "Transferência realizada com sucesso");
+            rd = getServletContext().getRequestDispatcher("/transfTerceiros.jsp");
+        } 
         rd.forward(request, response);
     }
-    
-    
+
+    public Boolean verificaSaldo(Conta conta, double valor) {
+        if (valor > conta.getSaldo() + conta.getLimite()) {
+            return false;
+        }
+        return true;
+    }
+    public Conta operacoesSaqueTransf(Conta conta, double valor) {
+        double valorFinal = conta.getSaldo() - valor;
+        conta.setSaldo(valorFinal);
+        return conta;
+    }
+    public Conta contaRecebeValor(Conta contaRecebe, double valor) {
+        double valorFinal = contaRecebe.getSaldo() + valor;
+        contaRecebe.setSaldo(valorFinal);
+        return contaRecebe;
+    }
+
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.

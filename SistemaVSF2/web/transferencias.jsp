@@ -49,16 +49,16 @@
                                         <option disabled="true" value="${minhaConta.id}">${minhaConta.numAgencia}  -  ${minhaConta.numConta}</option>
                                     </c:if>
                                     <c:if test="${minhaConta.numConta != conta.numConta}">
-                                        <option value="${minhaConta.id}">${minhaConta.numAgencia}  -  ${minhaConta.numConta}</option>
+                                        <option value="${minhaConta.id}">${minhaConta.numAgencia}/${minhaConta.numConta}</option>
                                     </c:if>
                                 </c:forEach>                            
                             </select>    
                             
                             </br>
                             Valor: <input type="text" name="valor" /></br>
-                            Token: <input type="text" name="token" /></br>
+                            <!--Token: <input type="text" name="token" /></br>-->
                             <input type="reset" class="btn btn-sm btn-default" value="Cancelar" /> &nbsp;
-                            <input type="submit" class="btn btn-sm btn-primary" value="Enviar" />
+                            <input type="submit" class="btn btn-sm btn-warning" value="Transferir" />
                         </form>
                     </div>
                     <div>

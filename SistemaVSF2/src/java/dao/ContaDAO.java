@@ -111,11 +111,51 @@ public class ContaDAO {
             pstmt.setInt(2, numConta);
             ResultSet rs = pstmt.executeQuery();
 
-            if (cliente.getCpf() == null) {
-                conta = new ContaPj();
+            if (rs.next()) {
+                if (rs.getString("tipoConta").equals("J")) {
+                    conta = new ContaPj();
+                } else {
+                    conta = new ContaPf();
+                }
+                conta.setId(rs.getInt("id"));
+                conta.setSaldo(rs.getDouble("saldo"));
+                conta.setLimite(rs.getDouble("limite"));
+                conta.setNumConta(rs.getInt("conta"));
+                conta.setNumAgencia(rs.getString("agencia"));
+                conta.setTipoConta(rs.getString("tipoConta"));
+                conta.setStatusConta(rs.getBoolean("statusConta"));
+                conta.setCliente(cliente);
             } else {
-                conta = new ContaPf();
+                conta = null;
             }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                pstmt.close();
+            } catch (Exception ex) {
+                System.out.println("Erro:" + ex.getMessage());
+            }
+            try {
+                conexao.close();
+            } catch (Exception ex) {
+                System.out.println("Erro:" + ex.getMessage());
+            }
+        }
+        return conta;
+    }
+
+    public Conta pegarContaByConta(String agencia, int numConta) {
+        Connection conexao = null;
+        PreparedStatement pstmt = null;
+        Conta conta = new Conta();
+        try {
+            conexao = DbConexao.getConection();
+            pstmt = conexao.prepareStatement(stmGetContaByCliente, Statement.RETURN_GENERATED_KEYS);
+            pstmt.setString(1, agencia);
+            pstmt.setInt(2, numConta);
+            ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
                 conta.setId(rs.getInt("id"));
@@ -125,7 +165,6 @@ public class ContaDAO {
                 conta.setNumAgencia(rs.getString("agencia"));
                 conta.setTipoConta(rs.getString("tipoConta"));
                 conta.setStatusConta(rs.getBoolean("statusConta"));
-                conta.setCliente(cliente);
             } else {
                 conta = null;
             }
@@ -308,7 +347,7 @@ public class ContaDAO {
     }
 
     //do próprio cliente
-    public void transferir(Conta contaRetirada, Conta contaDeposito) {
+    public void transferir(Conta contaRetirada, Conta contaRecebeTransf) {
         Connection conexao = null;
         PreparedStatement pstmt = null;
         try {
@@ -318,9 +357,11 @@ public class ContaDAO {
             pstmt.setString(2, contaRetirada.getNumAgencia());
             pstmt.setInt(3, contaRetirada.getNumConta());
             pstmt.executeUpdate();
-            pstmt.setDouble(1, contaDeposito.getSaldo());
-            pstmt.setString(2, contaDeposito.getNumAgencia());
-            pstmt.setInt(3, contaDeposito.getNumConta());
+            pstmt.clearParameters();
+            //pstmt = conexao.prepareStatement(stmTransferir, Statement.RETURN_GENERATED_KEYS);
+            pstmt.setDouble(1, contaRecebeTransf.getSaldo());
+            pstmt.setString(2, contaRecebeTransf.getNumAgencia());
+            pstmt.setInt(3, contaRecebeTransf.getNumConta());
             pstmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
