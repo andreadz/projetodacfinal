@@ -28,17 +28,17 @@ public class Portal extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         RequestDispatcher rd = request.getRequestDispatcher("");
-        String action = request.getParameter("action");        
-        Conta conta = (Conta) session.getAttribute("conta");        
+        String action = request.getParameter("action");
+        Conta conta = (Conta) session.getAttribute("conta");
         Cliente cliente = (Cliente) session.getAttribute("cliente");
-        
+
         ContaDAO daoConta = new ContaDAO();
         TransacaoDAO daoTrans = new TransacaoDAO();
-        
+
         Conta contaRecebeTransf;
         ArrayList<Conta> contas;
         ArrayList<Transacao> transacoes;
-        
+
         if (cliente == null) {
             request.setAttribute("msg", "Não há nenhuma sessão inicializada.");
             rd = getServletContext().getRequestDispatcher("/index.jsp");
@@ -75,16 +75,20 @@ public class Portal extends HttpServlet {
             String agenciaDeposito = request.getParameter("agenciaDeposito");
             int contaDeposito = Integer.parseInt(request.getParameter("contaDeposito"));
             contaRecebeTransf = daoConta.pegarContaByConta(agenciaDeposito, contaDeposito);
-            if(conta == contaRecebeTransf){
-               conta = contaRecebeValor(conta,valor);
+            if (conta.getNumAgencia() == contaRecebeTransf.getNumAgencia() && conta.getNumConta() == contaRecebeTransf.getNumConta()) {
+                conta = contaRecebeValor(conta, valor);
+            } else {
+                if (!verificaSaldo(conta, valor)) {
+                    request.setAttribute("msg", "Valor de depósito é maior que o saldo e limite disponíveis.");
+                    rd = getServletContext().getRequestDispatcher("/depositos.jsp");
+                    rd.forward(request, response);
+                }
+                conta = operacoes(conta, valor);
+                contaRecebeTransf = contaRecebeValor(contaRecebeTransf, valor);
             }
-            else{
-                conta = operacoes(conta,valor);
-                contaRecebeTransf = contaRecebeValor(contaRecebeTransf,valor);
-            }            
-            daoConta.depositar(conta,contaRecebeTransf);
+            daoConta.depositar(conta, contaRecebeTransf);
             session.setAttribute("conta", conta);
-            request.setAttribute("msg", "Transferência realizada com sucesso");
+            request.setAttribute("msg", "Depósito realizado com sucesso");
             rd = getServletContext().getRequestDispatcher("/depositos.jsp");
         } else if ("transferir".equals(action)) {
             double valor = Double.parseDouble(request.getParameter("valor"));
@@ -92,16 +96,16 @@ public class Portal extends HttpServlet {
                 request.setAttribute("msg", "Valor de transferência maior que o saldo e limite disponíveis.");
                 rd = getServletContext().getRequestDispatcher("/transferencias.jsp");
                 rd.forward(request, response);
-            }               
+            }
             String agenciaTransferencia = request.getParameter("contaTransferir").substring(0, 3);
             int contaTransferencia = Integer.parseInt(request.getParameter("contaTransferir").substring(5));
             contaRecebeTransf = daoConta.pegarContaByConta(agenciaTransferencia, contaTransferencia);
-            if(contaRecebeTransf == null || !contaRecebeTransf.getStatusConta()){
+            if (contaRecebeTransf == null || !contaRecebeTransf.getStatusConta()) {
                 request.setAttribute("msg", "Conta informada para transferência inexistente.");
                 rd = getServletContext().getRequestDispatcher("/transferencias.jsp");
                 rd.forward(request, response);
             }
-            conta = operacoes(conta, valor);      
+            conta = operacoes(conta, valor);
             contaRecebeTransf = contaRecebeValor(contaRecebeTransf, valor);
             daoConta.transferir(conta, contaRecebeTransf);
             session.setAttribute("conta", conta);
@@ -118,18 +122,18 @@ public class Portal extends HttpServlet {
             String agenciaDestino = request.getParameter("agenciaDestino");
             int contaDestino = Integer.parseInt(request.getParameter("contaDestino"));
             contaRecebeTransf = daoConta.pegarContaByConta(agenciaDestino, contaDestino);
-            if(contaRecebeTransf == null || !contaRecebeTransf.getStatusConta()){
+            if (contaRecebeTransf == null || !contaRecebeTransf.getStatusConta()) {
                 request.setAttribute("msg", "Conta informada para transferência inexistente ou inativa.");
                 rd = getServletContext().getRequestDispatcher("/transfTerceiros.jsp");
                 rd.forward(request, response);
             }
-            conta = operacoes(conta, valor);      
+            conta = operacoes(conta, valor);
             contaRecebeTransf = contaRecebeValor(contaRecebeTransf, valor);
             daoConta.transferir(conta, contaRecebeTransf);
             session.setAttribute("conta", conta);
             request.setAttribute("msg", "Transferência realizada com sucesso");
             rd = getServletContext().getRequestDispatcher("/transfTerceiros.jsp");
-        } 
+        }
         rd.forward(request, response);
     }
 
@@ -139,11 +143,13 @@ public class Portal extends HttpServlet {
         }
         return true;
     }
+
     public Conta operacoes(Conta conta, double valor) {
         double valorFinal = conta.getSaldo() - valor;
         conta.setSaldo(valorFinal);
         return conta;
     }
+
     public Conta contaRecebeValor(Conta contaRecebe, double valor) {
         double valorFinal = contaRecebe.getSaldo() + valor;
         contaRecebe.setSaldo(valorFinal);
