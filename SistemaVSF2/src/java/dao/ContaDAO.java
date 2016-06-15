@@ -326,10 +326,13 @@ public class ContaDAO {
             pstmt.setString(2, contaRetirada.getNumAgencia());
             pstmt.setInt(3, contaRetirada.getNumConta());
             pstmt.executeUpdate();
-            pstmt.setDouble(1, contaDeposito.getSaldo());
-            pstmt.setString(2, contaDeposito.getNumAgencia());
-            pstmt.setInt(3, contaDeposito.getNumConta());
-            pstmt.executeUpdate();
+            if (contaDeposito != null) {
+                pstmt.clearParameters();
+                pstmt.setDouble(1, contaDeposito.getSaldo());
+                pstmt.setString(2, contaDeposito.getNumAgencia());
+                pstmt.setInt(3, contaDeposito.getNumConta());
+                pstmt.executeUpdate();
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {

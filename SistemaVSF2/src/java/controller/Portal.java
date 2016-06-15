@@ -71,11 +71,21 @@ public class Portal extends HttpServlet {
             }
             rd = getServletContext().getRequestDispatcher("/todasContas.jsp");
         } else if ("depositar".equals(action)) {
-            contas = daoConta.pegarTodasContasByCliente(cliente);
-            if (contas.size() > 0) {
-                session.setAttribute("contas", contas);
+            double valor = Double.parseDouble(request.getParameter("valor"));
+            String agenciaDeposito = request.getParameter("agenciaDeposito");
+            int contaDeposito = Integer.parseInt(request.getParameter("contaDeposito"));
+            contaRecebeTransf = daoConta.pegarContaByConta(agenciaDeposito, contaDeposito);
+            if(conta == contaRecebeTransf){
+               conta = contaRecebeValor(conta,valor);
             }
-            rd = getServletContext().getRequestDispatcher("/todasContas.jsp");
+            else{
+                conta = operacoes(conta,valor);
+                contaRecebeTransf = contaRecebeValor(contaRecebeTransf,valor);
+            }            
+            daoConta.depositar(conta,contaRecebeTransf);
+            session.setAttribute("conta", conta);
+            request.setAttribute("msg", "Transferência realizada com sucesso");
+            rd = getServletContext().getRequestDispatcher("/depositos.jsp");
         } else if ("transferir".equals(action)) {
             double valor = Double.parseDouble(request.getParameter("valor"));
             if (!verificaSaldo(conta, valor)) {
@@ -91,9 +101,10 @@ public class Portal extends HttpServlet {
                 rd = getServletContext().getRequestDispatcher("/transferencias.jsp");
                 rd.forward(request, response);
             }
-            conta = operacoesSaqueTransf(conta, valor);      
+            conta = operacoes(conta, valor);      
             contaRecebeTransf = contaRecebeValor(contaRecebeTransf, valor);
             daoConta.transferir(conta, contaRecebeTransf);
+            session.setAttribute("conta", conta);
             request.setAttribute("msg", "Transferência realizada com sucesso");
             rd = getServletContext().getRequestDispatcher("/transferencias.jsp");
 
@@ -109,12 +120,13 @@ public class Portal extends HttpServlet {
             contaRecebeTransf = daoConta.pegarContaByConta(agenciaDestino, contaDestino);
             if(contaRecebeTransf == null || !contaRecebeTransf.getStatusConta()){
                 request.setAttribute("msg", "Conta informada para transferência inexistente ou inativa.");
-                rd = getServletContext().getRequestDispatcher("/transferencias.jsp");
+                rd = getServletContext().getRequestDispatcher("/transfTerceiros.jsp");
                 rd.forward(request, response);
             }
-            conta = operacoesSaqueTransf(conta, valor);      
+            conta = operacoes(conta, valor);      
             contaRecebeTransf = contaRecebeValor(contaRecebeTransf, valor);
             daoConta.transferir(conta, contaRecebeTransf);
+            session.setAttribute("conta", conta);
             request.setAttribute("msg", "Transferência realizada com sucesso");
             rd = getServletContext().getRequestDispatcher("/transfTerceiros.jsp");
         } 
@@ -127,7 +139,7 @@ public class Portal extends HttpServlet {
         }
         return true;
     }
-    public Conta operacoesSaqueTransf(Conta conta, double valor) {
+    public Conta operacoes(Conta conta, double valor) {
         double valorFinal = conta.getSaldo() - valor;
         conta.setSaldo(valorFinal);
         return conta;
