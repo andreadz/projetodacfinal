@@ -8,6 +8,8 @@ package controller;
 import dao.*;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -16,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import models.*;
+import org.joda.time.LocalDate;
 
 /**
  *
@@ -34,7 +37,12 @@ public class Portal extends HttpServlet {
 
         ContaDAO daoConta = new ContaDAO();
         TransacaoDAO daoTrans = new TransacaoDAO();
+        Date dataAtual = new Date();
+        Calendar c = Calendar.getInstance();
+        c.setTime(dataAtual);
+        dataAtual.setTime(c.getTime().getTime());
 
+        Transacao trans = new Transacao();
         Conta contaRecebeTransf;
         ArrayList<Conta> contas;
         ArrayList<Transacao> transacoes;
@@ -53,7 +61,6 @@ public class Portal extends HttpServlet {
             } else {
                 transacoes = daoTrans.pegarTransacoes(conta.getId());
             }
-
             request.setAttribute("msg", "");
             request.setAttribute("transacoes", transacoes);
             rd = getServletContext().getRequestDispatcher("/extratos.jsp");
@@ -65,83 +72,119 @@ public class Portal extends HttpServlet {
             rd = getServletContext().getRequestDispatcher("/todasContas.jsp");
 
         } else if ("sacar".equals(action)) {
-            contas = daoConta.pegarTodasContasByCliente(cliente);
-            if (contas.size() > 0) {
-                session.setAttribute("contas", contas);
+            double valor = Double.parseDouble(request.getParameter("valor"));
+            if (!verificaSaldo(conta, valor)) {
+                request.setAttribute("msg", "Valor de saque é maior que o saldo e limite disponíveis.");
+                rd = getServletContext().getRequestDispatcher("/saques.jsp");
+            } else {
+                conta = operacoes(conta, valor);
+                daoConta.sacar(conta);
+                trans.setTipoTransacao(4);
+                trans.setValor(valor);
+                trans.setDataTransacao(new java.sql.Date(dataAtual.getTime()));
+                trans.setIdConta1(conta.getId());
+                trans.setIdConta2(0);
+                daoTrans.salvarTransacao(trans);
+                session.setAttribute("conta", conta);
+                request.setAttribute("msg", "Saque realizado com sucesso, motoboy passará receber o dinheiro");
+                rd = getServletContext().getRequestDispatcher("/saques.jsp");
             }
-            rd = getServletContext().getRequestDispatcher("/todasContas.jsp");
         } else if ("depositar".equals(action)) {
             double valor = Double.parseDouble(request.getParameter("valor"));
             String agenciaDeposito = request.getParameter("agenciaDeposito");
             int contaDeposito = Integer.parseInt(request.getParameter("contaDeposito"));
             contaRecebeTransf = daoConta.pegarContaByConta(agenciaDeposito, contaDeposito);
-            if (conta.getNumAgencia() == contaRecebeTransf.getNumAgencia() && conta.getNumConta() == contaRecebeTransf.getNumConta()) {
+            if (contaRecebeTransf == null || !contaRecebeTransf.getStatusConta()) {
+                request.setAttribute("msg", "Conta informada para depósito inexistente ou inativa.");
+                rd = getServletContext().getRequestDispatcher("/depositos.jsp");
+            } else if (conta.getNumAgencia() == contaRecebeTransf.getNumAgencia() && conta.getNumConta() == contaRecebeTransf.getNumConta()) {
                 conta = contaRecebeValor(conta, valor);
+            } else if (!verificaSaldo(conta, valor)) {
+                request.setAttribute("msg", "Valor de depósito é maior que o saldo e limite disponíveis.");
+                rd = getServletContext().getRequestDispatcher("/depositos.jsp");
             } else {
-                if (!verificaSaldo(conta, valor)) {
-                    request.setAttribute("msg", "Valor de depósito é maior que o saldo e limite disponíveis.");
-                    rd = getServletContext().getRequestDispatcher("/depositos.jsp");
-                    rd.forward(request, response);
-                }
                 conta = operacoes(conta, valor);
                 contaRecebeTransf = contaRecebeValor(contaRecebeTransf, valor);
+                daoConta.depositar(conta, contaRecebeTransf);
+                trans.setTipoTransacao(1);
+                trans.setValor(valor);
+                trans.setDataTransacao(new java.sql.Date(dataAtual.getTime()));
+                trans.setIdConta1(conta.getId());
+                trans.setIdConta2(0);
+                daoTrans.salvarTransacao(trans);
+                session.setAttribute("conta", conta);
+                request.setAttribute("msg", "Depósito realizado com sucesso, motoboy passará receber o dinheiro");
+                rd = getServletContext().getRequestDispatcher("/depositos.jsp");
             }
-            daoConta.depositar(conta, contaRecebeTransf);
-            session.setAttribute("conta", conta);
-            request.setAttribute("msg", "Depósito realizado com sucesso");
-            rd = getServletContext().getRequestDispatcher("/depositos.jsp");
         } else if ("transferir".equals(action)) {
             double valor = Double.parseDouble(request.getParameter("valor"));
             if (!verificaSaldo(conta, valor)) {
                 request.setAttribute("msg", "Valor de transferência maior que o saldo e limite disponíveis.");
                 rd = getServletContext().getRequestDispatcher("/transferencias.jsp");
                 rd.forward(request, response);
+            } else {
+                String agenciaTransferencia = request.getParameter("contaTransferir").substring(0, 3);
+                int contaTransferencia = Integer.parseInt(request.getParameter("contaTransferir").substring(5));
+                contaRecebeTransf = daoConta.pegarContaByConta(agenciaTransferencia, contaTransferencia);
+                if (contaRecebeTransf == null || !contaRecebeTransf.getStatusConta()) {
+                    request.setAttribute("msg", "Conta informada para transferência inexistente ou inativa.");
+                    rd = getServletContext().getRequestDispatcher("/transferencias.jsp");
+                    rd.forward(request, response);
+                } else {
+                    conta = operacoes(conta, valor);
+                    contaRecebeTransf = contaRecebeValor(contaRecebeTransf, valor);
+                    daoConta.transferir(conta, contaRecebeTransf);
+                    trans.setTipoTransacao(2);
+                    trans.setValor(valor);
+                    trans.setDataTransacao(new java.sql.Date(dataAtual.getTime()));
+                    trans.setIdConta1(conta.getId());
+                    trans.setIdConta2(0);
+                    daoTrans.salvarTransacao(trans);
+                    session.setAttribute("conta", conta);
+                    request.setAttribute("msg", "Transferência realizada com sucesso");
+                    rd = getServletContext().getRequestDispatcher("/transferencias.jsp");
+                }
             }
-            String agenciaTransferencia = request.getParameter("contaTransferir").substring(0, 3);
-            int contaTransferencia = Integer.parseInt(request.getParameter("contaTransferir").substring(5));
-            contaRecebeTransf = daoConta.pegarContaByConta(agenciaTransferencia, contaTransferencia);
-            if (contaRecebeTransf == null || !contaRecebeTransf.getStatusConta()) {
-                request.setAttribute("msg", "Conta informada para transferência inexistente.");
-                rd = getServletContext().getRequestDispatcher("/transferencias.jsp");
-                rd.forward(request, response);
-            }
-            conta = operacoes(conta, valor);
-            contaRecebeTransf = contaRecebeValor(contaRecebeTransf, valor);
-            daoConta.transferir(conta, contaRecebeTransf);
-            session.setAttribute("conta", conta);
-            request.setAttribute("msg", "Transferência realizada com sucesso");
-            rd = getServletContext().getRequestDispatcher("/transferencias.jsp");
-
         } else if ("transferirTerceiros".equals(action)) {
             double valor = Double.parseDouble(request.getParameter("valor"));
             if (!verificaSaldo(conta, valor)) {
                 request.setAttribute("msg", "Valor de transferência maior que o saldo e limite disponíveis.");
-                rd = getServletContext().getRequestDispatcher("/transferencias.jsp");
-                rd.forward(request, response);
-            }
-            String agenciaDestino = request.getParameter("agenciaDestino");
-            int contaDestino = Integer.parseInt(request.getParameter("contaDestino"));
-            contaRecebeTransf = daoConta.pegarContaByConta(agenciaDestino, contaDestino);
-            if (contaRecebeTransf == null || !contaRecebeTransf.getStatusConta()) {
-                request.setAttribute("msg", "Conta informada para transferência inexistente ou inativa.");
                 rd = getServletContext().getRequestDispatcher("/transfTerceiros.jsp");
-                rd.forward(request, response);
+            } else {
+                String agenciaDestino = request.getParameter("agenciaDestino");
+                int contaDestino = Integer.parseInt(request.getParameter("contaDestino"));
+                contaRecebeTransf = daoConta.pegarContaByConta(agenciaDestino, contaDestino);
+                if (contaRecebeTransf == null || !contaRecebeTransf.getStatusConta()) {
+                    request.setAttribute("msg", "Conta informada para transferência inexistente ou inativa.");
+                    rd = getServletContext().getRequestDispatcher("/transfTerceiros.jsp");
+                }
+                conta = operacoes(conta, valor);
+                contaRecebeTransf = contaRecebeValor(contaRecebeTransf, valor);
+                daoConta.transferir(conta, contaRecebeTransf);
+                trans.setTipoTransacao(3);
+                trans.setValor(valor);
+                trans.setDataTransacao(new java.sql.Date(dataAtual.getTime()));
+                trans.setIdConta1(conta.getId());
+                trans.setIdConta2(0);
+                daoTrans.salvarTransacao(trans);
+                session.setAttribute("conta", conta);
+                request.setAttribute("msg", "Transferência realizada com sucesso");
+                rd = getServletContext().getRequestDispatcher("/transfTerceiros.jsp");
             }
-            conta = operacoes(conta, valor);
-            contaRecebeTransf = contaRecebeValor(contaRecebeTransf, valor);
-            daoConta.transferir(conta, contaRecebeTransf);
-            session.setAttribute("conta", conta);
-            request.setAttribute("msg", "Transferência realizada com sucesso");
-            rd = getServletContext().getRequestDispatcher("/transfTerceiros.jsp");
         }
         rd.forward(request, response);
     }
 
     public Boolean verificaSaldo(Conta conta, double valor) {
-        if (valor > conta.getSaldo() + conta.getLimite()) {
+        double valorFinal = conta.getSaldo() - valor;
+        double limiteN = -conta.getLimite();
+        if (valorFinal < limiteN) {
             return false;
+        } else if (valor > conta.getSaldo() + conta.getLimite()) {
+            return false;
+        } else {
+            return true;
         }
-        return true;
     }
 
     public Conta operacoes(Conta conta, double valor) {

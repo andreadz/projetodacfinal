@@ -14,24 +14,17 @@
         <script src="bootstrap-3.3.6-dist/js/bootstrap.min.js" type="text/javascript"></script>
         <title>Banco VSF</title>
     </head>
-    <body>
-        
+    <body>        
         <div class="container theme-showcase" role="main" style="padding-top: 100px;">
             <div class="jumbotron" style="padding-left: 250px;">
                 <h3>Banco VSF - Virtude do Sistema Financeiro</h1>
                     <div>
-                        <form action="Portal?action=acessar" method="POST">
+                        <form>
                             <table>
                                 <tbody>
                                     <tr>
                                         <td style="padding: 10px;">
                                             Olá, <c:out value="${cliente.nome}"  />                                            
-                                        </td>
-                                        <td style="padding: 10px;">
-                                            <c:out value="${conta.numAgencia}"  />
-                                        </td>
-                                        <td style="padding: 10px;">
-                                            <c:out value="${conta.numConta}"  />
                                         </td>
                                         <td style="padding: 10px;">
                                             <a href="ProcessaLoginLogout?action=logout" >Logout</a> <br/>
@@ -40,7 +33,16 @@
                                 </tbody>
                             </table>
                         </form>
-                    </div>                    
+                    </div> 
+                    <div>
+                        <form method="POST" action="Portal?action=sacar">
+                            Minha Conta <input type="text" value="${conta.numAgencia} - ${conta.numConta}" readonly="true" /></br>
+                            Valor: <input type="text" name="valor" required="required" pattern="[0-9]+$" title="Favor informar quantia"  /></br>
+                            <!--Token: <input type="text" name="token" /></br> -->
+                            <input type="reset" class="btn btn-sm btn-default" value="Cancelar" /> &nbsp;
+                            <input type="submit" class="btn btn-sm btn-warning" value="Sacar" />
+                        </form>
+                    </div>
                     <div>
                         <c:url var="allContas" value="Portal?action=todasContas" />
                         <c:url var="transfers" value="transferencias.jsp" />
@@ -71,6 +73,7 @@
                         </c:if> 
                         <a href="${encerrar}" >Encerramento Conta-Corrente</a>
                     </div>
+                ${msg}
             </div>
         </div>
     </body>

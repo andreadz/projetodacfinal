@@ -15,23 +15,16 @@
         <title>Banco VSF</title>
     </head>
     <body>
-
         <div class="container theme-showcase" role="main" style="padding-top: 100px;">
             <div class="jumbotron" style="padding-left: 250px;">
                 <h3>Banco VSF - Virtude do Sistema Financeiro</h1>
                     <div>
-                        <form action="Portal?action=acessar" method="POST">
+                        <form>
                             <table>
                                 <tbody>
                                     <tr>
                                         <td style="padding: 10px;">
                                             Olá, <c:out value="${cliente.nome}"  />                                            
-                                        </td>
-                                        <td style="padding: 10px;">
-                                            <c:out value="${conta.numAgencia}"  />
-                                        </td>
-                                        <td style="padding: 10px;">
-                                            <c:out value="${conta.numConta}"  />
                                         </td>
                                         <td style="padding: 10px;">
                                             <a href="ProcessaLoginLogout?action=logout" >Logout</a> <br/>

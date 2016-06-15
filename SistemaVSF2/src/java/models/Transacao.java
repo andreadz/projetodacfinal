@@ -23,6 +23,18 @@ public class Transacao {
     private Conta ContaRecepcao;
     private double saldoConta;
 
+//    public Transacao(int id, int tipoTransacao, double valor, Date dataTransacao, int idConta1, int idConta2, double saldoConta) {
+//        this.id = id;
+//        this.tipoTransacao = tipoTransacao;
+//        this.valor = valor;
+//        this.dataTransacao = dataTransacao;
+//        this.idConta1 = idConta1;
+//        this.idConta2 = idConta2;
+//        this.saldoConta = saldoConta;
+//    }
+//    public Transacao(){
+//    }
+    
     public double getSaldoConta() {
         return saldoConta;
     }

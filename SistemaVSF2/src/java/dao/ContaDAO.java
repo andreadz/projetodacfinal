@@ -21,6 +21,7 @@ public class ContaDAO {
 
     private final String stmEncerrarConta = "UPDATE contas SET statusConta = ? where agencia= ? AND conta = ?";
     private final String stmDepositar = "UPDATE contas SET saldo = ? WHERE agencia = ? AND conta=?";
+    private final String stmSacar = "UPDATE contas SET saldo = ? WHERE agencia = ? AND conta=?";
     private final String stmTransferir = "UPDATE contas SET saldo = ? WHERE agencia = ? AND conta=?";
     private final String stmClienteCPF = "SELECT id, nome FROM clientes where cpf=?";
     private final String stmTransferirTerceiros = "UPDATE contas SET saldo = ? WHERE agencia = ? AND conta=? AND idCliente = (SELECT id FROM clientes where cpf=?)";
@@ -348,7 +349,33 @@ public class ContaDAO {
             }
         }
     }
-
+    
+    public void sacar(Conta contaRetirada) {
+        Connection conexao = null;
+        PreparedStatement pstmt = null;
+        try {
+            conexao = DbConexao.getConection();
+            pstmt = conexao.prepareStatement(stmSacar, Statement.RETURN_GENERATED_KEYS);
+            pstmt.setDouble(1, contaRetirada.getSaldo());
+            pstmt.setString(2, contaRetirada.getNumAgencia());
+            pstmt.setInt(3, contaRetirada.getNumConta());
+            pstmt.executeUpdate();            
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                pstmt.close();
+            } catch (Exception ex) {
+                System.out.println("Erro:" + ex.getMessage());
+            }
+            try {
+                conexao.close();
+            } catch (Exception ex) {
+                System.out.println("Erro:" + ex.getMessage());
+            }
+        }
+    }
+    
     //do próprio cliente
     public void transferir(Conta contaRetirada, Conta contaRecebeTransf) {
         Connection conexao = null;
