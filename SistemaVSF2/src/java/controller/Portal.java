@@ -84,6 +84,7 @@ public class Portal extends HttpServlet {
                 trans.setDataTransacao(new java.sql.Date(dataAtual.getTime()));
                 trans.setIdConta1(conta.getId());
                 trans.setIdConta2(0);
+                trans.setSaldoConta(conta.getSaldo());
                 daoTrans.salvarTransacao(trans);
                 session.setAttribute("conta", conta);
                 request.setAttribute("msg", "Saque realizado com sucesso, motoboy passará receber o dinheiro");
@@ -111,6 +112,7 @@ public class Portal extends HttpServlet {
                 trans.setDataTransacao(new java.sql.Date(dataAtual.getTime()));
                 trans.setIdConta1(conta.getId());
                 trans.setIdConta2(0);
+                trans.setSaldoConta(conta.getSaldo());
                 daoTrans.salvarTransacao(trans);
                 session.setAttribute("conta", conta);
                 request.setAttribute("msg", "Depósito realizado com sucesso, motoboy passará receber o dinheiro");
@@ -139,6 +141,7 @@ public class Portal extends HttpServlet {
                     trans.setDataTransacao(new java.sql.Date(dataAtual.getTime()));
                     trans.setIdConta1(conta.getId());
                     trans.setIdConta2(0);
+                    trans.setSaldoConta(conta.getSaldo());
                     daoTrans.salvarTransacao(trans);
                     session.setAttribute("conta", conta);
                     request.setAttribute("msg", "Transferência realizada com sucesso");
@@ -166,6 +169,7 @@ public class Portal extends HttpServlet {
                 trans.setDataTransacao(new java.sql.Date(dataAtual.getTime()));
                 trans.setIdConta1(conta.getId());
                 trans.setIdConta2(0);
+                trans.setSaldoConta(conta.getSaldo());
                 daoTrans.salvarTransacao(trans);
                 session.setAttribute("conta", conta);
                 request.setAttribute("msg", "Transferência realizada com sucesso");
