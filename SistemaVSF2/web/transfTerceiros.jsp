@@ -72,7 +72,9 @@
                         <a href="${extCompleto}"  >Extrato Completo</a> |
                         <a href="${extQuinzeDias}" >Extrato Últimos 15 dias</a> | 
                         <a href="${extTrintaDias}" >Extrato Últimos 30 dias</a>
-                        <a href="${transfers}" >Transferências para minha conta</a> |
+                        <c:if test="${contas.size() > 1}">
+                            <a href="${transfers}" >Transferências para minha conta</a> |
+                        </c:if> 
                         <a href="#" >Transferências para Terceiros</a> |
                         <a href="${depositos}" >Depósito</a> | 
                         <c:if test="${conta.tipoConta == 'J'}" > 
