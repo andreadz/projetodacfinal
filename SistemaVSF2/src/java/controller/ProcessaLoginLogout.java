@@ -39,7 +39,11 @@ public class ProcessaLoginLogout extends HttpServlet {
             if (cliente == null) {
                 request.setAttribute("msg", "Login e/ou senha incorretos.");
                 rd.forward(request, response);
-            } else {
+            }else if(!conta.getStatusConta()){
+                request.setAttribute("msg", "Conta inativa.");
+                rd.forward(request, response);
+            } 
+            else {
                 HttpSession session = request.getSession();
                 ArrayList<Conta> contas = daoconta.pegarTodasContasByCliente(cliente);
                 double totalSaldos = totalSaldos = somaSaldos(contas);                

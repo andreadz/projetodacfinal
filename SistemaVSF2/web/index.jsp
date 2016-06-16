@@ -17,12 +17,21 @@
     <body>
 
         <div class="container theme-showcase" role="main" style="padding-top: 100px;">
-            <c:if test="${msg.equals('Login e/ou senha incorretos.')}"><div class="alert alert-danger" role="alert">
-                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                <span class="sr-only">Error:</span>
-                ${msg}
-            </div>
+            <c:if test="${msg.equals('Login e/ou senha incorretos.') || msg.equals('Conta inativa.')}">
+                <div class="alert alert-danger" role="alert">
+                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                    <span class="sr-only">Error:</span>
+                    ${msg}
+                </div>
             </c:if>
+            <c:if test="${msg.equals('Conta encerrada com sucesso!')}">
+                <div class="alert alert-success" role="alert">
+                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                    <span class="sr-only">Sucesso</span>
+                    ${msg}
+                </div>
+            </c:if>
+
             <div class="jumbotron" style="padding-left: 250px;">
                 <h3>Banco VSF - Virtude do Sistema Financeiro</h1>
                     <div>

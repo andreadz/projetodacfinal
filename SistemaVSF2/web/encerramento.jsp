@@ -1,7 +1,7 @@
 <%-- 
-    Document   : transfTerceiros
-    Created on : Jun 14, 2016, 3:03:17 PM
-    Author     : Andre
+    Document   : encerramentos
+    Created on : 16/06/2016, 14:02:08
+    Author     : sdgdsgd
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -35,16 +35,10 @@
                         </form>
                     </div>  
                     <div>
-                        <form method="POST" action="Portal?action=transferirTerceiros">
-                            
-                            Agência/Conta <input type="text" value="${conta.numAgencia} - ${conta.numConta}" readonly="true" />&nbsp;
-                            Agência/Conta Destino <input type="text"  name="agenciaDestino" required="required" />/
-                            <input type="text" name="contaDestino" required="required" />
-                            </br>
-                            Valor &nbsp;<input type="text" name="valor" required="required" /></br>
-                            <!--Token: <input type="text" name="token" /></br> -->
-                            <input type="reset" class="btn btn-sm btn-default" value="Cancelar" /> &nbsp;
-                            <input type="submit" class="btn btn-sm btn-warning" value="Transferir" />
+                        <form method="POST" action="Portal?action=encerrar">
+                            Tem certeza que deseja encerrar a conta ?      </br>                       
+                            <input type="button" class="btn btn-sm btn-default" value="Voltar" href="portal.jsp" /> &nbsp;
+                            <input type="submit" class="btn btn-sm btn-warning" value="Encerrar" />
                         </form>
                     </div>
                     <div>
@@ -75,10 +69,10 @@
                         <c:if test="${conta.tipoConta == 'J'}" > 
                             <a href="${sacar}" >Saque</a> | 
                         </c:if> 
-                        <a href="${encerrar}" >Encerramento Conta-Corrente</a>
+                        <a href="#" >Encerramento Conta-Corrente</a>
                     </div>
-                ${msg}
             </div>
         </div>
     </body>
 </html>
+

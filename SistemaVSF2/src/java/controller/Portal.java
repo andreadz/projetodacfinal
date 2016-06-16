@@ -56,7 +56,7 @@ public class Portal extends HttpServlet {
             int periodo = request.getParameter("extrato") == null || request.getParameter("extrato").isEmpty() ? 0 : Integer.parseInt(request.getParameter("extrato"));
             if (periodo == 30 || periodo == 15) {
                 transacoes = daoConta.extrato(periodo, conta.getId());
-            }  else {
+            } else {
                 transacoes = daoConta.extrato(conta.getId());
             }
             request.setAttribute("msg", "");
@@ -183,6 +183,21 @@ public class Portal extends HttpServlet {
                 }
             }
             rd = getServletContext().getRequestDispatcher("/transfTerceiros.jsp");
+        } else if ("encerrar".equals(action)) {   
+            conta.setStatusConta(Boolean.FALSE);
+            daoConta.encerrarConta(conta);
+            
+            trans.setTipoTransacao(5);
+            trans.setValor(0);
+            trans.setDataTransacao(new java.sql.Date(dataAtual.getTime()));
+            trans.setIdConta1(conta.getId());
+            trans.setIdConta2(0);
+            trans.setSaldoConta(conta.getSaldo());
+            daoTrans.salvarTransacao(trans);
+            
+            session.removeAttribute("conta");
+            request.setAttribute("msg", "Conta encerrada com sucesso!");
+            rd = getServletContext().getRequestDispatcher("/index.jsp");
         }
         rd.forward(request, response);
     }
