@@ -24,12 +24,8 @@ public class Verificacoes extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
-        RequestDispatcher rd = request.getRequestDispatcher("");
-        
-        if (session.getAttribute("usuario") == null) {
-            request.setAttribute("msg", "Usuário e não senha informados.");
-            rd = getServletContext().getRequestDispatcher("/index.jsp");
-        }        
+        RequestDispatcher rd = request.getRequestDispatcher("");        
+             
         String cnpjCpf = request.getParameter("cnpj").isEmpty() ? request.getParameter("cpf") : request.getParameter("cnpj");
         String action = request.getParameter("action");
         
@@ -44,6 +40,7 @@ public class Verificacoes extends HttpServlet {
                 request.setAttribute("msg", "Usuário existente, favor logar no sistema"); 
                 rd = request.getRequestDispatcher("index.jsp");
             } else {
+                request.setAttribute("cnpjCpf", cnpjCpf);
                 request.setAttribute("msg", "Usuário não existe, realize cadastro.");
                 rd = request.getRequestDispatcher("cadastro.jsp");
             }

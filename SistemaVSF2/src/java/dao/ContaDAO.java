@@ -33,7 +33,7 @@ public class ContaDAO {
     private final String stmSaldoAtual = "SELECT saldo, limite FROM contas where agencia=? AND conta=? ";
     //private final String stmExtratoCompleto = "SELECT * FROM transacoes WHERE idConta=? AND idClienteConta=? ";
     //private final String stmExtratoIntervalo = "SELECT * FROM transacoes WHERE idConta=? AND idClienteConta=? AND (dataTransacao BETWEEN '?' AND Date(now()))";
-    private final String stmExtratoIntervalo = "SELECT * FROM transacoes WHERE idContaOperacao=? AND dataTransacao BETWEEN '?' AND NOW()";
+    private final String stmExtratoIntervalo = "SELECT * FROM transacoes WHERE idContaOperacao=? AND dataTransacao BETWEEN ? AND NOW()";
     private final String stmExtratoCompleto = "SELECT * FROM transacoes WHERE idContaOperacao=?";
     
     

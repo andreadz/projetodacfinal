@@ -54,11 +54,9 @@ public class Portal extends HttpServlet {
         }
         if ("extratos".equals(action)) {
             int periodo = request.getParameter("extrato") == null || request.getParameter("extrato").isEmpty() ? 0 : Integer.parseInt(request.getParameter("extrato"));
-            if (periodo == 30) {
+            if (periodo == 30 || periodo == 15) {
                 transacoes = daoConta.extrato(periodo, conta.getId());
-            } else if (periodo == 15) {
-                transacoes = daoConta.extrato(periodo, conta.getId());
-            } else {
+            }  else {
                 transacoes = daoConta.extrato(conta.getId());
             }
             request.setAttribute("msg", "");
@@ -163,29 +161,28 @@ public class Portal extends HttpServlet {
             double valor = Double.parseDouble(request.getParameter("valor"));
             if (!verificaSaldo(conta, valor)) {
                 request.setAttribute("msg", "Valor de transferência maior que o saldo e limite disponíveis.");
-                rd = getServletContext().getRequestDispatcher("/transfTerceiros.jsp");
             } else {
                 String agenciaDestino = request.getParameter("agenciaDestino");
                 int contaDestino = Integer.parseInt(request.getParameter("contaDestino"));
                 contaRecebeTransf = daoConta.pegarContaByConta(agenciaDestino, contaDestino);
                 if (contaRecebeTransf == null || !contaRecebeTransf.getStatusConta()) {
                     request.setAttribute("msg", "Conta informada para transferência inexistente ou inativa.");
-                    rd = getServletContext().getRequestDispatcher("/transfTerceiros.jsp");
+                } else {
+                    conta = operacoes(conta, valor);
+                    contaRecebeTransf = contaRecebeValor(contaRecebeTransf, valor);
+                    daoConta.transferir(conta, contaRecebeTransf);
+                    trans.setTipoTransacao(3);
+                    trans.setValor(valor);
+                    trans.setDataTransacao(new java.sql.Date(dataAtual.getTime()));
+                    trans.setIdConta1(conta.getId());
+                    trans.setIdConta2(contaRecebeTransf.getId());
+                    trans.setSaldoConta(conta.getSaldo());
+                    daoTrans.salvarTransacao(trans);
+                    session.setAttribute("conta", conta);
+                    request.setAttribute("msg", "Transferência realizada com sucesso");
                 }
-                conta = operacoes(conta, valor);
-                contaRecebeTransf = contaRecebeValor(contaRecebeTransf, valor);
-                daoConta.transferir(conta, contaRecebeTransf);
-                trans.setTipoTransacao(3);
-                trans.setValor(valor);
-                trans.setDataTransacao(new java.sql.Date(dataAtual.getTime()));
-                trans.setIdConta1(conta.getId());
-                trans.setIdConta2(contaRecebeTransf.getId());
-                trans.setSaldoConta(conta.getSaldo());
-                daoTrans.salvarTransacao(trans);
-                session.setAttribute("conta", conta);
-                request.setAttribute("msg", "Transferência realizada com sucesso");
-                rd = getServletContext().getRequestDispatcher("/transfTerceiros.jsp");
             }
+            rd = getServletContext().getRequestDispatcher("/transfTerceiros.jsp");
         }
         rd.forward(request, response);
     }

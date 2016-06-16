@@ -36,8 +36,8 @@
                     </div> 
                     <div>
                         <form method="POST" action="Portal?action=sacar">
-                            Minha Conta <input type="text" value="${conta.numAgencia} - ${conta.numConta}" readonly="true" /></br>
-                            Valor: <input type="text" name="valor" required="required" pattern="[0-9]+$" title="Favor informar quantia"  /></br>
+                            Agência/Conta<input type="text" value="${conta.numAgencia} - ${conta.numConta}" readonly="true" />&nbsp;
+                            Valor <input type="text" name="valor" required="required" pattern="[0-9]+$"  /></br>
                             <!--Token: <input type="text" name="token" /></br> -->
                             <input type="reset" class="btn btn-sm btn-default" value="Cancelar" /> &nbsp;
                             <input type="submit" class="btn btn-sm btn-warning" value="Sacar" />
@@ -51,13 +51,13 @@
                         <c:url var="encerrar" value="encerramento.jsp" />
                         <c:url var="sacar" value="saques.jsp" />
                         <c:url var="extCompleto" value="Portal?action=extratos" >
-                            <param name="extrato" value="" />
+                            <c:param name="extrato" value="" />
                         </c:url>
                         <c:url var="extQuinzeDias" value="Portal?action=extratos" >
-                            <param name="extrato" value="15" />
+                            <c:param name="extrato" value="15" />
                         </c:url>
                         <c:url var="extTrintaDias" value="Portal?action=extratos" >
-                            <param name="extrato" value="30" />
+                            <c:param name="extrato" value="30" />
                         </c:url>
                         <a href="${allContas}" >Todas Contas</a> |
                         <a href="${extCompleto}"  >Extrato Completo</a> |

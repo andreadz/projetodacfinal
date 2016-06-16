@@ -35,88 +35,100 @@
                                     </tr>
                                     <tr>                                        
                                         <td class="col-md-2">
-                                            <input type="text" maxlength="50" size="50" name="nome"  />
+                                            <input type="text" maxlength="50" size="50" name="nome" required="required" />
                                         </td>
                                         <td class="col-md-1">                                        
-                                            <input type="text" maxlength="9" name="rg"/>
+                                            <input type="text" maxlength="9" name="rg" required="required"/>
                                         </td>
                                     </tr>
                                     <tr>
 
                                         <td colspan="2">
                                             <label>Endereço</label>
-                                            <input type="text" maxlenght="40" name="endereco"/>
+                                            <input type="text" maxlenght="40" name="endereco" required="required"/>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>
                                             <label>Número</label>
-                                            <input type="text" maxlenght="5" name="numero"/>
+                                            <input type="text" maxlenght="5" name="numero" required="required"/>
                                         </td>
                                         <td>
                                             <label>Complemento</label>
-                                            <input type="text" maxlenght="15" name="complemento"/>
+                                            <input type="text" maxlenght="15" name="complemento" required="required"/>
                                         </td>
                                         <td>
                                             <label>CEP</label>
-                                            <input type="text" maxlenght="8" name="cep" />
+                                            <input type="text" maxlenght="8" name="cep" required="required" />
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>
                                             <label>Telefone</label>
-                                            <input type="text" maxlenght="11" name="telefone" />
+                                            <input type="text" maxlenght="11" name="telefone" required="required" />
                                         </td>
                                         <td>
                                             <label>Email</label>
-                                            <input type="text" maxlenght="25" name="email" />
+                                            <input type="text" maxlenght="25" name="email" required="required" />
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>
-                                            <input type="radio" checked="true" name="tipoConta" value="F" />
-                                            <label>Conta Física </label>
-                                            <label>CPF</label>
-                                        </td>
-                                        <td class="col-md-2"> 
-                                            <input type="text" maxlength="11" name="cpf" />
-                                        </td>
-                                        <td>
-                                            <input type="radio" name="tipoConta" value="J" />
-                                            <label>Conta Jurídica</label>                                            
-                                            <label>CNPJ</label>
-                                        </td> 
-                                        <td>
-                                            <input type="text" maxlength="14" name="cnpj"  />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="3">
-                                            <label> Insira sua renda mensal, de acordo com ela será definido o seu Cheque Especial(limite)</label>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <label>Renda</label>
-                                            <input type="text" maxlength="18" name="renda"/>
-                                        </td>
-                                        <td>
-                                            <label>Senha</label>
-                                            <input type="text" maxlength="10" name="senha"/>
-                                        </td>
-                                        <td>
-                                            <label>Confirma Senha</label>
-                                            <input type="text" maxlength="10" name="confirmaSenha"/>
-                                        </td>
-                                        <td>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <input type="reset" class="btn btn-sm btn-default" value="Cancelar" />
-                                            <input type="submit" class="btn btn-sm btn-primary" value="Enviar" />
-                                        </td>
-                                    </tr>
+                                <div class="row">
+                                    <c:if test="${cnpjCpf.length() == 11}">
+                                        <div class="col-lg-4">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">
+                                                    <input type="radio" name="tipoConta" value="F"  checked="true" />
+                                                </span>
+                                                <input id="cpf" type="text" name="cpf" class="form-control" value="${cnpjCpf}"  disabled="true" /> 
+                                                <span class="input-group-addon">
+                                                    CPF - Conta Física
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </c:if>
+                                    <c:if test="${cnpjCpf.length() > 11}" >
+                                        <div class="col-lg-5">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">
+                                                    <input type="radio" name="tipoConta" value="J" checked="true"  />
+                                                </span>
+                                                <input id="cnpj" type="text" name="cnpj" class="form-control" value="${cnpjCpf}"  disabled="true"  />
+                                                <span class="input-group-addon">
+                                                    CNPJ - Conta Jurídica
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </c:if>
+                                </div>  
+                                </tr>
+                                <tr>
+                                    <td colspan="3">
+                                        <label> Insira sua renda mensal, de acordo com ela será definido o seu Cheque Especial(limite)</label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <label>Renda</label>
+                                        <input type="text" maxlength="18" name="renda" required="required"/>
+                                    </td>
+                                    <td>
+                                        <label>Senha</label>
+                                        <input type="password" maxlength="10" name="senha" required="required"/>
+                                    </td>
+                                    <td>
+                                        <label>Confirma Senha</label>
+                                        <input type="password" maxlength="10" name="confirmaSenha" required="required"/>
+                                    </td>
+                                    <td>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input type="reset" class="btn btn-sm btn-default" value="Cancelar" />
+                                        <input type="submit" class="btn btn-sm btn-primary" value="Enviar" />
+                                    </td>
+                                </tr>
                                 </tbody>
                             </table>
                             <div>

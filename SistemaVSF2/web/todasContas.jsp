@@ -42,7 +42,7 @@
                         </form>
                     </div>
                     <div>
-                        <table>
+                        <table class="table-striped table-bordered">
                             <thead>
                                 <tr>
                                     <th style="padding: 5px;">Agência</th>
@@ -71,13 +71,13 @@
                         <c:url var="encerrar" value="encerramento.jsp" />
                         <c:url var="sacar" value="saques.jsp" />
                         <c:url var="extCompleto" value="Portal?action=extratos" >
-                            <param name="extrato" value="" />
+                            <c:param name="extrato" value="" />
                         </c:url>
                         <c:url var="extQuinzeDias" value="Portal?action=extratos" >
-                            <param name="extrato" value="15" />
+                            <c:param name="extrato" value="15" />
                         </c:url>
                         <c:url var="extTrintaDias" value="Portal?action=extratos" >
-                            <param name="extrato" value="30" />
+                            <c:param name="extrato" value="30" />
                         </c:url>
                         <a href="${allContas}" >Todas Contas</a> |
                         <a href="${extCompleto}"  >Extrato Completo</a> |

@@ -37,10 +37,12 @@
                     </div>  
                     <div>
                         <form method="POST" action="Portal?action=transferirTerceiros">
-                            Minha Conta: <input type="text" value="${conta.numAgencia} - ${conta.numConta}" readonly="true" /></br>
-                            Agência/Conta Destino: <input type="text"  name="agenciaDestino" />/<input type="text" name="contaDestino" />
+                            
+                            Agência/Conta <input type="text" value="${conta.numAgencia} - ${conta.numConta}" readonly="true" />&nbsp;
+                            Agência/Conta Destino <input type="text"  name="agenciaDestino" required="required" />/
+                            <input type="text" name="contaDestino" required="required" />
                             </br>
-                            Valor: <input type="text" name="valor" /></br>
+                            Valor &nbsp;<input type="text" name="valor" required="required" /></br>
                             <!--Token: <input type="text" name="token" /></br> -->
                             <input type="reset" class="btn btn-sm btn-default" value="Cancelar" /> &nbsp;
                             <input type="submit" class="btn btn-sm btn-warning" value="Transferir" />
@@ -54,13 +56,13 @@
                         <c:url var="encerrar" value="encerramento.jsp" />
                         <c:url var="sacar" value="saques.jsp" />
                         <c:url var="extCompleto" value="Portal?action=extratos" >
-                            <param name="extrato" value="" />
+                            <c:param name="extrato" value="" />
                         </c:url>
                         <c:url var="extQuinzeDias" value="Portal?action=extratos" >
-                            <param name="extrato" value="15" />
+                            <c:param name="extrato" value="15" />
                         </c:url>
                         <c:url var="extTrintaDias" value="Portal?action=extratos" >
-                            <param name="extrato" value="30" />
+                            <c:param name="extrato" value="30" />
                         </c:url>
                         <a href="${allContas}" >Todas Contas</a> |
                         <a href="${extCompleto}"  >Extrato Completo</a> |
