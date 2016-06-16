@@ -49,6 +49,7 @@
                                     <th style="padding: 5px;">Conta</th>
                                     <th style="padding: 5px;">Saldo</th>
                                     <th style="padding: 5px;">Limite</th>
+                                    <th style="padding: 5px;">Situação</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -56,8 +57,14 @@
                                     <tr>
                                         <td style="padding: 5px;"> ${contaCli.numAgencia} </td>
                                         <td style="padding: 5px;"> ${contaCli.numConta} </td>
-                                        <td style="padding: 5px;"> ${contaCli.saldo} </td>
+                                        <td style="padding: 5px;"> ${contaCli.saldo} </td>                                       
                                         <td style="padding: 5px;"> ${contaCli.limite} </td>
+                                        <c:if test="${contaCli.statusConta == true}" >
+                                            <td style="padding: 5px;"> Ativa </td>
+                                        </c:if>
+                                        <c:if test="${contaCli.statusConta == false}" >
+                                            <td style="padding: 5px;"> Inativa </td>
+                                        </c:if>
                                     </tr>
                                 </c:forEach>
                             </tbody>
@@ -82,8 +89,8 @@
                         <a href="${allContas}" >Todas Contas</a> |
                         <a href="${extCompleto}"  >Extrato Completo</a> |
                         <a href="${extQuinzeDias}" >Extrato Últimos 15 dias</a> | 
-                        <a href="${extTrintaDias}" >Extrato Últimos 30 dias</a>
-                        <<c:if test="${contas.size() > 1}">
+                        <a href="${extTrintaDias}" >Extrato Últimos 30 dias</a> |
+                        <c:if test="${contas.size() > 1}">
                             <a href="${transfers}" >Transferências para minha conta</a> |
                         </c:if>  
                         <a href="${transfTerc}" >Transferências para Terceiros</a> |

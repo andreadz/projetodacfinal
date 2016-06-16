@@ -14,8 +14,7 @@
         <script src="bootstrap-3.3.6-dist/js/bootstrap.min.js" type="text/javascript"></script>
         <title>Banco VSF</title>
     </head>
-    <body>
-
+    <body>        
         <div class="container theme-showcase" role="main" style="padding-top: 100px;">
             <c:if test="${msg.equals('Login e/ou senha incorretos.') || msg.equals('Conta inativa.')}">
                 <div class="alert alert-danger" role="alert">

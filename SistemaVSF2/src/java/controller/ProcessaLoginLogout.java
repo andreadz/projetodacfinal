@@ -29,7 +29,7 @@ public class ProcessaLoginLogout extends HttpServlet {
         String action = request.getParameter("action");
         ClienteDAO dao = new ClienteDAO();
         ContaDAO daoconta = new ContaDAO();
-        RequestDispatcher rd = getServletContext().getRequestDispatcher("/");
+        RequestDispatcher rd = getServletContext().getRequestDispatcher("/index.jsp");
         if ("acessar".equals(action)) {
             String agencia = request.getParameter("agencia").isEmpty() ? "" : request.getParameter("agencia");
             int numConta = request.getParameter("numConta").isEmpty() ? 0 : Integer.parseInt(request.getParameter("numConta"));
@@ -38,10 +38,8 @@ public class ProcessaLoginLogout extends HttpServlet {
             Conta conta = daoconta.pegarContaByCliente(agencia, numConta, cliente);            
             if (cliente == null) {
                 request.setAttribute("msg", "Login e/ou senha incorretos.");
-                rd.forward(request, response);
             }else if(!conta.getStatusConta()){
                 request.setAttribute("msg", "Conta inativa.");
-                rd.forward(request, response);
             } 
             else {
                 HttpSession session = request.getSession();
@@ -63,11 +61,10 @@ public class ProcessaLoginLogout extends HttpServlet {
             if (session != null) {
                 session.invalidate();
             }
-            rd = getServletContext().getRequestDispatcher("/index.jsp");
+            request.setAttribute("msg", "Logout realizado com sucesso.");
         }
         else {
             request.setAttribute("msg", "Login e senha incorretos.");
-            rd = getServletContext().getRequestDispatcher("/index.jsp");
         }
         rd.forward(request, response);
     }
