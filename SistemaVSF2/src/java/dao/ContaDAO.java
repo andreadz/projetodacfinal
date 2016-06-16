@@ -446,7 +446,7 @@ public class ContaDAO {
         }
     }
 
-    public ArrayList<Transacao> extratoCompleto(Conta conta) {
+    //public ArrayList<Transacao> extratoCompleto(Conta conta) {
 //        Connection conexao = null;
 //        PreparedStatement pstmt = null;
 //        ArrayList<Transacao> trans = new ArrayList<Transacao>();
@@ -521,7 +521,7 @@ public class ContaDAO {
 //            }
 //        }
 //        return trans;
-    }
+    //}
     
     public ArrayList<Transacao> extrato(int periodo, int idConta) {
         Connection conexao = null;

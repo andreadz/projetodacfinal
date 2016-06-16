@@ -17,33 +17,32 @@
         <div class="container theme-showcase" role="main" style="padding-top: 100px;">
             <div class="jumbotron" style="padding-left: 250px;">
                 <h3>Banco VSF - Virtude do Sistema Financeiro</h1>
-                    <form action="Verificacoes?action=verificaExistencia" method="POST">
-                        <table>                
-                            <tr>                    
-                                <td>
-                                    <input type="radio" name="tipoPessoa" value="J"  />
-                                </td>
-                                <td>
-                                    CNPJ
-                                </td>
-                                <td>                   
-                                    <input id="cnpj" type="text" name="cnpj" />           
-                                </td>
-                                <td>
-                                    CPF
-                                </td>
-                                <td>
-                                    <input type="radio" name="tipoPessoa" value="F"  />
-                                </td>
-                                <td>
-                                    <input id="cpf" type="text" name="cpf" />     
-                                </td>
-                                <td>
-                                    <input type="submit" value="Verificar"  />
-                                </td>
-                            </tr>
-                        </table>
-                        ${msg}                             
+                    <form action="Verificacoes?action=verificaExistencia" method="POST">                        
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                        <input type="radio" name="tipoPessoa" value="F"  />
+                                    </span>
+                                    <input id="cpf" type="text" name="cpf" class="form-control"  maxlength="11" /> 
+                                    <span class="input-group-addon">
+                                        CPF
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-lg-5">
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                        <input type="radio" name="tipoPessoa" value="J"  />
+                                    </span>
+                                    <input id="cnpj" type="text" name="cnpj" class="form-control" maxlength="14"  />
+                                    <span class="input-group-addon">
+                                        CNPJ
+                                    </span>
+                                </div>
+                            </div>
+                            <input type="submit" value="Verificar" class="btn btn-info" />
+                        </div>                                               
                     </form>
             </div>
         </div>

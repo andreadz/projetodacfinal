@@ -50,6 +50,7 @@ public class ProcessaLoginLogout extends HttpServlet {
                 request.setAttribute("qtdeContas", contas.size());
                 session.setAttribute("conta", conta);
                 session.setAttribute("cliente", cliente);
+                request.setAttribute("msg", "");
                 rd = getServletContext().getRequestDispatcher("/portal.jsp");
             }
         }

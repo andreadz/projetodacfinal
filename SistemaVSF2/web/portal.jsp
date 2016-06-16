@@ -10,7 +10,7 @@
 <html>
     <head>
         <link href="bootstrap-3.3.6-dist/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" >
         <script src="bootstrap-3.3.6-dist/js/bootstrap.min.js" type="text/javascript"></script>
         <title>Banco VSF</title>
     </head>

@@ -15,7 +15,14 @@
         <title>Banco VSF</title>
     </head>
     <body>
+
         <div class="container theme-showcase" role="main" style="padding-top: 100px;">
+            <c:if test="${msg.equals('Login e/ou senha incorretos.')}"><div class="alert alert-danger" role="alert">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                <span class="sr-only">Error:</span>
+                ${msg}
+            </div>
+            </c:if>
             <div class="jumbotron" style="padding-left: 250px;">
                 <h3>Banco VSF - Virtude do Sistema Financeiro</h1>
                     <div>
@@ -47,7 +54,7 @@
                                     </tr>
                                 </tbody>
                             </table>
-                            ${msg} </br>
+                            <%-- ${msg} </br> --%>
                             <c:if test="${conta != null}">
                                 Dados conta: </br>
                                 Agência: <c:out value="${conta.numAgencia}"/> </br>
