@@ -13,7 +13,16 @@ public class Conta implements Serializable {
     private double limite;
     private String tipoConta;
     public Boolean statusConta;
+    private Date dataNegativacao;
 
+    public Date getDataNegativacao() {
+        return dataNegativacao;
+    }
+
+    public void setDataNegativacao(Date dataNegativacao) {
+        this.dataNegativacao = dataNegativacao;
+    }
+    
     public Conta(int id, Cliente cliente, int numConta, String numAgencia, double saldo, double limite, String tipoConta, Boolean statusConta) {
         this.id = id;
         this.cliente = cliente;

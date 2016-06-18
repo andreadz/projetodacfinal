@@ -18,6 +18,15 @@ public class Cliente implements Serializable{
     private String email;
     private String senha;
     private double renda;
+    private boolean statusDOR;
+
+    public boolean isStatusDOR() {
+        return statusDOR;
+    }
+
+    public void setStatusDOR(boolean statusDOR) {
+        this.statusDOR = statusDOR;
+    }
 
     public Cliente(int id, String cpf, String cnpj, String nome, String rg, String endereco, String cep, 
             String telefone, String email, String senha, double renda) {

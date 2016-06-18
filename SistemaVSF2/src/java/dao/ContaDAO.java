@@ -21,7 +21,7 @@ public class ContaDAO {
             + " (agencia,conta,saldo,limite,statusConta,tipoConta,idCliente) values (?,?,?,?,?,?,?)";
 
     private final String stmEncerrarConta = "UPDATE contas SET statusConta = ? where agencia= ? AND conta = ?";
-    private final String stmDepositar = "UPDATE contas SET saldo = ? WHERE agencia = ? AND conta=?";
+    private final String stmDepositar = "UPDATE contas SET saldo = ?, dataNegativacao=? WHERE agencia = ? AND conta=?";
     private final String stmSacar = "UPDATE contas SET saldo = ? WHERE agencia = ? AND conta=?";
     private final String stmTransferir = "UPDATE contas SET saldo = ? WHERE agencia = ? AND conta=?";
     private final String stmClienteCPF = "SELECT id, nome FROM clientes where cpf=?";
@@ -325,9 +325,16 @@ public class ContaDAO {
         Connection conexao = null;
         PreparedStatement pstmt = null;
         try {
+            java.util.Date dataAtual = new java.util.Date();            
+            //LocalDate date = LocalDate.now().minusDays(15);            
+            Calendar c = Calendar.getInstance();
+            c.setTime(dataAtual);
+            dataAtual.setTime(c.getTime().getTime());
+            
             conexao = DbConexao.getConection();
             pstmt = conexao.prepareStatement(stmDepositar, Statement.RETURN_GENERATED_KEYS);
             pstmt.setDouble(1, contaRetirada.getSaldo());
+            pstmt.setDate(2, new java.sql.Date(contaRetirada.getDataNegativacao().getTime()));
             pstmt.setString(2, contaRetirada.getNumAgencia());
             pstmt.setInt(3, contaRetirada.getNumConta());
             pstmt.executeUpdate();

@@ -32,7 +32,7 @@
             </c:if>
 
             <div class="jumbotron" style="padding-left: 250px;">
-                <h3>Banco VSF - Virtude do Sistema Financeiro</h1>
+                <h3>Banco VSF - Virtude do Sistema Financeiro</h3>
                     <div>
                         <form action="ProcessaLoginLogout?action=acessar" method="POST">
                             <table>

@@ -77,6 +77,7 @@ public class Portal extends HttpServlet {
             } else {
                 conta = operacoes(conta, valor);
                 daoConta.sacar(conta);
+                verificaDataNegativacao(conta, dataAtual);
                 trans.setTipoTransacao(4);
                 trans.setValor(valor);
                 trans.setDataTransacao(new java.sql.Date(dataAtual.getTime()));
@@ -100,6 +101,7 @@ public class Portal extends HttpServlet {
                 conta = contaRecebeValor(conta, valor);
                 contaRecebeTransf = null;
                 daoConta.depositar(conta, contaRecebeTransf);
+                verificaDataNegativacao(conta, dataAtual);
                 trans.setTipoTransacao(1);
                 trans.setValor(valor);
                 trans.setDataTransacao(new java.sql.Date(dataAtual.getTime()));
@@ -115,6 +117,7 @@ public class Portal extends HttpServlet {
                 conta = operacoes(conta, valor);
                 contaRecebeTransf = contaRecebeValor(contaRecebeTransf, valor);
                 daoConta.depositar(conta, contaRecebeTransf);
+                verificaDataNegativacao(conta, dataAtual);
                 trans.setTipoTransacao(1);
                 trans.setValor(valor);
                 trans.setDataTransacao(new java.sql.Date(dataAtual.getTime()));
@@ -145,6 +148,7 @@ public class Portal extends HttpServlet {
                     conta = operacoes(conta, valor);
                     contaRecebeTransf = contaRecebeValor(contaRecebeTransf, valor);
                     daoConta.transferir(conta, contaRecebeTransf);
+                    verificaDataNegativacao(conta, dataAtual);
                     trans.setTipoTransacao(2);
                     trans.setValor(valor);
                     trans.setDataTransacao(new java.sql.Date(dataAtual.getTime()));
@@ -171,6 +175,7 @@ public class Portal extends HttpServlet {
                     conta = operacoes(conta, valor);
                     contaRecebeTransf = contaRecebeValor(contaRecebeTransf, valor);
                     daoConta.transferir(conta, contaRecebeTransf);
+                    verificaDataNegativacao(conta, dataAtual);
                     trans.setTipoTransacao(3);
                     trans.setValor(valor);
                     trans.setDataTransacao(new java.sql.Date(dataAtual.getTime()));
@@ -183,10 +188,10 @@ public class Portal extends HttpServlet {
                 }
             }
             rd = getServletContext().getRequestDispatcher("/transfTerceiros.jsp");
-        } else if ("encerrar".equals(action)) {   
+        } else if ("encerrar".equals(action)) {
             conta.setStatusConta(Boolean.FALSE);
             daoConta.encerrarConta(conta);
-            
+
             trans.setTipoTransacao(5);
             trans.setValor(0);
             trans.setDataTransacao(new java.sql.Date(dataAtual.getTime()));
@@ -194,7 +199,7 @@ public class Portal extends HttpServlet {
             trans.setIdConta2(0);
             trans.setSaldoConta(conta.getSaldo());
             daoTrans.salvarTransacao(trans);
-            
+
             session.removeAttribute("conta");
             request.setAttribute("msg", "Conta encerrada com sucesso!");
             rd = getServletContext().getRequestDispatcher("/index.jsp");
@@ -212,6 +217,17 @@ public class Portal extends HttpServlet {
         } else {
             return true;
         }
+    }
+
+    public Conta verificaDataNegativacao(Conta conta, Date dataAtual) {
+        if (conta.getSaldo() < 0) {
+            if (conta.getDataNegativacao() == null) {
+                conta.setDataNegativacao(new java.util.Date(dataAtual.getTime()));
+            }
+        } else if (conta.getDataNegativacao() != null) {
+            conta.setDataNegativacao(null);
+        }
+        return conta;
     }
 
     public Conta operacoes(Conta conta, double valor) {
