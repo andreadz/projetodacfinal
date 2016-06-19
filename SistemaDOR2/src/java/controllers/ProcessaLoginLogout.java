@@ -32,13 +32,13 @@ public class ProcessaLoginLogout extends HttpServlet {
         ClienteDAO daoCliente = new ClienteDAO();
         ArrayList<Usuario> usuarios;
         ArrayList<Cliente> clientes;
-       // ArrayList<Historicos> historicos;       
+        ArrayList<Historico> historicos;       
         HttpSession session;
         RequestDispatcher rd = getServletContext().getRequestDispatcher("/index.jsp");
         
         if ("acessar".equals(action)) {
-            String email = request.getParameter("email").isEmpty() ? "" : request.getParameter("email");
-            String senha = request.getParameter("senha").isEmpty() ? "" : request.getParameter("senha");
+            String email = request.getParameter("email");
+            String senha = request.getParameter("senha");
             Usuario usuario = daoUsuario.login(email, senha);
             //Cliente cliente = daoCliente.login(email, senha);
             if (usuario == null) {
@@ -46,11 +46,11 @@ public class ProcessaLoginLogout extends HttpServlet {
             } else if (usuario.getPerfil() == 1) {
                 session = request.getSession();
                 usuarios = daoUsuario.todosUsuariosAtivos();
-               // clientes = daoCliente.todosClientes();
+                //clientes = daoCliente.todosClientes();
                 //historicos = daoUsuario.todosHistoricos();
                 session.setAttribute("usuario", usuario);
                 session.setAttribute("usuarios", usuarios);                
-                //.setAttribute("clientes", clientes);                
+                //setAttribute("clientes", clientes);                
                 //session.setAttribute("historicos", historicos);                
                 
                 rd = getServletContext().getRequestDispatcher("/portalAdmin.jsp");

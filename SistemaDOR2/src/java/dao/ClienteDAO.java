@@ -19,15 +19,18 @@ import vsf.Cliente;
  * @author sdgdsgd
  */
 public class ClienteDAO {
+
     private final String stmInserirCliente = "INSERT INTO clientes (nome,cpf,cnpj,statusDOR) values (?,?,?,1)";
-    
+
     private final String stmNegativarCliente = "UPDATE clientes SET statusDOR=0 WHERE id=?";
     private final String stmAtivarCliente = "UPDATE clientes SET statusDOR=1 WHERE id=?";
-    
+
     private final String stmSelClientesAtivos = "SELECT * FROM clientes WHERE statusDOR=1";
     private final String stmSelClientesNegativos = "SELECT * FROM clientes WHERE statusDOR=0";
     private final String stmSelClientes = "SELECT * FROM clientes ";
-    
+    private final String stmPegarClienteJur = "SELECT * FROM clientes WHERE cnpj=?";
+    private final String stmPegarClienteFis = "SELECT * FROM clientes WHERE cpf=?";
+
     public void cadastrarCliente(Cliente cliente) {
         Connection conexao = null;
         PreparedStatement pstmt = null;
@@ -57,6 +60,46 @@ public class ClienteDAO {
                 System.out.println("Erro:" + ex.getMessage());
             }
         }
+    }
+
+    public Cliente verificaRestricaoDOR(Cliente cliente) {
+        Connection conexao = null;
+        PreparedStatement pstmt = null;
+        try {
+            conexao = DbConexao.getConection();
+            if (null == cliente.getCpf()) {
+                pstmt = conexao.prepareStatement(stmPegarClienteFis, Statement.RETURN_GENERATED_KEYS);
+                pstmt.setString(1, cliente.getCpf());
+            } else {
+                pstmt = conexao.prepareStatement(stmPegarClienteJur, Statement.RETURN_GENERATED_KEYS);
+                pstmt.setString(1, cliente.getCnpj());
+            }
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                cliente.setId(rs.getInt("id"));
+                cliente.setNome(rs.getString("nome"));
+                cliente.setCpf(rs.getString("cpf"));
+                cliente.setCnpj(rs.getString("cnpj"));
+                cliente.setStatusDOR(rs.getBoolean("statusDOR"));
+            }
+            else{
+                cliente = null;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                pstmt.close();
+            } catch (Exception ex) {
+                System.out.println("Erro:" + ex.getMessage());
+            }
+            try {
+                conexao.close();
+            } catch (Exception ex) {
+                System.out.println("Erro:" + ex.getMessage());
+            }
+        }
+        return cliente;
     }
 
     public void ativarCliente(Cliente cliente) {
@@ -106,7 +149,7 @@ public class ClienteDAO {
             }
         }
     }
-    
+
     public ArrayList<Cliente> todosClientes() {
         Connection conexao = null;
         PreparedStatement pstmt = null;
@@ -141,7 +184,7 @@ public class ClienteDAO {
         }
         return clientes;
     }
-    
+
     public ArrayList<Cliente> todosClientesNegativados() {
         Connection conexao = null;
         PreparedStatement pstmt = null;

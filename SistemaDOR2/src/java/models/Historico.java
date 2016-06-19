@@ -11,6 +11,6 @@ import java.io.Serializable;
  *
  * @author sdgdsgd
  */
-public class Historicos implements Serializable {
+public class Historico implements Serializable {
     
 }
