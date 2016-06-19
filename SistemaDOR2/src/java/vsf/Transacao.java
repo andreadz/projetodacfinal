@@ -5,6 +5,7 @@
  */
 package vsf;
 
+import java.io.Serializable;
 import java.sql.Date;
 
 /**
@@ -12,7 +13,7 @@ import java.sql.Date;
  * @author André
  */
 
-public class Transacao {
+public class Transacao implements Serializable {
     private int id;
     private int tipoTransacao;
     private double valor;

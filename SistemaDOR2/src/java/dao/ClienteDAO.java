@@ -22,7 +22,8 @@ public class ClienteDAO {
 
     private final String stmInserirCliente = "INSERT INTO clientes (nome,cpf,cnpj,statusDOR) values (?,?,?,1)";
 
-    private final String stmNegativarCliente = "UPDATE clientes SET statusDOR=0 WHERE id=?";
+    private final String stmNegativarClienteFis = "UPDATE clientes SET statusDOR=0 WHERE cpf=?";
+    private final String stmNegativarClienteJur = "UPDATE clientes SET statusDOR=0 WHERE cnpj=?";
     private final String stmAtivarCliente = "UPDATE clientes SET statusDOR=1 WHERE id=?";
 
     private final String stmSelClientesAtivos = "SELECT * FROM clientes WHERE statusDOR=1";
@@ -31,9 +32,10 @@ public class ClienteDAO {
     private final String stmPegarClienteJur = "SELECT * FROM clientes WHERE cnpj=?";
     private final String stmPegarClienteFis = "SELECT * FROM clientes WHERE cpf=?";
 
-    public void cadastrarCliente(Cliente cliente) {
+    public Boolean cadastrarCliente(Cliente cliente) {
         Connection conexao = null;
         PreparedStatement pstmt = null;
+        Boolean verifica = false;
         try {
             conexao = DbConexao.getConection();
             pstmt = conexao.prepareStatement(stmInserirCliente, Statement.RETURN_GENERATED_KEYS);
@@ -46,6 +48,7 @@ public class ClienteDAO {
             rs.next();
             int i = rs.getInt(1);
             cliente.setId(i);
+            verifica = true;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
@@ -60,6 +63,7 @@ public class ClienteDAO {
                 System.out.println("Erro:" + ex.getMessage());
             }
         }
+        return verifica;
     }
 
     public Cliente verificaRestricaoDOR(Cliente cliente) {
@@ -68,11 +72,11 @@ public class ClienteDAO {
         try {
             conexao = DbConexao.getConection();
             if (null == cliente.getCpf()) {
-                pstmt = conexao.prepareStatement(stmPegarClienteFis, Statement.RETURN_GENERATED_KEYS);
-                pstmt.setString(1, cliente.getCpf());
-            } else {
                 pstmt = conexao.prepareStatement(stmPegarClienteJur, Statement.RETURN_GENERATED_KEYS);
                 pstmt.setString(1, cliente.getCnpj());
+            } else {
+                pstmt = conexao.prepareStatement(stmPegarClienteFis, Statement.RETURN_GENERATED_KEYS);
+                pstmt.setString(1, cliente.getCpf());
             }
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
@@ -102,14 +106,21 @@ public class ClienteDAO {
         return cliente;
     }
 
-    public void ativarCliente(Cliente cliente) {
+    public Boolean ativarCliente(Cliente cliente) {
         Connection conexao = null;
         PreparedStatement pstmt = null;
+        Boolean verifica = false;
         try {
             conexao = DbConexao.getConection();
-            pstmt = conexao.prepareStatement(stmAtivarCliente, Statement.RETURN_GENERATED_KEYS);
-            pstmt.setInt(1, cliente.getId());
+             if (null == cliente.getCpf()) {
+                pstmt = conexao.prepareStatement(stmNegativarClienteJur, Statement.RETURN_GENERATED_KEYS);
+                pstmt.setString(1, cliente.getCnpj());
+            } else {
+                pstmt = conexao.prepareStatement(stmNegativarClienteFis, Statement.RETURN_GENERATED_KEYS);
+                pstmt.setString(1, cliente.getCpf());
+            }
             pstmt.executeUpdate();
+            verifica = true;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
@@ -124,16 +135,25 @@ public class ClienteDAO {
                 System.out.println("Erro:" + ex.getMessage());
             }
         }
+        return verifica;
     }
 
-    public void inativarCliente(Cliente cliente) {
+    public Boolean inativarCliente(Cliente cliente) {
         Connection conexao = null;
         PreparedStatement pstmt = null;
+        Boolean verifica = false;
         try {
             conexao = DbConexao.getConection();
-            pstmt = conexao.prepareStatement(stmNegativarCliente, Statement.RETURN_GENERATED_KEYS);
-            pstmt.setInt(1, cliente.getId());
+            
+            if (null == cliente.getCpf()) {
+                pstmt = conexao.prepareStatement(stmNegativarClienteJur, Statement.RETURN_GENERATED_KEYS);
+                pstmt.setString(1, cliente.getCnpj());
+            } else {
+                pstmt = conexao.prepareStatement(stmNegativarClienteFis, Statement.RETURN_GENERATED_KEYS);
+                pstmt.setString(1, cliente.getCpf());
+            }
             pstmt.executeUpdate();
+            verifica = true;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
@@ -148,6 +168,7 @@ public class ClienteDAO {
                 System.out.println("Erro:" + ex.getMessage());
             }
         }
+        return verifica;
     }
 
     public ArrayList<Cliente> todosClientes() {
