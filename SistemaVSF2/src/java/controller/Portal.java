@@ -107,7 +107,7 @@ public class Portal extends HttpServlet {
                             if (!cliente.getStatusDOR()) {
                                 request.setAttribute("mensagemDOR", "Erro ao incluir cliente no sistema DOR.");
                             } else {
-                                request.setAttribute("mensagemDOR", "Cliente foi incluído na lista de Devedores do DOR.");
+                                request.setAttribute("mensagemDOR", "Você está incluso na lista de Devedores do DOR.");
                             }
                             i = quantidades.size();
                         }
@@ -119,7 +119,7 @@ public class Portal extends HttpServlet {
                             if (!cliente.getStatusDOR()) {
                                 request.setAttribute("mensagemDOR", "Erro ao incluir cliente no sistema DOR.");
                             } else {
-                                request.setAttribute("mensagemDOR", "Cliente foi incluído na lista de Devedores do DOR.");
+                                request.setAttribute("mensagemDOR", "Você está incluso na lista de Devedores do DOR.");
                             }
                             i = quantidades.size();
                         }
@@ -152,47 +152,16 @@ public class Portal extends HttpServlet {
                 daoTrans.salvarTransacao(trans);
                 session.setAttribute("conta", conta);
                 request.setAttribute("msg", "Depósito realizado com sucesso, motoboy passará receber o dinheiro");
-                contas = (ArrayList<Conta>) session.getAttribute("contas");
-                ArrayList<Integer> quantidades = daoConta.verificaStatusDOR(cliente);
-                if (contas.size() > 1) {
-                    for (int i = 0; i < quantidades.size(); i++) {
-                        if (quantidades.get(i) >= 10) {
-                            boolean verifica = liberaClienteDOR(cliente);
-                            if (verifica) {
-                                request.setAttribute("mensagemDOR", "Você foi removido da lista de Devedores do DOR após depósito.");
-                                session.setAttribute("conta", conta);
-                            }
-                            if (!cliente.getStatusDOR()) {
-                                request.setAttribute("mensagemDOR", "Erro ao incluir cliente no sistema DOR.");
-                            } else {
-                                request.setAttribute("mensagemDOR", "Cliente foi incluído na lista de Devedores do DOR.");
-                            }
-                            i = quantidades.size();
-                        }
-                    }
-                } else {
-                    for (int i = 0; i < quantidades.size(); i++) {
-                        if (quantidades.get(i) >= 10) {
-                            cliente = insereClienteDOR(conta.getCliente());
-                            if (!cliente.getStatusDOR()) {
-                                request.setAttribute("mensagemDOR", "Erro ao incluir cliente no sistema DOR.");
-                            } else {
-                                request.setAttribute("mensagemDOR", "Cliente foi incluído na lista de Devedores do DOR.");
-                            }
-                            i = quantidades.size();
-                        }
-                    }
-                }
-
-                quantidadeDias = daoConta.verificaStatusDOR(cliente, conta);
-                if (quantidadeDias >= 10) {
+                
+                //quantidadeDias = daoConta.verificaStatusDOR(cliente, conta);
+                if (conta.getSaldo() >= 0) {
                     boolean verifica = liberaClienteDOR(cliente);
                     if (verifica) {
                         request.setAttribute("mensagemDOR", "Você foi removido da lista de Devedores do DOR após depósito.");
                         session.setAttribute("conta", conta);
                     }
                 }
-
+                
             } else if (!verificaSaldo(conta, valor)) {
                 request.setAttribute("msg", "Valor de depósito é maior que o saldo e limite disponíveis.");
             } else {
@@ -210,21 +179,21 @@ public class Portal extends HttpServlet {
                 trans.setSaldoConta(conta.getSaldo());
                 daoTrans.salvarTransacao(trans);
                 session.setAttribute("conta", conta);
-                request.setAttribute("msg", "Depósito realizado com sucesso, motoboy passará receber o dinheiro");
-
+                request.setAttribute("msg", "Depósito realizado com sucesso, motoboy passará receber o dinheiro");               
+               
                 quantidadeDias = daoConta.verificaStatusDOR(cliente, conta);
                 if (quantidadeDias >= 10) {
                     cliente = insereClienteDOR(conta.getCliente());
                     if (!cliente.getStatusDOR()) {
                         request.setAttribute("mensagemDOR", "Erro ao incluir cliente no sistema DOR.");
                     } else {
-                        request.setAttribute("mensagemDOR", "Você foi incluído na lista de Devedores do DOR.");
+                        request.setAttribute("mensagemDOR", "Você está incluso na lista de Devedores do DOR.");
                     }
                 }
                 clienteRecebeTransf = daoCliente.clienteByConta(contaRecebeTransf.getNumAgencia(), contaRecebeTransf.getNumConta());
-                quantidadeDias = daoConta.verificaStatusDOR(clienteRecebeTransf, contaRecebeTransf);
+                //quantidadeDias = daoConta.verificaStatusDOR(clienteRecebeTransf, contaRecebeTransf);
 
-                if (quantidadeDias >= 10) {
+                if (contaRecebeTransf.getSaldo() >= 0) {
                     boolean verifica = liberaClienteDOR(cliente);
                     if (verifica) {
                         request.setAttribute("mensagemDOR", "Cliente que recebeu depósito foi removido da lista de Devedores do DOR.");
@@ -268,28 +237,18 @@ public class Portal extends HttpServlet {
                         if (!cliente.getStatusDOR()) {
                             request.setAttribute("mensagemDOR", "Erro ao incluir cliente no sistema DOR.");
                         } else {
-                            request.setAttribute("mensagemDOR", "Você foi incluído na lista de Devedores do DOR.");
+                            request.setAttribute("mensagemDOR", "Você está incluso na lista de Devedores do DOR.");
                         }
                     }
                     clienteRecebeTransf = daoCliente.clienteByConta(contaRecebeTransf.getNumAgencia(), contaRecebeTransf.getNumConta());
                     quantidadeDias = daoConta.verificaStatusDOR(clienteRecebeTransf, contaRecebeTransf);
 
-                    if (quantidadeDias >= 10) {
+                    if (contaRecebeTransf.getSaldo() >= 0) {
                         boolean verifica = liberaClienteDOR(cliente);
                         if (verifica) {
                             request.setAttribute("mensagemDOR", "Cliente que recebeu transferência foi removido da lista de Devedores do DOR.");
                         }
                     }
-
-                    //verificar no banco se Saldo > 0 AND dataNegativacao BETWEEN dataAtual-10 AND dataAtual
-                    //se houve, libera do DOR, senão não faz nada.
-//                    if (contaRecebeTransf.getSaldo() > 0) {
-//                        boolean verifica = liberaClienteDOR(cliente);
-//                       if(verifica){
-//                            request.setAttribute("mensagemDOR", "Cliente da transferência estava negativado no "
-//                                    + "DOR(Devedores Originalmente Regulares, agora foi liberado credito.");
-//                       }
-//                    }
                     rd = getServletContext().getRequestDispatcher("/transferencias.jsp");
                 }
             }
@@ -333,6 +292,26 @@ public class Portal extends HttpServlet {
                 daoTrans.salvarTransacao(trans);
                 session.setAttribute("conta", conta);
                 request.setAttribute("msg", "Transferência realizada com sucesso");
+                
+                quantidadeDias = daoConta.verificaStatusDOR(cliente, conta);
+                if (quantidadeDias >= 10) {
+                    cliente = insereClienteDOR(conta.getCliente());
+                    if (!cliente.getStatusDOR()) {
+                        request.setAttribute("mensagemDOR", "Erro ao incluir cliente no sistema DOR.");
+                    } else {
+                        request.setAttribute("mensagemDOR", "Você está incluso na lista de Devedores do DOR.");
+                    }
+                }
+                clienteRecebeTransf = daoCliente.clienteByConta(contaRecebeTransf.getNumAgencia(), contaRecebeTransf.getNumConta());
+                quantidadeDias = daoConta.verificaStatusDOR(clienteRecebeTransf, contaRecebeTransf);
+
+                if (contaRecebeTransf.getSaldo() >= 0) {
+                    boolean verifica = liberaClienteDOR(cliente);
+                    if (verifica) {
+                        request.setAttribute("mensagemDOR", "Cliente que recebeu depósito foi removido da lista de Devedores do DOR.");
+                    }
+                }
+                
             }
 
             rd = getServletContext().getRequestDispatcher("/transfTerceiros.jsp");
@@ -355,7 +334,7 @@ public class Portal extends HttpServlet {
             contas = daoConta.pegarTodasContasByCliente(cliente);
             if (contas.size() > 0) {
                 session.setAttribute("contas", contas);
-            }
+            }   
             rd = getServletContext().getRequestDispatcher("/todasContas.jsp");
         }
         rd.forward(request, response);

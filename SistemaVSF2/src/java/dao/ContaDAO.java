@@ -29,6 +29,7 @@ public class ContaDAO {
 
     //private final String stmQuantidadeDiasData = "SELECT DATEDIFF(CURDATE(),dataNegativacao) as quantidade FROM contas where idCliente=? AND agencia = ? AND conta=?;";
     private final String stmQuantidadeDiasData = "SELECT DATEDIFF(CURDATE(),dataNegativacao) as quantidade FROM contas WHERE idCliente=?";
+    private final String stmQtdDiasDataConta = "SELECT DATEDIFF(CURDATE(),dataNegativacao) as quantidade FROM contas WHERE idCliente=? AND agencia=? AND conta=?";
     private final String stmVerificaStatusDOR = "SELECT * FROM contas WHERE idCliente=? AND dataNegativacao BETWEEN ? AND NOW()";
     private final String stmGetContaByCliente = "SELECT * FROM contas WHERE agencia = ? AND conta = ?";
     private final String stmTodasContas = "SELECT * FROM contas WHERE idCliente=?";
@@ -333,7 +334,7 @@ public class ContaDAO {
         //Conta conta = new Conta();
         try {
             conexao = DbConexao.getConection();
-            pstmt = conexao.prepareStatement(stmQuantidadeDiasData, Statement.RETURN_GENERATED_KEYS);
+            pstmt = conexao.prepareStatement(stmQtdDiasDataConta, Statement.RETURN_GENERATED_KEYS);
             //java.util.Date dataAtual = new java.util.Date();
             ///LocalDate date = LocalDate.now().minusDays(15);            
             //Calendar c = Calendar.getInstance();
