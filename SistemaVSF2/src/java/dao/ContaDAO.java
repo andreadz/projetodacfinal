@@ -22,11 +22,11 @@ public class ContaDAO {
 
     private final String stmEncerrarConta = "UPDATE contas SET statusConta = ? where agencia= ? AND conta = ?";
     private final String stmDepositar = "UPDATE contas SET saldo = ?, dataNegativacao=? WHERE agencia = ? AND conta=?";
-    private final String stmSacar = "UPDATE contas SET saldo = ? WHERE agencia = ? AND conta=?";
-    private final String stmTransferir = "UPDATE contas SET saldo = ? WHERE agencia = ? AND conta=?";
+    private final String stmSacar = "UPDATE contas SET saldo = ?, dataNegativacao=? WHERE agencia = ? AND conta=?";
+    private final String stmTransferir = "UPDATE contas SET saldo = ?, dataNegativacao=? WHERE agencia = ? AND conta=?";
     private final String stmClienteCPF = "SELECT id, nome FROM clientes where cpf=?";
     private final String stmTransferirTerceiros = "UPDATE contas SET saldo = ? WHERE agencia = ? AND conta=? AND idCliente = (SELECT id FROM clientes where cpf=?)";
-    
+
     private final String stmGetContaByCliente = "SELECT * FROM contas WHERE agencia = ? AND conta = ?";
     private final String stmTodasContas = "SELECT * FROM contas WHERE idCliente=?";
     private final String stmVerificaContaExistente = "SELECT MAX(conta) AS conta FROM contas WHERE agencia = ?";
@@ -35,8 +35,7 @@ public class ContaDAO {
     //private final String stmExtratoIntervalo = "SELECT * FROM transacoes WHERE idConta=? AND idClienteConta=? AND (dataTransacao BETWEEN '?' AND Date(now()))";
     private final String stmExtratoIntervalo = "SELECT * FROM transacoes WHERE idContaOperacao=? AND dataTransacao BETWEEN ? AND NOW()";
     private final String stmExtratoCompleto = "SELECT * FROM transacoes WHERE idContaOperacao=?";
-    
-    
+
     public void inserir(Cliente cliente) {
         Connection conexao = null;
         PreparedStatement pstmt = null;
@@ -325,24 +324,35 @@ public class ContaDAO {
         Connection conexao = null;
         PreparedStatement pstmt = null;
         try {
-            java.util.Date dataAtual = new java.util.Date();            
+            java.util.Date dataAtual = new java.util.Date();
             //LocalDate date = LocalDate.now().minusDays(15);            
             Calendar c = Calendar.getInstance();
             c.setTime(dataAtual);
             dataAtual.setTime(c.getTime().getTime());
+            contaRetirada = verificaDataNegativacao(contaRetirada, dataAtual);
             
             conexao = DbConexao.getConection();
             pstmt = conexao.prepareStatement(stmDepositar, Statement.RETURN_GENERATED_KEYS);
             pstmt.setDouble(1, contaRetirada.getSaldo());
-            pstmt.setDate(2, new java.sql.Date(contaRetirada.getDataNegativacao().getTime()));
-            pstmt.setString(2, contaRetirada.getNumAgencia());
-            pstmt.setInt(3, contaRetirada.getNumConta());
+            if (null == contaRetirada.getDataNegativacao()) {
+                pstmt.setDate(2, null);
+            } else {
+                pstmt.setDate(2, new java.sql.Date(contaRetirada.getDataNegativacao().getTime()));
+            }
+            pstmt.setString(3, contaRetirada.getNumAgencia());
+            pstmt.setInt(4, contaRetirada.getNumConta());
             pstmt.executeUpdate();
             if (contaDeposito != null) {
                 pstmt.clearParameters();
+                contaDeposito = verificaDataNegativacao(contaDeposito, dataAtual);
                 pstmt.setDouble(1, contaDeposito.getSaldo());
-                pstmt.setString(2, contaDeposito.getNumAgencia());
-                pstmt.setInt(3, contaDeposito.getNumConta());
+                if (null == contaDeposito.getDataNegativacao()) {
+                    pstmt.setDate(2, null);
+                } else {
+                    pstmt.setDate(2, new java.sql.Date(contaDeposito.getDataNegativacao().getTime()));
+                }
+                pstmt.setString(3, contaDeposito.getNumAgencia());
+                pstmt.setInt(4, contaDeposito.getNumConta());
                 pstmt.executeUpdate();
             }
         } catch (SQLException e) {
@@ -360,17 +370,28 @@ public class ContaDAO {
             }
         }
     }
-    
+
     public void sacar(Conta contaRetirada) {
         Connection conexao = null;
         PreparedStatement pstmt = null;
         try {
+            java.util.Date dataAtual = new java.util.Date();
+            Calendar c = Calendar.getInstance();
+            c.setTime(dataAtual);
+            dataAtual.setTime(c.getTime().getTime());
+            contaRetirada = verificaDataNegativacao(contaRetirada, dataAtual);
+
             conexao = DbConexao.getConection();
             pstmt = conexao.prepareStatement(stmSacar, Statement.RETURN_GENERATED_KEYS);
             pstmt.setDouble(1, contaRetirada.getSaldo());
-            pstmt.setString(2, contaRetirada.getNumAgencia());
-            pstmt.setInt(3, contaRetirada.getNumConta());
-            pstmt.executeUpdate();            
+            if (null == contaRetirada.getDataNegativacao()) {
+                pstmt.setDate(2, null);
+            } else {
+                pstmt.setDate(2, new java.sql.Date(contaRetirada.getDataNegativacao().getTime()));
+            }
+            pstmt.setString(3, contaRetirada.getNumAgencia());
+            pstmt.setInt(4, contaRetirada.getNumConta());
+            pstmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
@@ -386,23 +407,40 @@ public class ContaDAO {
             }
         }
     }
-    
+
     //do próprio cliente
     public void transferir(Conta contaRetirada, Conta contaRecebeTransf) {
         Connection conexao = null;
         PreparedStatement pstmt = null;
         try {
+            java.util.Date dataAtual = new java.util.Date();
+            Calendar c = Calendar.getInstance();
+            c.setTime(dataAtual);
+            dataAtual.setTime(c.getTime().getTime());
+            contaRetirada = verificaDataNegativacao(contaRetirada, dataAtual);
+
             conexao = DbConexao.getConection();
             pstmt = conexao.prepareStatement(stmTransferir, Statement.RETURN_GENERATED_KEYS);
             pstmt.setDouble(1, contaRetirada.getSaldo());
-            pstmt.setString(2, contaRetirada.getNumAgencia());
-            pstmt.setInt(3, contaRetirada.getNumConta());
+            if (null == contaRetirada.getDataNegativacao()) {
+                pstmt.setDate(2, null);
+            } else {
+                pstmt.setDate(2, new java.sql.Date(contaRetirada.getDataNegativacao().getTime()));
+            }
+            pstmt.setString(3, contaRetirada.getNumAgencia());
+            pstmt.setInt(4, contaRetirada.getNumConta());
             pstmt.executeUpdate();
             pstmt.clearParameters();
-            //pstmt = conexao.prepareStatement(stmTransferir, Statement.RETURN_GENERATED_KEYS);
+            
+            contaRecebeTransf = verificaDataNegativacao(contaRecebeTransf, dataAtual);
             pstmt.setDouble(1, contaRecebeTransf.getSaldo());
-            pstmt.setString(2, contaRecebeTransf.getNumAgencia());
-            pstmt.setInt(3, contaRecebeTransf.getNumConta());
+            if (null == contaRecebeTransf.getDataNegativacao()) {
+                pstmt.setDate(2, null);
+            } else {
+                pstmt.setDate(2, new java.sql.Date(contaRecebeTransf.getDataNegativacao().getTime()));
+            }
+            pstmt.setString(3, contaRecebeTransf.getNumAgencia());
+            pstmt.setInt(4, contaRecebeTransf.getNumConta());
             pstmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -529,7 +567,6 @@ public class ContaDAO {
 //        }
 //        return trans;
     //}
-    
     public ArrayList<Transacao> extrato(int periodo, int idConta) {
         Connection conexao = null;
         PreparedStatement pstmt = null;
@@ -538,13 +575,13 @@ public class ContaDAO {
         try {
             conexao = DbConexao.getConection();
             pstmt = conexao.prepareStatement(stmExtratoIntervalo, Statement.RETURN_GENERATED_KEYS);
-            java.util.Date dataAtual = new java.util.Date();            
+            java.util.Date dataAtual = new java.util.Date();
             //LocalDate date = LocalDate.now().minusDays(15);            
             Calendar c = Calendar.getInstance();
             c.setTime(dataAtual);
             c.add(Calendar.DATE, -periodo);
             dataAtual.setTime(c.getTime().getTime());
-            
+
             pstmt.setInt(1, idConta);
             pstmt.setDate(2, new java.sql.Date(dataAtual.getTime()));
             ResultSet rs = pstmt.executeQuery();
@@ -576,7 +613,7 @@ public class ContaDAO {
         }
         return transacoes;
     }
-    
+
     public ArrayList<Transacao> extrato(int idConta) {
         Connection conexao = null;
         PreparedStatement pstmt = null;
@@ -584,7 +621,7 @@ public class ContaDAO {
         Transacao transacao;
         try {
             conexao = DbConexao.getConection();
-            pstmt = conexao.prepareStatement(stmExtratoCompleto, Statement.RETURN_GENERATED_KEYS);            
+            pstmt = conexao.prepareStatement(stmExtratoCompleto, Statement.RETURN_GENERATED_KEYS);
             pstmt.setInt(1, idConta);
             ResultSet rs = pstmt.executeQuery();
 
@@ -614,5 +651,16 @@ public class ContaDAO {
             }
         }
         return transacoes;
+    }
+
+    public Conta verificaDataNegativacao(Conta conta, java.util.Date dataAtual) {
+        if (conta.getSaldo() < 0) {
+            if (conta.getDataNegativacao() == null) {
+                conta.setDataNegativacao(new java.util.Date(dataAtual.getTime()));
+            }
+        } else {
+            conta.setDataNegativacao(null);
+        }
+        return conta;
     }
 }

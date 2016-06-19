@@ -54,34 +54,38 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <c:forEach var="transac" items="${transacoes}">
-                                    <tr>                                        
-                                        <td style="padding: 10px;"><fmt:formatDate value="${transac.dataTransacao}" pattern="dd/MM/yyyy" /></td>
-                                        <c:choose>
-                                            <c:when test="${transac.tipoTransacao == 1}">
-                                               <td style="padding: 10px;">Depósito</td>
-                                            </c:when>
-                                            <c:when test="${transac.tipoTransacao == 2}">
-                                              <td style="padding: 10px;">Transferência para minha conta</td>
-                                            </c:when>
-                                            <c:when test="${transac.tipoTransacao == 3}">
-                                                <td style="padding: 10px;">Transferência para terceiros</td>
-                                            </c:when>
-                                            <c:when test="${transac.tipoTransacao == 4}">
-                                                <td style="padding: 10px;">Saque</td>
-                                            </c:when>
-                                        </c:choose>                                        
-                                                <td style="padding: 10px;"><fmt:formatNumber value="${transac.valor}" type="currency" /></td>
-                                        <td style="padding: 10px;">${transac.idConta1}</td>
-                                        <td style="padding: 10px;">${transac.idConta2}</td>
-                                        <td style="padding: 10px;"><fmt:formatNumber value="${transac.saldoConta}" type="currency" /></td>
-                                    </tr>
-                                </c:forEach>
-
+                                <c:if test="${transacoes.size() > 0}" >
+                                    <c:forEach var="transac" items="${transacoes}">
+                                        <tr>                                        
+                                            <td style="padding: 10px;"><fmt:formatDate value="${transac.dataTransacao}" pattern="dd/MM/yyyy" /></td>
+                                            <c:choose>
+                                                <c:when test="${transac.tipoTransacao == 1}">
+                                                    <td style="padding: 10px;">Depósito</td>
+                                                </c:when>
+                                                <c:when test="${transac.tipoTransacao == 2}">
+                                                    <td style="padding: 10px;">Transferência para minha conta</td>
+                                                </c:when>
+                                                <c:when test="${transac.tipoTransacao == 3}">
+                                                    <td style="padding: 10px;">Transferência para terceiros</td>
+                                                </c:when>
+                                                <c:when test="${transac.tipoTransacao == 4}">
+                                                    <td style="padding: 10px;">Saque</td>
+                                                </c:when>
+                                            </c:choose>                                        
+                                            <td style="padding: 10px;"><fmt:formatNumber value="${transac.valor}" type="currency" /></td>
+                                            <td style="padding: 10px;">${transac.idConta1}</td>
+                                            <td style="padding: 10px;">${transac.idConta2}</td>
+                                            <td style="padding: 10px;"><fmt:formatNumber value="${transac.saldoConta}" type="currency" /></td>
+                                        </tr>
+                                    </c:forEach>
+                                </c:if>
+                                    <c:if test="${transacoes.size() <= 0}">
+                                        Nenhuma transacão realizada.
+                                    </c:if>
                             </tbody>
                         </table>
                     </div>
-                   <div>
+                    <div>
                         <c:url var="allContas" value="Portal?action=todasContas" />
                         <c:url var="transfers" value="transferencias.jsp" />
                         <c:url var="transfTerc" value="transfTerceiros.jsp" />

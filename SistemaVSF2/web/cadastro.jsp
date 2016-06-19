@@ -74,26 +74,26 @@
                                     </tr>
                                     <tr>
                                 <div class="row">
-                                    <c:if test="${cnpjCpf.length() == 11}">
+                                    <c:if test="${tipoPessoa == 'F' }">
                                         <div class="col-lg-4">
                                             <div class="input-group">
                                                 <span class="input-group-addon">
                                                     <input type="radio" name="tipoConta" value="F"  checked="true" />
                                                 </span>
-                                                <input id="cpf" type="text" name="cpf" class="form-control" value="${cnpjCpf}"  disabled="true" /> 
+                                                <input id="cpf" type="text" name="cpf" class="form-control" value="${cpf}"  disabled="true" /> 
                                                 <span class="input-group-addon">
                                                     CPF - Conta Física
                                                 </span>
                                             </div>
                                         </div>
                                     </c:if>
-                                    <c:if test="${cnpjCpf.length() > 11}" >
+                                    <c:if test="${tipoPessoa == 'J' }">
                                         <div class="col-lg-5">
                                             <div class="input-group">
                                                 <span class="input-group-addon">
                                                     <input type="radio" name="tipoConta" value="J" checked="true"  />
                                                 </span>
-                                                <input id="cnpj" type="text" name="cnpj" class="form-control" value="${cnpjCpf}"  disabled="true"  />
+                                                <input id="cnpj" type="text" name="cnpj" class="form-control" value="${cnpj}"  disabled="true"  />
                                                 <span class="input-group-addon">
                                                     CNPJ - Conta Jurídica
                                                 </span>

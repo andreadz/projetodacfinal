@@ -35,6 +35,7 @@ public class Portal extends HttpServlet {
         Conta conta = (Conta) session.getAttribute("conta");
         Cliente cliente = (Cliente) session.getAttribute("cliente");
 
+        ClienteDAO daoCliente = new ClienteDAO();
         ContaDAO daoConta = new ContaDAO();
         TransacaoDAO daoTrans = new TransacaoDAO();
         Date dataAtual = new Date();
@@ -44,6 +45,7 @@ public class Portal extends HttpServlet {
 
         Transacao trans = new Transacao();
         Conta contaRecebeTransf;
+        Cliente clienteRecebeTransf;
         ArrayList<Conta> contas;
         ArrayList<Transacao> transacoes;
 
@@ -75,9 +77,10 @@ public class Portal extends HttpServlet {
                 request.setAttribute("msg", "Valor de saque é maior que o saldo e limite disponíveis.");
                 rd = getServletContext().getRequestDispatcher("/saques.jsp");
             } else {
-                conta = operacoes(conta, valor);
+                conta = descontoSaldo(conta, valor);
+                //verificaDataNegativacao(conta, dataAtual);
                 daoConta.sacar(conta);
-                verificaDataNegativacao(conta, dataAtual);
+
                 trans.setTipoTransacao(4);
                 trans.setValor(valor);
                 trans.setDataTransacao(new java.sql.Date(dataAtual.getTime()));
@@ -100,8 +103,9 @@ public class Portal extends HttpServlet {
             } else if (conta.getNumAgencia().equals(contaRecebeTransf.getNumAgencia()) && conta.getNumConta() == contaRecebeTransf.getNumConta()) {
                 conta = contaRecebeValor(conta, valor);
                 contaRecebeTransf = null;
+                //verificaDataNegativacao(conta, dataAtual);
                 daoConta.depositar(conta, contaRecebeTransf);
-                verificaDataNegativacao(conta, dataAtual);
+
                 trans.setTipoTransacao(1);
                 trans.setValor(valor);
                 trans.setDataTransacao(new java.sql.Date(dataAtual.getTime()));
@@ -114,10 +118,12 @@ public class Portal extends HttpServlet {
             } else if (!verificaSaldo(conta, valor)) {
                 request.setAttribute("msg", "Valor de depósito é maior que o saldo e limite disponíveis.");
             } else {
-                conta = operacoes(conta, valor);
+                conta = descontoSaldo(conta, valor);
                 contaRecebeTransf = contaRecebeValor(contaRecebeTransf, valor);
+                //conta = verificaDataNegativacao(conta, dataAtual);
+                //contaRecebeTransf =verificaDataNegativacao(contaRecebeTransf, dataAtual);
                 daoConta.depositar(conta, contaRecebeTransf);
-                verificaDataNegativacao(conta, dataAtual);
+
                 trans.setTipoTransacao(1);
                 trans.setValor(valor);
                 trans.setDataTransacao(new java.sql.Date(dataAtual.getTime()));
@@ -145,10 +151,10 @@ public class Portal extends HttpServlet {
                     rd = getServletContext().getRequestDispatcher("/transferencias.jsp");
                     rd.forward(request, response);
                 } else {
-                    conta = operacoes(conta, valor);
+                    conta = descontoSaldo(conta, valor);
                     contaRecebeTransf = contaRecebeValor(contaRecebeTransf, valor);
                     daoConta.transferir(conta, contaRecebeTransf);
-                    verificaDataNegativacao(conta, dataAtual);
+                    //verificaDataNegativacao(conta, dataAtual);
                     trans.setTipoTransacao(2);
                     trans.setValor(valor);
                     trans.setDataTransacao(new java.sql.Date(dataAtual.getTime()));
@@ -161,32 +167,48 @@ public class Portal extends HttpServlet {
                     rd = getServletContext().getRequestDispatcher("/transferencias.jsp");
                 }
             }
-        } else if ("transferirTerceiros".equals(action)) {
+        } else if ("confirmaTransferencia".equals(action)) {
             double valor = Double.parseDouble(request.getParameter("valor"));
             if (!verificaSaldo(conta, valor)) {
                 request.setAttribute("msg", "Valor de transferência maior que o saldo e limite disponíveis.");
             } else {
                 String agenciaDestino = request.getParameter("agenciaDestino");
                 int contaDestino = Integer.parseInt(request.getParameter("contaDestino"));
+
                 contaRecebeTransf = daoConta.pegarContaByConta(agenciaDestino, contaDestino);
-                if (contaRecebeTransf == null || !contaRecebeTransf.getStatusConta()) {
-                    request.setAttribute("msg", "Conta informada para transferência inexistente ou inativa.");
-                } else {
-                    conta = operacoes(conta, valor);
-                    contaRecebeTransf = contaRecebeValor(contaRecebeTransf, valor);
-                    daoConta.transferir(conta, contaRecebeTransf);
-                    verificaDataNegativacao(conta, dataAtual);
-                    trans.setTipoTransacao(3);
-                    trans.setValor(valor);
-                    trans.setDataTransacao(new java.sql.Date(dataAtual.getTime()));
-                    trans.setIdConta1(conta.getId());
-                    trans.setIdConta2(contaRecebeTransf.getId());
-                    trans.setSaldoConta(conta.getSaldo());
-                    daoTrans.salvarTransacao(trans);
-                    session.setAttribute("conta", conta);
-                    request.setAttribute("msg", "Transferência realizada com sucesso");
-                }
+                clienteRecebeTransf = daoCliente.clienteByConta(agenciaDestino, contaDestino);
+
+                request.setAttribute("contaRecebeTransf", contaRecebeTransf);
+                request.setAttribute("valorTransferencia", valor);
+                request.setAttribute("clienteRecebeTransf", clienteRecebeTransf);
             }
+            rd = getServletContext().getRequestDispatcher("/transfTerceiros.jsp");
+
+        } else if ("transferirTerceiros".equals(action)) {
+            double valor = Double.parseDouble(request.getParameter("valorTransferencia"));
+            String agenciaDestino = request.getParameter("agenciaContaDestino").substring(0, 4);
+            int contaDestino = Integer.parseInt(request.getParameter("agenciaContaDestino").substring(5));
+//                String agenciaDestino = request.getParameter("agenciaDestino");
+//                int contaDestino = Integer.parseInt(request.getParameter("contaDestino"));
+            contaRecebeTransf = daoConta.pegarContaByConta(agenciaDestino, contaDestino);
+            if (contaRecebeTransf == null || !contaRecebeTransf.getStatusConta()) {
+                request.setAttribute("msg", "Conta informada para transferência inexistente ou inativa.");
+            } else {
+                conta = descontoSaldo(conta, valor);
+                contaRecebeTransf = contaRecebeValor(contaRecebeTransf, valor);
+                daoConta.transferir(conta, contaRecebeTransf);
+                //verificaDataNegativacao(conta, dataAtual);
+                trans.setTipoTransacao(3);
+                trans.setValor(valor);
+                trans.setDataTransacao(new java.sql.Date(dataAtual.getTime()));
+                trans.setIdConta1(conta.getId());
+                trans.setIdConta2(contaRecebeTransf.getId());
+                trans.setSaldoConta(conta.getSaldo());
+                daoTrans.salvarTransacao(trans);
+                session.setAttribute("conta", conta);
+                request.setAttribute("msg", "Transferência realizada com sucesso");
+            }
+
             rd = getServletContext().getRequestDispatcher("/transfTerceiros.jsp");
         } else if ("encerrar".equals(action)) {
             conta.setStatusConta(Boolean.FALSE);
@@ -220,17 +242,15 @@ public class Portal extends HttpServlet {
     }
 
     public Conta verificaDataNegativacao(Conta conta, Date dataAtual) {
-        if (conta.getSaldo() < 0) {
-            if (conta.getDataNegativacao() == null) {
-                conta.setDataNegativacao(new java.util.Date(dataAtual.getTime()));
-            }
-        } else if (conta.getDataNegativacao() != null) {
+        if (conta.getSaldo() < 0 && conta.getDataNegativacao() == null) {
+            conta.setDataNegativacao(new java.util.Date(dataAtual.getTime()));
+        } else {
             conta.setDataNegativacao(null);
         }
         return conta;
     }
 
-    public Conta operacoes(Conta conta, double valor) {
+    public Conta descontoSaldo(Conta conta, double valor) {
         double valorFinal = conta.getSaldo() - valor;
         conta.setSaldo(valorFinal);
         return conta;
