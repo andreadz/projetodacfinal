@@ -27,7 +27,7 @@ public class ContaDAO {
     private final String stmClienteCPF = "SELECT id, nome FROM clientes where cpf=?";
     private final String stmTransferirTerceiros = "UPDATE contas SET saldo = ? WHERE agencia = ? AND conta=? AND idCliente = (SELECT id FROM clientes where cpf=?)";
 
-    private final String stmVerificaStatusDOR = "SELECT * FROM contas WHERE idCliente=?";
+    private final String stmVerificaStatusDOR = "SELECT * FROM contas WHERE idCliente=? AND AND dataTransacao BETWEEN ? AND NOW()";
     private final String stmGetContaByCliente = "SELECT * FROM contas WHERE agencia = ? AND conta = ?";
     private final String stmTodasContas = "SELECT * FROM contas WHERE idCliente=?";
     private final String stmVerificaContaExistente = "SELECT MAX(conta) AS conta FROM contas WHERE agencia = ?";
@@ -331,7 +331,15 @@ public class ContaDAO {
         try {
             conexao = DbConexao.getConection();
             pstmt = conexao.prepareStatement(stmVerificaStatusDOR, Statement.RETURN_GENERATED_KEYS);
+            java.util.Date dataAtual = new java.util.Date();
+            //LocalDate date = LocalDate.now().minusDays(15);            
+            Calendar c = Calendar.getInstance();
+            c.setTime(dataAtual);
+            c.add(Calendar.DATE, -10);
+            dataAtual.setTime(c.getTime().getTime());
+
             pstmt.setInt(1, cliente.getId());
+            pstmt.setDate(2, new java.sql.Date(dataAtual.getTime()));
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {

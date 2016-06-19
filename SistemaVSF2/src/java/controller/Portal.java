@@ -96,12 +96,18 @@ public class Portal extends HttpServlet {
                 daoTrans.salvarTransacao(trans);
                 session.setAttribute("conta", conta);
                 request.setAttribute("msg", "Saque realizado com sucesso, motoboy passará receber o dinheiro");
-                
+
 //                if(conta.getSaldo() < 0 && dataNegativacaoMaior10(conta)){
 //                    insereClienteDOR(cliente);
 //                     request.setAttribute("msg", "Cliente foi incluído na lista de Devedores do DOR.");
 //                }
-                
+                conta = daoConta.verificaStatusDOR(cliente);
+                if (conta != null) {
+                    insereClienteDOR(cliente);
+                    request.setAttribute("mensagemDOR", "Cliente foi incluído na lista de Devedores do DOR.");
+                }
+                //fazer verificar no BANCO de dados se SALDO<0 AND dataNegativacao BETWEEN  dataAtual-10 AND dataAtual
+                //se houver, então negativa no DOR, senão não faz nada.
                 rd = getServletContext().getRequestDispatcher("/saques.jsp");
             }
         } else if ("depositar".equals(action)) {
@@ -127,6 +133,12 @@ public class Portal extends HttpServlet {
                 daoTrans.salvarTransacao(trans);
                 session.setAttribute("conta", conta);
                 request.setAttribute("msg", "Depósito realizado com sucesso, motoboy passará receber o dinheiro");
+                conta = daoConta.verificaStatusDOR(cliente);
+                if (conta != null) {
+                    liberaClienteDOR(cliente);
+                    request.setAttribute("mensagemDOR", "Cliente que recebeu transferência foi removido da lista de Devedores do DOR.");
+                }
+
             } else if (!verificaSaldo(conta, valor)) {
                 request.setAttribute("msg", "Valor de depósito é maior que o saldo e limite disponíveis.");
             } else {
@@ -145,6 +157,18 @@ public class Portal extends HttpServlet {
                 daoTrans.salvarTransacao(trans);
                 session.setAttribute("conta", conta);
                 request.setAttribute("msg", "Depósito realizado com sucesso, motoboy passará receber o dinheiro");
+
+                conta = daoConta.verificaStatusDOR(cliente);
+                clienteRecebeTransf = daoCliente.clienteByConta(contaRecebeTransf.getNumAgencia(), contaRecebeTransf.getNumConta());
+                contaRecebeTransf = daoConta.verificaStatusDOR(clienteRecebeTransf);
+                if (conta != null) {
+                    insereClienteDOR(cliente);
+                    request.setAttribute("mensagemDOR", "Cliente foi incluído na lista de Devedores do DOR.");
+                }
+                if (contaRecebeTransf != null) {
+                    liberaClienteDOR(cliente);
+                    request.setAttribute("mensagemDOR", "Cliente que recebeu depósito foi removido da lista de Devedores do DOR.");
+                }
             }
             rd = getServletContext().getRequestDispatcher("/depositos.jsp");
 
@@ -176,14 +200,28 @@ public class Portal extends HttpServlet {
                     daoTrans.salvarTransacao(trans);
                     session.setAttribute("conta", conta);
                     request.setAttribute("msg", "Transferência realizada com sucesso");
-                    
-                    if (contaRecebeTransf.getSaldo() > 0) {
-                        boolean verifica = liberaClienteDOR(cliente);
-                       if(verifica){
-                            request.setAttribute("mensagemDOR", "Cliente da transferência estava negativado no "
-                                    + "DOR(Devedores Originalmente Regulares, agora foi liberado credito.");
-                       }
+
+                    conta = daoConta.verificaStatusDOR(cliente);
+                    clienteRecebeTransf = daoCliente.clienteByConta(contaRecebeTransf.getNumAgencia(), contaRecebeTransf.getNumConta());
+                    contaRecebeTransf = daoConta.verificaStatusDOR(clienteRecebeTransf);
+                    if (conta != null) {
+                        insereClienteDOR(cliente);
+                        request.setAttribute("mensagemDOR", "Cliente foi incluído na lista de Devedores do DOR.");
                     }
+                    if (contaRecebeTransf != null) {
+                        liberaClienteDOR(cliente);
+                        request.setAttribute("mensagemDOR", "Cliente que recebeu transferência foi removido da lista de Devedores do DOR.");
+                    }
+
+                    //verificar no banco se Saldo > 0 AND dataNegativacao BETWEEN dataAtual-10 AND dataAtual
+                    //se houve, libera do DOR, senão não faz nada.
+//                    if (contaRecebeTransf.getSaldo() > 0) {
+//                        boolean verifica = liberaClienteDOR(cliente);
+//                       if(verifica){
+//                            request.setAttribute("mensagemDOR", "Cliente da transferência estava negativado no "
+//                                    + "DOR(Devedores Originalmente Regulares, agora foi liberado credito.");
+//                       }
+//                    }
                     rd = getServletContext().getRequestDispatcher("/transferencias.jsp");
                 }
             }
@@ -287,13 +325,12 @@ public class Portal extends HttpServlet {
         contaRecebe.setSaldo(valorFinal);
         return contaRecebe;
     }
-    
+
 //    public Boolean dataNegativacaoMaior10(Conta conta, Date dataAtual){
 //        if(conta.getDataNegativacao().getD){
 //            
 //        }
 //    }
-
     public Boolean liberaClienteDOR(Cliente cliente) {
         Client client = ClientBuilder.newClient();
         Response resp = client.target("http://localhost:8084/SistemaDOR2/webresources/WsDOR/VerificaNegativado/" + cliente)
@@ -307,7 +344,7 @@ public class Portal extends HttpServlet {
             return true;
         }
     }
-    
+
     public Cliente insereClienteDOR(Cliente cliente) {
         Client client = ClientBuilder.newClient();
         Response resp = client.target("http://localhost:8084/SistemaDOR2/webresources/WsDOR/VerificaNegativado/" + cliente)
