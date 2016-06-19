@@ -17,6 +17,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import models.*;
 import org.joda.time.LocalDate;
 
@@ -64,14 +69,15 @@ public class Portal extends HttpServlet {
             request.setAttribute("msg", "");
             request.setAttribute("transacoes", transacoes);
             rd = getServletContext().getRequestDispatcher("/extratos.jsp");
-        } else if ("todasContas".equals(action)) {
-            contas = daoConta.pegarTodasContasByCliente(cliente);
-            if (contas.size() > 0) {
-                session.setAttribute("contas", contas);
-            }
-            rd = getServletContext().getRequestDispatcher("/todasContas.jsp");
-
-        } else if ("sacar".equals(action)) {
+        } //        else if ("todasContas".equals(action)) {
+        //            contas = daoConta.pegarTodasContasByCliente(cliente);
+        //            if (contas.size() > 0) {
+        //                session.setAttribute("contas", contas);
+        //            }
+        //            rd = getServletContext().getRequestDispatcher("/todasContas.jsp");
+        //
+        //        } 
+        else if ("sacar".equals(action)) {
             double valor = Double.parseDouble(request.getParameter("valor"));
             if (!verificaSaldo(conta, valor)) {
                 request.setAttribute("msg", "Valor de saque é maior que o saldo e limite disponíveis.");
@@ -90,6 +96,12 @@ public class Portal extends HttpServlet {
                 daoTrans.salvarTransacao(trans);
                 session.setAttribute("conta", conta);
                 request.setAttribute("msg", "Saque realizado com sucesso, motoboy passará receber o dinheiro");
+                
+//                if(conta.getSaldo() < 0 && dataNegativacaoMaior10(conta)){
+//                    insereClienteDOR(cliente);
+//                     request.setAttribute("msg", "Cliente foi incluído na lista de Devedores do DOR.");
+//                }
+                
                 rd = getServletContext().getRequestDispatcher("/saques.jsp");
             }
         } else if ("depositar".equals(action)) {
@@ -164,6 +176,14 @@ public class Portal extends HttpServlet {
                     daoTrans.salvarTransacao(trans);
                     session.setAttribute("conta", conta);
                     request.setAttribute("msg", "Transferência realizada com sucesso");
+                    
+                    if (contaRecebeTransf.getSaldo() > 0) {
+                        boolean verifica = liberaClienteDOR(cliente);
+                       if(verifica){
+                            request.setAttribute("mensagemDOR", "Cliente da transferência estava negativado no "
+                                    + "DOR(Devedores Originalmente Regulares, agora foi liberado credito.");
+                       }
+                    }
                     rd = getServletContext().getRequestDispatcher("/transferencias.jsp");
                 }
             }
@@ -225,6 +245,12 @@ public class Portal extends HttpServlet {
             session.removeAttribute("conta");
             request.setAttribute("msg", "Conta encerrada com sucesso!");
             rd = getServletContext().getRequestDispatcher("/index.jsp");
+        } else {
+            contas = daoConta.pegarTodasContasByCliente(cliente);
+            if (contas.size() > 0) {
+                session.setAttribute("contas", contas);
+            }
+            rd = getServletContext().getRequestDispatcher("/todasContas.jsp");
         }
         rd.forward(request, response);
     }
@@ -260,6 +286,39 @@ public class Portal extends HttpServlet {
         double valorFinal = contaRecebe.getSaldo() + valor;
         contaRecebe.setSaldo(valorFinal);
         return contaRecebe;
+    }
+    
+//    public Boolean dataNegativacaoMaior10(Conta conta, Date dataAtual){
+//        if(conta.getDataNegativacao().getD){
+//            
+//        }
+//    }
+
+    public Boolean liberaClienteDOR(Cliente cliente) {
+        Client client = ClientBuilder.newClient();
+        Response resp = client.target("http://localhost:8084/SistemaDOR2/webresources/WsDOR/VerificaNegativado/" + cliente)
+                .request(MediaType.APPLICATION_JSON).get();
+        Cliente clienteNegativado = resp.readEntity(Cliente.class);
+        if (clienteNegativado == null || !clienteNegativado.getStatusDOR()) {
+            return false;
+        } else {
+            client.target("http://localhost:8084/SistemaWSFinal/webresources/WsDOR/liberaNegativado/")
+                    .request(MediaType.APPLICATION_JSON).put(Entity.json(cliente));
+            return true;
+        }
+    }
+    
+    public Cliente insereClienteDOR(Cliente cliente) {
+        Client client = ClientBuilder.newClient();
+        Response resp = client.target("http://localhost:8084/SistemaDOR2/webresources/WsDOR/VerificaNegativado/" + cliente)
+                .request(MediaType.APPLICATION_JSON).get();
+        Cliente clienteNegativado = resp.readEntity(Cliente.class);
+        if (clienteNegativado == null || !clienteNegativado.getStatusDOR()) {
+            resp = client.target("http://localhost:8084/SistemaWSFinal/webresources/WsDOR/insereNegativado/")
+                    .request(MediaType.APPLICATION_JSON).put(Entity.json(cliente));
+            clienteNegativado = resp.readEntity(Cliente.class);
+        }
+        return clienteNegativado;
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

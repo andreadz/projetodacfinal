@@ -27,6 +27,7 @@ public class ContaDAO {
     private final String stmClienteCPF = "SELECT id, nome FROM clientes where cpf=?";
     private final String stmTransferirTerceiros = "UPDATE contas SET saldo = ? WHERE agencia = ? AND conta=? AND idCliente = (SELECT id FROM clientes where cpf=?)";
 
+    private final String stmVerificaStatusDOR = "SELECT * FROM contas WHERE idCliente=?";
     private final String stmGetContaByCliente = "SELECT * FROM contas WHERE agencia = ? AND conta = ?";
     private final String stmTodasContas = "SELECT * FROM contas WHERE idCliente=?";
     private final String stmVerificaContaExistente = "SELECT MAX(conta) AS conta FROM contas WHERE agencia = ?";
@@ -35,6 +36,7 @@ public class ContaDAO {
     //private final String stmExtratoIntervalo = "SELECT * FROM transacoes WHERE idConta=? AND idClienteConta=? AND (dataTransacao BETWEEN '?' AND Date(now()))";
     private final String stmExtratoIntervalo = "SELECT * FROM transacoes WHERE idContaOperacao=? AND dataTransacao BETWEEN ? AND NOW()";
     private final String stmExtratoCompleto = "SELECT * FROM transacoes WHERE idContaOperacao=?";
+    private final String stmVerificaExistenciaConta = "SELECT * FROM contas WHERE idCliente=?";
 
     public void inserir(Cliente cliente) {
         Connection conexao = null;
@@ -128,6 +130,7 @@ public class ContaDAO {
                 conta.setNumAgencia(rs.getString("agencia"));
                 conta.setTipoConta(rs.getString("tipoConta"));
                 conta.setStatusConta(rs.getBoolean("statusConta"));
+                conta.setDataNegativacao(rs.getDate("dataNegativacao"));
                 conta.setCliente(cliente);
             } else {
                 conta = null;
@@ -169,6 +172,7 @@ public class ContaDAO {
                 conta.setNumAgencia(rs.getString("agencia"));
                 conta.setTipoConta(rs.getString("tipoConta"));
                 conta.setStatusConta(rs.getBoolean("statusConta"));
+                conta.setDataNegativacao(rs.getDate("dataNegativacao"));
             } else {
                 conta = null;
             }
@@ -318,6 +322,46 @@ public class ContaDAO {
                 System.out.println("Erro:" + ex.getMessage());
             }
         }
+    }
+    
+    public Conta verificaStatusDOR(Cliente cliente){
+        Connection conexao = null;
+        PreparedStatement pstmt = null;
+        Conta conta = new Conta();
+        try {
+            conexao = DbConexao.getConection();
+            pstmt = conexao.prepareStatement(stmVerificaStatusDOR, Statement.RETURN_GENERATED_KEYS);
+            pstmt.setInt(1, cliente.getId());
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                conta.setId(rs.getInt("id"));
+                conta.setSaldo(rs.getDouble("saldo"));
+                conta.setLimite(rs.getDouble("limite"));
+                conta.setNumConta(rs.getInt("conta"));
+                conta.setNumAgencia(rs.getString("agencia"));
+                conta.setTipoConta(rs.getString("tipoConta"));
+                conta.setStatusConta(rs.getBoolean("statusConta"));
+                conta.setDataNegativacao(rs.getDate("dataNegativacao"));
+            } else {
+                conta = null;
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                pstmt.close();
+            } catch (Exception ex) {
+                System.out.println("Erro:" + ex.getMessage());
+            }
+            try {
+                conexao.close();
+            } catch (Exception ex) {
+                System.out.println("Erro:" + ex.getMessage());
+            }
+        }
+        return conta;
     }
 
     public void depositar(Conta contaRetirada, Conta contaDeposito) {
@@ -653,6 +697,50 @@ public class ContaDAO {
         return transacoes;
     }
 
+    public Conta verificaExistenciaContaByCliente(Cliente cliente){
+        Connection conexao = null;
+        PreparedStatement pstmt = null;
+        Conta conta;
+        try {
+            conexao = DbConexao.getConection();
+            pstmt = conexao.prepareStatement(stmVerificaExistenciaConta, Statement.RETURN_GENERATED_KEYS);
+            pstmt.setInt(1, cliente.getId());
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                if (rs.getString("tipoConta").equals("J")) {
+                    conta = new ContaPj();
+                } else {
+                    conta = new ContaPf();
+                }
+                conta.setId(rs.getInt("id"));
+                conta.setSaldo(rs.getDouble("saldo"));
+                conta.setLimite(rs.getDouble("limite"));
+                conta.setNumConta(rs.getInt("conta"));
+                conta.setNumAgencia(rs.getString("agencia"));
+                conta.setTipoConta(rs.getString("tipoConta"));
+                conta.setStatusConta(rs.getBoolean("statusConta"));
+                conta.setCliente(cliente);
+            } else {
+                conta = null;
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                pstmt.close();
+            } catch (Exception ex) {
+                System.out.println("Erro:" + ex.getMessage());
+            }
+            try {
+                conexao.close();
+            } catch (Exception ex) {
+                System.out.println("Erro:" + ex.getMessage());
+            }
+        }
+        return conta;
+    }
+    
     public Conta verificaDataNegativacao(Conta conta, java.util.Date dataAtual) {
         if (conta.getSaldo() < 0) {
             if (conta.getDataNegativacao() == null) {
@@ -663,4 +751,5 @@ public class ContaDAO {
         }
         return conta;
     }
+    
 }

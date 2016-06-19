@@ -17,6 +17,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import models.*;
 import dao.*;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import models.Cliente;
 
 /**
@@ -33,6 +37,7 @@ public class Cadastros extends HttpServlet {
         String action = request.getParameter("action");
         ClienteDAO daoCli = new ClienteDAO();
         ContaDAO daoConta = new ContaDAO();
+        ArrayList<Conta> contas;
 //        if (session.getAttribute("cliente") == null) {
 //            request.setAttribute("msg", "Usuário e não senha informados.");
 //            rd = getServletContext().getRequestDispatcher("/index.jsp");
@@ -47,36 +52,88 @@ public class Cadastros extends HttpServlet {
             String senha = request.getParameter("senha");
             double renda = Double.parseDouble(request.getParameter("renda"));
             String email = request.getParameter("email");
-            String cpf = request.getParameter("cpf").isEmpty() ? "" : request.getParameter("cpf");
-            String cnpj = request.getParameter("cnpj").isEmpty() ? "" : request.getParameter("cnpj");
+            String tipoConta = request.getParameter("tipoConta");
+            String cnpj = null;
+            String cpf = null;
+            if (tipoConta.equals("J")) {
+                cnpj = request.getParameter("cnpj");
+            } else {
+                cpf = request.getParameter("cpf");
+            }
 
             Cliente cliente = new Cliente(0, cpf, cnpj, nome, rg, endereco, cep, telefone, email, senha, renda);
             cliente = daoCli.cadastrarCliente(cliente);
             session.setAttribute("cliente", cliente);
 
-            request.setAttribute("msg", "Cliente cadastrado com sucesso.");
-            rd = getServletContext().getRequestDispatcher("/cadastroconta.jsp");
-        }
-        else if ("cadconta".equals(action)) {
+            Client client = ClientBuilder.newClient();
+            Response resp = client.target("http://localhost:8084/SistemaDOR2/webresources/WsDor/VerificaNegativado/" + cliente)
+                    .request(MediaType.APPLICATION_JSON).get();
+            Cliente clienteNegativado = resp.readEntity(Cliente.class);
+            if (clienteNegativado.getStatusDOR()) {
+                request.setAttribute("msg", "Cliente cadastrado com sucesso, porém não foi possível realizar cadastro"
+                        + " de conta corrente, pois consta pendências no sistema de Devedores Originalmente Regulares. "
+                        + " Favor regularizar pendências para posteriormente realizar continuação"
+                        + " de cadastro de conta corrente.");
+                rd = getServletContext().getRequestDispatcher("/index.jsp");
+            } else {
+                request.setAttribute("msg", "Cliente cadastrado com sucesso, realize cadastro de conta "
+                        + "selecionando agência.");
+                rd = getServletContext().getRequestDispatcher("/cadastroconta.jsp");
+            }
+        } else if ("cadconta".equals(action)) {
             String agencia = request.getParameter("agencia");
             Cliente cliente = (Cliente) session.getAttribute("cliente");
-            
+
             double limite = verificaLimite(cliente.getRenda());
-            Conta conta = daoConta.criarConta(agencia, cliente, limite );
-            request.setAttribute("msg", "Conta cadastrada com sucesso.");
-            request.setAttribute("conta", conta);
+            Client client = ClientBuilder.newClient();
+            Response resp = client.target("http://localhost:8084/SistemaDOR2/webresources/WsDOR/VerificaNegativado/" + cliente)
+                    .request(MediaType.APPLICATION_JSON).get();
+            Cliente clienteNegativado = resp.readEntity(Cliente.class);
+            if(clienteNegativado == null || !clienteNegativado.getStatusDOR()){
+                Conta contaNova = daoConta.criarConta(agencia, cliente, limite);
+                request.setAttribute("msg", "Conta cadastrada com sucesso.");
+                request.setAttribute("contaNova", contaNova);
+            }
+            else {
+                request.setAttribute("msg", "Não é possível realizar cadastro"
+                        + " de conta corrente, pois consta pendências no sistema de Devedores Originalmente Regulares. "
+                        + " Favor regularizar pendências para posteriormente realizar"
+                        + " cadastro de conta-corrente.");
+            }
             rd = getServletContext().getRequestDispatcher("/index.jsp");
+        } else if ("cadastroContaNova".equals(action)) {
+            String agencia = request.getParameter("agencia");
+            Cliente cliente = (Cliente) session.getAttribute("cliente");
+            double limite = verificaLimite(cliente.getRenda());
+            Client client = ClientBuilder.newClient();
+            Response resp = client.target("http://localhost:8084/SistemaDOR2/webresources/WsDOR/VerificaNegativado/" + cliente)
+                    .request(MediaType.APPLICATION_JSON).get();
+            Cliente clienteNegativado = resp.readEntity(Cliente.class);
+            if(clienteNegativado == null || !clienteNegativado.getStatusDOR()){
+                contas = (ArrayList<Conta>) session.getAttribute("contas");
+                Conta contaNova = daoConta.criarConta(agencia, cliente, limite);
+                request.setAttribute("msg", "Nova Conta cadastrada com sucesso.");
+                contas.add(contaNova);
+                session.setAttribute("contas", contas); 
+            }
+            else  {
+                request.setAttribute("msg", "Não é possível  realizar cadastro de nova "
+                        + " conta corrente, pois consta pendências no sistema de Devedores Originalmente Regulares. "
+                        + " Favor regularizar pendências para posteriormente realizar"
+                        + " cadastro de conta-corrente.");
+            } 
+            rd = getServletContext().getRequestDispatcher("/portal.jsp");
         }
         rd.forward(request, response);
     }
 
     public double verificaLimite(double renda) {
-        double limite;        
+        double limite;
         if (renda < 1000.0) {
             limite = 0;
-        }else {
+        } else {
             limite = renda / 2;
-        } 
+        }
         return limite;
     }
 

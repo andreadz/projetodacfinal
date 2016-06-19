@@ -44,7 +44,7 @@ public class ProcessaLoginLogout extends HttpServlet {
             else {
                 HttpSession session = request.getSession();
                 ArrayList<Conta> contas = daoconta.pegarTodasContasByCliente(cliente);
-                double totalSaldos = totalSaldos = somaSaldos(contas);                
+                double totalSaldos = somaSaldos(contas);                
                 if(contas.size() > 0){                    
                     session.setAttribute("contas", contas);
                 } 

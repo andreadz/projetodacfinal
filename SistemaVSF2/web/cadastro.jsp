@@ -80,7 +80,7 @@
                                                 <span class="input-group-addon">
                                                     <input type="radio" name="tipoConta" value="F"  checked="true" />
                                                 </span>
-                                                <input id="cpf" type="text" name="cpf" class="form-control" value="${cpf}"  disabled="true" /> 
+                                                <input id="cpf" type="text" name="cpf" class="form-control" value="${cpf}"  readonly="true" /> 
                                                 <span class="input-group-addon">
                                                     CPF - Conta Física
                                                 </span>
@@ -93,7 +93,7 @@
                                                 <span class="input-group-addon">
                                                     <input type="radio" name="tipoConta" value="J" checked="true"  />
                                                 </span>
-                                                <input id="cnpj" type="text" name="cnpj" class="form-control" value="${cnpj}"  disabled="true"  />
+                                                <input id="cnpj" type="text" name="cnpj" class="form-control" value="${cnpj}"  readonly="true"  />
                                                 <span class="input-group-addon">
                                                     CNPJ - Conta Jurídica
                                                 </span>

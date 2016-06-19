@@ -31,8 +31,8 @@ public class ClienteDAO {
             + " clientes.endereco, clientes.cep, clientes.telefone, clientes.email, clientes.renda, clientes.senha FROM clientes "
             + " INNER JOIN contas ON contas.idCliente = clientes.id  "
             + " WHERE contas.agencia=? AND contas.conta=? AND clientes.senha = ? AND contas.idCliente = clientes.id";
-    private final String stmVerificaUsuarioFisico = "SELECT nome,cpf FROM clientes WHERE cpf = ?";
-    private final String stmVerificaUsuarioJuridico = "SELECT nome, cnpj FROM clientes WHERE cnpj = ?";
+    private final String stmVerificaUsuarioFisico = "SELECT * FROM clientes WHERE cpf = ?";
+    private final String stmVerificaUsuarioJuridico = "SELECT * FROM clientes WHERE cnpj = ?";
     private final String stmVerificaLoco = "SELECT cli.nome as Nome ,con.cnpj As CNPJ, cli.rg as RG, cli.endereco as Endereco, "
             + "cli.cep as CEP, cli.telefone, cli.email, cli.renda FROM clientes cli JOIN contas con "
             + "ON cli.id = con.idCliente WHERE con.cnpj = ?";
@@ -342,20 +342,29 @@ public class ClienteDAO {
         return contas;
     }
 
-    public Boolean verificaUsuarioExistenteF(String cpf) {
+    public Cliente verificaUsuarioExistenteF(String cpf) {
         Connection conexao = null;
         PreparedStatement pstmt = null;
-        Boolean verifica = false;
+        Cliente cliente = new Cliente();
         try {
             conexao = DbConexao.getConection();
 
             pstmt = conexao.prepareStatement(stmVerificaUsuarioFisico, Statement.RETURN_GENERATED_KEYS);
             pstmt.setString(1, cpf);
             ResultSet rs = pstmt.executeQuery();
-            while (rs.next()) {
-                rs.getString("nome");
-                rs.getString("cpf");
-                verifica = true;
+            if (rs.next()) {
+                cliente.setId(rs.getInt("id"));
+                cliente.setNome(rs.getString("nome"));
+                cliente.setCpf(rs.getString("cpf"));
+                cliente.setRg(rs.getString("rg"));
+                cliente.setEndereco(rs.getString("endereco"));
+                cliente.setCep(rs.getString("cep"));
+                cliente.setTelefone(rs.getString("telefone"));
+                cliente.setEmail(rs.getString("email"));
+                cliente.setRenda(rs.getDouble("renda"));
+            }
+            else{
+                cliente = null;
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -371,23 +380,31 @@ public class ClienteDAO {
                 System.out.println("Erro:" + ex.getMessage());
             }
         }
-        return verifica;
+        return cliente;
     }
 
-    public Boolean verificaUsuarioExistenteJ(String cnpj) {
+    public Cliente verificaUsuarioExistenteJ(String cnpj) {
         Connection conexao = null;
         PreparedStatement pstmt = null;
-        Boolean verifica = false;
+        Cliente cliente = new Cliente();
         try {
             conexao = DbConexao.getConection();
 
             pstmt = conexao.prepareStatement(stmVerificaUsuarioJuridico, Statement.RETURN_GENERATED_KEYS);
             pstmt.setString(1, cnpj);
             ResultSet rs = pstmt.executeQuery();
-            while (rs.next()) {
-                rs.getString("nome");
-                rs.getString("cnpj");
-                verifica = true;
+            if (rs.next()) {
+                cliente.setId(rs.getInt("id"));
+                cliente.setNome(rs.getString("nome"));
+                cliente.setCnpj(rs.getString("cnpj"));
+                cliente.setRg(rs.getString("rg"));
+                cliente.setEndereco(rs.getString("endereco"));
+                cliente.setCep(rs.getString("cep"));
+                cliente.setTelefone(rs.getString("telefone"));
+                cliente.setEmail(rs.getString("email"));
+                cliente.setRenda(rs.getDouble("renda"));
+            } else {
+                cliente = null;
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -403,7 +420,7 @@ public class ClienteDAO {
                 System.out.println("Erro:" + ex.getMessage());
             }
         }
-        return verifica;
+        return cliente;
     }
 
     public Conta getClienteFisico(String cpf) {
