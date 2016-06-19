@@ -82,7 +82,8 @@
                         </c:if> 
                         <a href="${encerrar}" >Encerramento Conta-Corrente</a>
                     </div>
-                ${msg}
+                        ${msg} </br>
+                ${mensagemDOR}
             </div>
         </div>
     </body>

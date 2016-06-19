@@ -41,12 +41,12 @@
                             <input type="text" name="contaDeposito" required="required" maxlength="6" />
                             &nbsp;
                             Valor <input type="text" name="valor" required="required" maxlength="18" /> </br>
-                           <!-- <div class="input-group">
-                                <span class="input-group-addon">Valor</span>
-                                <input type="text" name class="form-control" aria-label="Amount (to the nearest dollar)">
-                                <span class="input-group-addon">.00</span>
-                            </div>
-                            Token: <input type="text" name="token" /></br> -->
+                            <!-- <div class="input-group">
+                                 <span class="input-group-addon">Valor</span>
+                                 <input type="text" name class="form-control" aria-label="Amount (to the nearest dollar)">
+                                 <span class="input-group-addon">.00</span>
+                             </div>
+                             Token: <input type="text" name="token" /></br> -->
                             <input type="reset" class="btn btn-sm btn-default" value="Cancelar" /> &nbsp;
                             <input type="submit" class="btn btn-sm btn-warning" value="Depositar" />
                         </form>
@@ -80,8 +80,9 @@
                             <a href="${sacar}" >Saque</a> | 
                         </c:if> 
                         <a href="${encerrar}" >Encerramento Conta-Corrente</a>
-                    </div>
-                    ${msg}
+                    </div> 
+                    ${msg} </br>
+                    ${mensagemDOR}
             </div>
         </div>
     </body>
