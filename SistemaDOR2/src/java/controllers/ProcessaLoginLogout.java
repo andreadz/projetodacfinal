@@ -53,7 +53,7 @@ public class ProcessaLoginLogout extends HttpServlet {
                 //setAttribute("clientes", clientes);                
                 //session.setAttribute("historicos", historicos);                
                 
-                rd = getServletContext().getRequestDispatcher("/portalAdmin.jsp");
+                rd = getServletContext().getRequestDispatcher("/paginasCRUDAdmin/portalAdmin.jsp");
             } else {
                 session = request.getSession();
                 clientes = daoCliente.todosClientes();
@@ -62,7 +62,7 @@ public class ProcessaLoginLogout extends HttpServlet {
                 session.setAttribute("clientes", clientes);
                 //session.setAttribute("historicos", historicos);
                 
-                rd = getServletContext().getRequestDispatcher("/portalFuncionario.jsp");
+                rd = getServletContext().getRequestDispatcher("/paginasUsuario/portalFuncionario.jsp");
             }
         } else if ("logout".equals(action)) {
             session = request.getSession(false);

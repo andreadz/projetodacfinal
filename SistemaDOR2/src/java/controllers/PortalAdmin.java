@@ -42,10 +42,11 @@ public class PortalAdmin extends HttpServlet {
         ClienteDAO daoCliente = new ClienteDAO();
         HttpSession session = request.getSession();
         Usuario usuario = new Usuario();
+        Usuario usuarioSessao = (Usuario) session.getAttribute("usuario");
         ArrayList<Usuario> usuarios;
-        RequestDispatcher rd = getServletContext().getRequestDispatcher("/portalAdmin.jsp");
+        RequestDispatcher rd = getServletContext().getRequestDispatcher("/paginasCRUDAdmin/portalAdmin.jsp");
         
-        if (session.getAttribute("usuario") == null) {
+        if (usuarioSessao == null) {
             request.setAttribute("msg", "Não há nenhuma sessão inicializada.");
             rd = getServletContext().getRequestDispatcher("/index.jsp");
             rd.forward(request, response);
@@ -54,13 +55,13 @@ public class PortalAdmin extends HttpServlet {
             int idUsuario = Integer.parseInt(request.getParameter("idUsuario"));
             usuario = daoUsuario.pegarUsuarioById(idUsuario);
             request.setAttribute("usuario", usuario);
-            rd = getServletContext().getRequestDispatcher("/editarUsuario.jsp");
+            rd = getServletContext().getRequestDispatcher("/paginasCRUDAdmin/editarUsuario.jsp");
         }
         if ("requerExcluirUsuario".equals(action)) {
             int idUsuario = Integer.parseInt(request.getParameter("idUsuario"));
             usuario = daoUsuario.pegarUsuarioById(idUsuario);
             request.setAttribute("usuario", usuario);            
-            rd = getServletContext().getRequestDispatcher("/excluirUsuario.jsp");
+            rd = getServletContext().getRequestDispatcher("/paginasCRUDAdmin/excluirUsuario.jsp");
         }
         if ("editarUsuario".equals(action)) {
             String nome = request.getParameter("nome");
@@ -74,7 +75,7 @@ public class PortalAdmin extends HttpServlet {
             daoUsuario.atualizarUsuario(usuario);
             usuarios = daoUsuario.todosUsuariosAtivos();
             session.setAttribute("usuarios", usuarios);
-             request.setAttribute("msg", "Alteração realizada com sucesso.");  
+            request.setAttribute("msg", "Alteração realizada com sucesso.");  
         }
         if ("excluirUsuario".equals(action)) {
             int idUsuario = Integer.parseInt(request.getParameter("idUsuario")); 
@@ -101,6 +102,8 @@ public class PortalAdmin extends HttpServlet {
             usuarios = daoUsuario.todosUsuariosAtivos();
             session.setAttribute("usuarios", usuarios);
         }
+        
+       //Ações para 
         rd.forward(request, response);        
     }
 
