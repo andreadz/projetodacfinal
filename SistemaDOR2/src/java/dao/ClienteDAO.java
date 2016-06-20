@@ -241,4 +241,79 @@ public class ClienteDAO {
         }
         return clientes;
     }
+    
+    public ArrayList<Cliente> buscaByNome(String nome) {
+        Connection conexao = null;
+        PreparedStatement pstmt = null;
+        Cliente cliente;
+        ArrayList<Cliente> clientes = new ArrayList();
+        String stmClientesByNome = "SELECT * FROM clientes WHERE nome LIKE '%" + nome + "%'";
+        try {
+            conexao = DbConexao.getConection();
+            pstmt = conexao.prepareStatement(stmClientesByNome, Statement.RETURN_GENERATED_KEYS);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                cliente = new Cliente();
+                cliente.setId(rs.getInt("id"));
+                cliente.setNome(rs.getString("nome"));
+                cliente.setCpf(rs.getString("cpf"));
+                cliente.setCnpj(rs.getString("cnpj"));
+                cliente.setStatusDOR(rs.getBoolean("statusDOR"));
+                clientes.add(cliente);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                pstmt.close();
+            } catch (Exception ex) {
+                System.out.println("Erro:" + ex.getMessage());
+            }
+            try {
+                conexao.close();
+            } catch (Exception ex) {
+                System.out.println("Erro:" + ex.getMessage());
+            }
+        }
+        return clientes;
+    }
+    
+    public Cliente buscarByCpf(String cpf) {
+        Connection conexao = null;
+        PreparedStatement pstmt = null;
+        Cliente cliente = new Cliente();
+        try {
+            conexao = DbConexao.getConection();
+                pstmt = conexao.prepareStatement(stmPegarClienteFis, Statement.RETURN_GENERATED_KEYS);
+                pstmt.setString(1, cpf);
+            
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                cliente.setId(rs.getInt("id"));
+                cliente.setNome(rs.getString("nome"));
+                cliente.setCpf(rs.getString("cpf"));
+                cliente.setCnpj(rs.getString("cnpj"));
+                cliente.setStatusDOR(rs.getBoolean("statusDOR"));
+            }
+            else{
+                cliente = null;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                pstmt.close();
+            } catch (Exception ex) {
+                System.out.println("Erro:" + ex.getMessage());
+            }
+            try {
+                conexao.close();
+            } catch (Exception ex) {
+                System.out.println("Erro:" + ex.getMessage());
+            }
+        }
+        return cliente;
+    }
+    
+    
 }

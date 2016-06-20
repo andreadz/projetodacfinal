@@ -34,6 +34,17 @@
                         </table>
                     </form>
                 </div>
+                <form method="POST" action="PortalAdmin?action=buscarCliente">
+                    <div>
+                        Buscar por CPF
+                        <input type="text" name="buscaCPF" maxlength="11" />
+                    </div>
+                    <div>
+                        Buscar cliente por nome
+                        <input type="text" name="buscaNome" maxlength="30" />
+                    </div>
+                    <input type="submit" value="Buscar" />
+                </form>
                 <div>
                     <table class="table-striped table-bordered">
                         <thead>
@@ -73,12 +84,106 @@
                     </table>
                     <a href="novoUsuario.jsp" class="btn btn-primary" >Novo Usuário</a> 
                 </div>
-                <div>
-                    <c:url var="relatorios" value="relatorios.jsp" />
-                    <c:url var="clientes" value="clientes.jsp" />
-                    <a href="${relatorios}" >Relatórios</a> |
-                    <a href="${clientes}"  > Clientes</a> 
-                </div>
+                <c:if test="${clientesNome.size() != 0}">
+                    <div>
+                        <table class="table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nome</th>
+                                        <c:if test="${clientesNome.cpf != null}">
+                                        <th>CPF</th>
+                                        </c:if>
+                                        <c:if test="${clientesNome.cnpj != null}">
+                                        <th>CNPJ</th>
+                                        </c:if>
+                                    <th>Status</th>
+                                    <th colspan="2"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <c:forEach var="clientesNome" items="${clientesNome}">
+                                    <c:url var="ativar" value="PortalAdmin?action=requerAtivarCliente" >
+                                        <c:param name="idCliente" value="${clientesNome.id}" />
+                                    </c:url>
+                                    <c:url var="negativar" value="PortalAdmin?action=requerNegativarCliente" >
+                                        <c:param name="idCliente" value="${clientesNome.id}" />
+                                    </c:url>
+                                    <tr>                                        
+                                        <td style="padding: 10px;">${clientesNome.id}</td>
+                                        <td style="padding: 10px;">${clientesNome.nome}</td>
+                                        <c:choose>
+                                            <c:when test="${clientesNome.cpf != null}">
+                                                <td style="padding: 10px;">CPF</td>
+                                            </c:when>
+                                            <c:when test="${clientesNome.cnpj != null}">
+                                                <td style="padding: 10px;">CNPJ</td>
+                                            </c:when>
+                                        </c:choose>
+                                        <c:choose>
+                                            <c:when test="${clientesNome.statusDOR == true}">
+                                                <td style="padding: 10px;">Negativado</td>
+                                                <td style="padding: 10px;"><a href="${ativar}">Ativar</a></td>
+                                            </c:when>
+                                            <c:when test="${clientesNome.statusDOR == false}">
+                                                <td style="padding: 10px;">Ativo</td>
+                                                <td style="padding: 10px;"><a href="${negativar}" >Negativar</a></td>
+                                            </c:when>
+                                        </c:choose>
+                                    </tr>
+                                </c:forEach>
+                            </tbody>
+                        </table>
+                    </div>  
+                </c:if>
+                <c:if test="${clienteBusca.cpf != null}">
+                    <div>
+                        <table class="table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nome</th>
+                                        <c:if test="${clientesNome.cpf != null}">
+                                        <th>CPF</th>
+                                        </c:if>
+                                        <c:if test="${clientesNome.cnpj != null}">
+                                        <th>CNPJ</th>
+                                        </c:if>
+                                    <th>Histórico</th>
+                                    <th>Situação</th>
+                                </tr>
+                            </thead>
+                            <tbody>                               
+                                <c:url var="ativar" value="PortalAdmin?action=requerAtivarCliente" >
+                                    <c:param name="idCliente" value="${clienteBusca.id}" />
+                                </c:url>
+                                <c:url var="negativar" value="PortalAdmin?action=requerNegativarCliente" >
+                                    <c:param name="idCliente" value="${clienteBusca.id}" />
+                                </c:url>
+                                <c:url var="relatorioHistorico" value="RelatorioController?action=historico">
+                                    <c:param name="idCliente" value="${clienteBusca.id}" />
+                                </c:url>
+                                <c:url var="relatorioEmpresa" value="RelatorioController?action=empresa">
+                                    <c:param name="idCliente" value="${clienteBusca.id}" />
+                                </c:url>
+                                <tr>                                        
+                                    <td style="padding: 10px;">${clienteBusca.id}</td>
+                                    <td style="padding: 10px;">${clienteBusca.nome}</td>                                   
+                                    <c:choose>
+                                        <c:when test="${clientesNome.cpf != null}">
+                                            <td style="padding: 10px;">${clienteBusca.cpf}</td>
+                                        </c:when>
+                                        <c:when test="${clientesNome.cnpj != null}">
+                                            <td style="padding: 10px;">${clienteBusca.cnpj}</td>
+                                        </c:when>
+                                    </c:choose>
+                                    <td><a href="${relatorioHistorico}">Histórico</a></td>
+                                    <td><a href="${relatorioEmpresa}">Relatório</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>  
+                </c:if>
                 ${msg}
             </div>
         </div>

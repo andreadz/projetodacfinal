@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import models.Usuario;
+import vsf.Cliente;
 
 /**
  *
@@ -45,29 +46,26 @@ public class PortalAdmin extends HttpServlet {
         Usuario usuarioSessao = (Usuario) session.getAttribute("usuario");
         ArrayList<Usuario> usuarios;
         RequestDispatcher rd = getServletContext().getRequestDispatcher("/paginasCRUDAdmin/portalAdmin.jsp");
-        
+
         if (usuarioSessao == null) {
             request.setAttribute("msg", "Não há nenhuma sessão inicializada.");
             rd = getServletContext().getRequestDispatcher("/index.jsp");
             rd.forward(request, response);
-        }
-        if ("requerEditarUsuario".equals(action)) {
+        } else if ("requerEditarUsuario".equals(action)) {
             int idUsuario = Integer.parseInt(request.getParameter("idUsuario"));
             usuario = daoUsuario.pegarUsuarioById(idUsuario);
             request.setAttribute("usuario", usuario);
             rd = getServletContext().getRequestDispatcher("/paginasCRUDAdmin/editarUsuario.jsp");
-        }
-        if ("requerExcluirUsuario".equals(action)) {
+        } else if ("requerExcluirUsuario".equals(action)) {
             int idUsuario = Integer.parseInt(request.getParameter("idUsuario"));
             usuario = daoUsuario.pegarUsuarioById(idUsuario);
-            request.setAttribute("usuario", usuario);            
+            request.setAttribute("usuario", usuario);
             rd = getServletContext().getRequestDispatcher("/paginasCRUDAdmin/excluirUsuario.jsp");
-        }
-        if ("editarUsuario".equals(action)) {
+        } else if ("editarUsuario".equals(action)) {
             String nome = request.getParameter("nome");
             String email = request.getParameter("email");
             int perfil = Integer.parseInt(request.getParameter("perfilUsuario"));
-            int idUsuario = Integer.parseInt(request.getParameter("idUsuario"));            
+            int idUsuario = Integer.parseInt(request.getParameter("idUsuario"));
             usuario.setNome(nome);
             usuario.setEmail(email);
             usuario.setPerfil(perfil);
@@ -75,19 +73,17 @@ public class PortalAdmin extends HttpServlet {
             daoUsuario.atualizarUsuario(usuario);
             usuarios = daoUsuario.todosUsuariosAtivos();
             session.setAttribute("usuarios", usuarios);
-            request.setAttribute("msg", "Alteração realizada com sucesso.");  
-        }
-        if ("excluirUsuario".equals(action)) {
-            int idUsuario = Integer.parseInt(request.getParameter("idUsuario")); 
+            request.setAttribute("msg", "Alteração realizada com sucesso.");
+        } else if ("excluirUsuario".equals(action)) {
+            int idUsuario = Integer.parseInt(request.getParameter("idUsuario"));
             usuario.setId(idUsuario);
             usuario.setStatusUsuario(Boolean.FALSE);
             daoUsuario.inativarUsuario(usuario);
             usuarios = daoUsuario.todosUsuariosAtivos();
             session.setAttribute("usuarios", usuarios);
-            request.setAttribute("msg", "Inativação realizada com sucesso.");   
-            
-        }
-        if ("cadUsuario".equals(action)) {
+            request.setAttribute("msg", "Inativação realizada com sucesso.");
+
+        } else if ("cadUsuario".equals(action)) {
             String nome = request.getParameter("nome");
             String email = request.getParameter("email");
             String senha = request.getParameter("senha");
@@ -98,13 +94,31 @@ public class PortalAdmin extends HttpServlet {
             usuario.setPerfil(perfil);
             usuario.setStatusUsuario(true);
             daoUsuario.cadastrarUsuario(usuario);
-            request.setAttribute("msg", "Cadastro realizado com sucesso.");    
+            request.setAttribute("msg", "Cadastro realizado com sucesso.");
             usuarios = daoUsuario.todosUsuariosAtivos();
             session.setAttribute("usuarios", usuarios);
+        } else if ("buscarCliente".equals(action)) {
+            String nome = request.getParameter("buscaNome").isEmpty() ? "" : request.getParameter("buscaNome");
+            String cpf = request.getParameter("buscaCPF").isEmpty() ? "" : request.getParameter("buscaCPF");
+            if (nome.isEmpty()) {
+                ArrayList<Cliente> clientesNome;
+                clientesNome = daoCliente.buscaByNome(nome);
+                if (clientesNome.isEmpty()) {
+                    request.setAttribute("msg", "nenhum cliente com esse nome encontrado.");
+                }
+                request.setAttribute("clientesNome", clientesNome);
+            } else {
+                Cliente clienteBusca;
+                clienteBusca = daoCliente.buscarByCpf(cpf);
+                if (clienteBusca == null) {
+                    request.setAttribute("msg", "nenhum cliente encontrado para este CPF.");
+                }
+                request.setAttribute("clienteBusca", clienteBusca);
+            }
         }
-        
-       //Ações para 
-        rd.forward(request, response);        
+
+        //Ações para Negativar ou Inativar Clientes
+        rd.forward(request, response);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
