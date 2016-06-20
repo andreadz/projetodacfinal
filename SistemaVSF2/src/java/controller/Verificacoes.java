@@ -37,13 +37,6 @@ public class Verificacoes extends HttpServlet {
         } else {
             cpf = request.getParameter("cpf");
         }
-
-        if ("verificaNegativado".equals(action)) {
-            Client client = ClientBuilder.newClient();
-            Response retorno = client.target("http://localhost:8080/SistemaDOR2/webresources/WsDor").request(MediaType.APPLICATION_JSON).get();
-            request.setAttribute("cliente", retorno.readEntity(Cliente.class));
-            rd = request.getRequestDispatcher("erro.jsp");
-        }
         if ("verificaExistencia".equals(action)) {
             Conta conta = new Conta();
             Cliente cliente;
@@ -56,7 +49,7 @@ public class Verificacoes extends HttpServlet {
             if (cliente != null) {
                 conta = daoConta.verificaExistenciaContaByCliente(cliente);
                 if (conta != null) {
-                    request.setAttribute("msg", "Usuário e conta existentes, favor logar no sistema");
+                    request.setAttribute("msg", "Usuário e conta existentes, favor logar no sistema.");
                     request.setAttribute("conta", conta);
                     rd = request.getRequestDispatcher("index.jsp");
                 } else {

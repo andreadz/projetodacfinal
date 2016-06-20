@@ -105,12 +105,12 @@ public class Cadastros extends HttpServlet {
             Cliente clienteTeste = client.target("http://localhost:8084/SistemaDOR2/webresources/WsSistemaDOR/VerificaNegativado/" + cpfTeste + "/" + cnpjTeste).
                     request(MediaType.APPLICATION_JSON).get(Cliente.class);
             if (clienteTeste == null || !clienteTeste.getStatusDOR()) {
-                Conta contaNova = daoConta.criarConta(agencia, cliente, limite);
+                Conta conta = daoConta.criarConta(agencia, cliente, limite);
                 request.setAttribute("msg", "Conta cadastrada com sucesso.");
-                request.setAttribute("contaNova", contaNova);
+                request.setAttribute("conta", conta);
             } else {
                 request.setAttribute("msg", "Não é possível realizar cadastro"
-                        + " de conta corrente, pois consta pendências no sistema de Devedores Originalmente Regulares. "
+                        + " de conta corrente, pois consta pendências no sistema de Devedores Originalmente Regulares."
                         + " Favor regularizar pendências para posteriormente realizar"
                         + " cadastro de conta-corrente.");
             }
