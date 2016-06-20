@@ -38,6 +38,8 @@ public class Cadastros extends HttpServlet {
         ClienteDAO daoCli = new ClienteDAO();
         ContaDAO daoConta = new ContaDAO();
         ArrayList<Conta> contas;
+        String cnpjTeste = "";
+            String cpfTeste = "";
 //        if (session.getAttribute("cliente") == null) {
 //            request.setAttribute("msg", "Usuário e não senha informados.");
 //            rd = getServletContext().getRequestDispatcher("/index.jsp");
@@ -64,37 +66,49 @@ public class Cadastros extends HttpServlet {
             Cliente cliente = new Cliente(0, cpf, cnpj, nome, rg, endereco, cep, telefone, email, senha, renda);
             cliente = daoCli.cadastrarCliente(cliente);
             session.setAttribute("cliente", cliente);
+            if (null == cliente.getCnpj()) {
+                cpfTeste = cliente.getCpf();
+                cnpjTeste = "1";
+            } else {
+                cnpjTeste = cliente.getCnpj();
+                cpfTeste = "1";
+            }
 
             Client client = ClientBuilder.newClient();
-            Response resp = client.target("http://localhost:8084/SistemaDOR2/webresources/WsDor/VerificaNegativado/" + cliente)
-                    .request(MediaType.APPLICATION_JSON).get();
-            Cliente clienteNegativado = resp.readEntity(Cliente.class);
-            if (clienteNegativado.getStatusDOR()) {
+            Cliente clienteTeste = client.target("http://localhost:8084/SistemaDOR2/webresources/WsSistemaDOR/VerificaNegativado/" + cpfTeste + "/" + cnpjTeste).
+                    request(MediaType.APPLICATION_JSON).get(Cliente.class);
+            if (clienteTeste == null || !clienteTeste.getStatusDOR()) {
+                request.setAttribute("msg", "Cliente cadastrado com sucesso, realize cadastro de conta "
+                        + "selecionando agência.");
+                rd = getServletContext().getRequestDispatcher("/cadastroconta.jsp");
+            } else {
                 request.setAttribute("msg", "Cliente cadastrado com sucesso, porém não foi possível realizar cadastro"
                         + " de conta corrente, pois consta pendências no sistema de Devedores Originalmente Regulares. "
                         + " Favor regularizar pendências para posteriormente realizar continuação"
                         + " de cadastro de conta corrente.");
                 rd = getServletContext().getRequestDispatcher("/index.jsp");
-            } else {
-                request.setAttribute("msg", "Cliente cadastrado com sucesso, realize cadastro de conta "
-                        + "selecionando agência.");
-                rd = getServletContext().getRequestDispatcher("/cadastroconta.jsp");
             }
         } else if ("cadconta".equals(action)) {
             String agencia = request.getParameter("agencia");
             Cliente cliente = (Cliente) session.getAttribute("cliente");
+            
+            if (null == cliente.getCnpj()) {
+                cpfTeste = cliente.getCpf();
+                cnpjTeste = "1";
+            } else {
+                cnpjTeste = cliente.getCnpj();
+                cpfTeste = "1";
+            }
 
             double limite = verificaLimite(cliente.getRenda());
             Client client = ClientBuilder.newClient();
-            Response resp = client.target("http://localhost:8084/SistemaDOR2/webresources/WsDOR/VerificaNegativado/" + cliente)
-                    .request(MediaType.APPLICATION_JSON).get();
-            Cliente clienteNegativado = resp.readEntity(Cliente.class);
-            if(clienteNegativado == null || !clienteNegativado.getStatusDOR()){
+            Cliente clienteTeste = client.target("http://localhost:8084/SistemaDOR2/webresources/WsSistemaDOR/VerificaNegativado/" + cpfTeste + "/" + cnpjTeste).
+                    request(MediaType.APPLICATION_JSON).get(Cliente.class);
+            if (clienteTeste == null || !clienteTeste.getStatusDOR()) {
                 Conta contaNova = daoConta.criarConta(agencia, cliente, limite);
                 request.setAttribute("msg", "Conta cadastrada com sucesso.");
                 request.setAttribute("contaNova", contaNova);
-            }
-            else {
+            } else {
                 request.setAttribute("msg", "Não é possível realizar cadastro"
                         + " de conta corrente, pois consta pendências no sistema de Devedores Originalmente Regulares. "
                         + " Favor regularizar pendências para posteriormente realizar"
@@ -105,23 +119,29 @@ public class Cadastros extends HttpServlet {
             String agencia = request.getParameter("agencia");
             Cliente cliente = (Cliente) session.getAttribute("cliente");
             double limite = verificaLimite(cliente.getRenda());
+            if (null == cliente.getCnpj()) {
+                cpfTeste = cliente.getCpf();
+                cnpjTeste = "1";
+            } else {
+                cnpjTeste = cliente.getCnpj();
+                cpfTeste = "1";
+            }
+            
             Client client = ClientBuilder.newClient();
-            Response resp = client.target("http://localhost:8084/SistemaDOR2/webresources/WsDOR/VerificaNegativado/" + cliente)
-                    .request(MediaType.APPLICATION_JSON).get();
-            Cliente clienteNegativado = resp.readEntity(Cliente.class);
-            if(clienteNegativado == null || !clienteNegativado.getStatusDOR()){
+            Cliente clienteTeste = client.target("http://localhost:8084/SistemaDOR2/webresources/WsSistemaDOR/VerificaNegativado/" + cpfTeste + "/" + cnpjTeste).
+                    request(MediaType.APPLICATION_JSON).get(Cliente.class);
+            if (clienteTeste == null || !clienteTeste.getStatusDOR()) {
                 contas = (ArrayList<Conta>) session.getAttribute("contas");
                 Conta contaNova = daoConta.criarConta(agencia, cliente, limite);
                 request.setAttribute("msg", "Nova Conta cadastrada com sucesso.");
                 contas.add(contaNova);
-                session.setAttribute("contas", contas); 
-            }
-            else  {
+                session.setAttribute("contas", contas);
+            } else {
                 request.setAttribute("msg", "Não é possível  realizar cadastro de nova "
                         + " conta corrente, pois consta pendências no sistema de Devedores Originalmente Regulares. "
                         + " Favor regularizar pendências para posteriormente realizar"
                         + " cadastro de conta-corrente.");
-            } 
+            }
             rd = getServletContext().getRequestDispatcher("/portal.jsp");
         }
         rd.forward(request, response);

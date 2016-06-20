@@ -45,15 +45,16 @@ public class Verificacoes extends HttpServlet {
             rd = request.getRequestDispatcher("erro.jsp");
         }
         if ("verificaExistencia".equals(action)) {
-            Conta conta;
+            Conta conta = new Conta();
             Cliente cliente;
             if (tipoPessoa.equals("J")) {
                 cliente = daoCliente.verificaUsuarioExistenteJ(cnpj);
             } else {
                 cliente = daoCliente.verificaUsuarioExistenteF(cpf);
             }
-            conta = daoConta.verificaExistenciaContaByCliente(cliente);
+
             if (cliente != null) {
+                conta = daoConta.verificaExistenciaContaByCliente(cliente);
                 if (conta != null) {
                     request.setAttribute("msg", "Usuário e conta existentes, favor logar no sistema");
                     request.setAttribute("conta", conta);
@@ -63,6 +64,11 @@ public class Verificacoes extends HttpServlet {
                             + " prossiga com cadastro selecionando agência que deseja abrir sua conta.");
                     rd = request.getRequestDispatcher("cadastroconta.jsp");
                 }
+            } else {
+                request.setAttribute("tipoPessoa", tipoPessoa);
+                request.setAttribute("cnpj", cnpj);
+                request.setAttribute("cpf", cpf);
+                rd = request.getRequestDispatcher("cadastro.jsp");
             }
         } else {
             request.setAttribute("tipoPessoa", tipoPessoa);

@@ -1,6 +1,5 @@
 <%-- 
     Document   : cadastroconta
-    Created on : Jun 11, 2016, 4:14:23 PM
     Author     : Andre
 --%>
 
@@ -19,7 +18,7 @@
             <div class="" style="padding-left: 250px;">
                 <h2>Banco VSF - Virtude do Sistema Financeiro</h2>
                 <div>
-                        <form action="Cadastros?action=cadconta" method="POST">
+                        <form action="Cadastros?action=cadastroContaNova" method="POST">
                         <div class="panel panel-default">
                             <table class="panel-heading">
                                 <labe class="panel-title">Abertura de conta corrente</labe>

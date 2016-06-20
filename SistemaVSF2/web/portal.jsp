@@ -67,7 +67,7 @@
                         </table>
                     </div>
                     <div>
-                        <c:url var="cadastrarConta" value="Verificacoes?action=verificaNegativado" />
+                        <c:url var="cadastrarConta" value="cadastroNovaConta.jsp" />
                         <c:url var="allContas" value="Portal?action=todasContas" />
                         <c:url var="transfers" value="transferencias.jsp" />
                         <c:url var="transfTerc" value="transfTerceiros.jsp" />
@@ -99,6 +99,7 @@
                         <a href="${encerrar}" >Encerramento Conta-Corrente</a>
                     </div>
             </div>
+                    ${msg}
         </div>
     </body>
 </html>

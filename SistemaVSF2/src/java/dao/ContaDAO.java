@@ -256,7 +256,7 @@ public class ContaDAO {
             }
             pstmt.clearParameters();
             valorconta = valorconta + 1;
-            if (cliente.getCpf().isEmpty()) {
+            if (null == cliente.getCpf() || cliente.getCpf().isEmpty()) {
                 conta = new ContaPj();
                 conta.setTipoConta("J");
             } else {
