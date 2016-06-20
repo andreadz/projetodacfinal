@@ -22,9 +22,10 @@ public class ClienteDAO {
 
     private final String stmInserirCliente = "INSERT INTO clientes (nome,cpf,cnpj,statusDOR) values (?,?,?,1)";
 
-    private final String stmNegativarClienteFis = "UPDATE clientes SET statusDOR=0 WHERE cpf=?";
-    private final String stmNegativarClienteJur = "UPDATE clientes SET statusDOR=0 WHERE cnpj=?";
-    private final String stmAtivarCliente = "UPDATE clientes SET statusDOR=1 WHERE id=?";
+    private final String stmAtivarClienteFis = "UPDATE clientes SET statusDOR=0 WHERE cpf=?";
+    private final String stmAtivarClienteJur = "UPDATE clientes SET statusDOR=0 WHERE cnpj=?";
+    private final String stmNegativarClienteFis = "UPDATE clientes SET statusDOR=1 WHERE cpf=?";
+    private final String stmNegativarClienteJur = "UPDATE clientes SET statusDOR=1 WHERE cnpj=?";
 
     private final String stmSelClientesAtivos = "SELECT * FROM clientes WHERE statusDOR=1";
     private final String stmSelClientesNegativos = "SELECT * FROM clientes WHERE statusDOR=0";
@@ -113,10 +114,10 @@ public class ClienteDAO {
         try {
             conexao = DbConexao.getConection();
              if (null == cliente.getCpf()) {
-                pstmt = conexao.prepareStatement(stmNegativarClienteJur, Statement.RETURN_GENERATED_KEYS);
+                pstmt = conexao.prepareStatement(stmAtivarClienteJur, Statement.RETURN_GENERATED_KEYS);
                 pstmt.setString(1, cliente.getCnpj());
             } else {
-                pstmt = conexao.prepareStatement(stmNegativarClienteFis, Statement.RETURN_GENERATED_KEYS);
+                pstmt = conexao.prepareStatement(stmAtivarClienteFis, Statement.RETURN_GENERATED_KEYS);
                 pstmt.setString(1, cliente.getCpf());
             }
             pstmt.executeUpdate();

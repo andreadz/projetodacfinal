@@ -6,6 +6,7 @@
 package teste;
 
 import dao.ClienteDAO;
+import dao.HistoricoDAO;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Produces;
@@ -17,6 +18,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import models.Historico;
 import vsf.Cliente;
 
 /**
@@ -82,6 +84,10 @@ public class WsSistemaDORResource {
         if(daoCliente.cadastrarCliente(cliente)){
             cliente.setStatusDOR(Boolean.TRUE);
         }
+        Historico historico = new Historico();
+        historico.setEmpresa("");
+        HistoricoDAO daoHistorico = new HistoricoDAO();
+        daoHistorico.cadastrarHistorico(cliente, historico);
         return Response.status(Response.Status.OK).header("Access-Control-Allow-Origin", "*").entity(cliente).build();
     }
     
@@ -92,7 +98,11 @@ public class WsSistemaDORResource {
         ClienteDAO daoFunc = new ClienteDAO();
         if(daoFunc.inativarCliente(cliente)){
             cliente.setStatusDOR(Boolean.TRUE);
-        }        
+        }
+        Historico historico = new Historico();
+        historico.setEmpresa("");
+        HistoricoDAO daoHistorico = new HistoricoDAO();
+        daoHistorico.cadastrarHistorico(cliente, historico);
         return Response.status(Response.Status.OK).header("Access-Control-Allow-Origin", "*").entity(cliente).build();
     }
     @PUT
@@ -103,6 +113,8 @@ public class WsSistemaDORResource {
         if(daoFunc.ativarCliente(cliente)){
             cliente.setStatusDOR(Boolean.FALSE);
         }        
+        HistoricoDAO daoHistorico = new HistoricoDAO();
+        daoHistorico.cadastroReativacao(cliente);
         return Response.status(Response.Status.OK).header("Access-Control-Allow-Origin", "*").entity(cliente).build();
     }
 }
