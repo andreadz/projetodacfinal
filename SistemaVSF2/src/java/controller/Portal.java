@@ -194,7 +194,7 @@ public class Portal extends HttpServlet {
                 //quantidadeDias = daoConta.verificaStatusDOR(clienteRecebeTransf, contaRecebeTransf);
 
                 if (contaRecebeTransf.getSaldo() >= 0) {
-                    boolean verifica = liberaClienteDOR(cliente);
+                    boolean verifica = liberaClienteDOR(clienteRecebeTransf);
                     if (verifica) {
                         request.setAttribute("mensagemDOR", "Cliente que recebeu depósito foi removido da lista de Devedores do DOR.");
                     }
@@ -244,7 +244,7 @@ public class Portal extends HttpServlet {
                     quantidadeDias = daoConta.verificaStatusDOR(clienteRecebeTransf, contaRecebeTransf);
 
                     if (contaRecebeTransf.getSaldo() >= 0) {
-                        boolean verifica = liberaClienteDOR(cliente);
+                        boolean verifica = liberaClienteDOR(clienteRecebeTransf);
                         if (verifica) {
                             request.setAttribute("mensagemDOR", "Cliente que recebeu transferência foi removido da lista de Devedores do DOR.");
                         }
@@ -306,7 +306,7 @@ public class Portal extends HttpServlet {
                 quantidadeDias = daoConta.verificaStatusDOR(clienteRecebeTransf, contaRecebeTransf);
 
                 if (contaRecebeTransf.getSaldo() >= 0) {
-                    boolean verifica = liberaClienteDOR(cliente);
+                    boolean verifica = liberaClienteDOR(clienteRecebeTransf);
                     if (verifica) {
                         request.setAttribute("mensagemDOR", "Cliente que recebeu depósito foi removido da lista de Devedores do DOR.");
                     }
@@ -373,11 +373,6 @@ public class Portal extends HttpServlet {
         return contaRecebe;
     }
 
-//    public Boolean dataNegativacaoMaior10(Conta conta, Date dataAtual){
-//        if(conta.getDataNegativacao().getD){
-//            
-//        }
-//    }
     public Boolean liberaClienteDOR(Cliente cliente) {
         String cnpj = "";
         String cpf = "";
@@ -395,7 +390,7 @@ public class Portal extends HttpServlet {
         if (clienteTeste == null || !clienteTeste.getStatusDOR()) {
             return false;
         } else {
-            Response resp = client.target("http://localhost:8084/SistemaDOR2/webresources/WsSistemaDOR/AlteraParaNegativado/")
+            Response resp = client.target("http://localhost:8084/SistemaDOR2/webresources/WsSistemaDOR/Reativar/")
                     .request(MediaType.APPLICATION_JSON).put(Entity.json(cliente));
             clienteTeste = resp.readEntity(Cliente.class);
             return true;
@@ -425,8 +420,6 @@ public class Portal extends HttpServlet {
                     .request(MediaType.APPLICATION_JSON).put(Entity.json(cliente));
             clienteTeste = resp.readEntity(Cliente.class);
         }
-
-        //return clienteNegativado;
         return clienteTeste;
     }
 
