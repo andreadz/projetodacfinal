@@ -5,6 +5,7 @@
 --%>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -57,8 +58,10 @@
                                     <tr>
                                         <td style="padding: 5px;"> ${contaCli.numAgencia} </td>
                                         <td style="padding: 5px;"> ${contaCli.numConta} </td>
-                                        <td style="padding: 5px;"> ${contaCli.saldo} </td>                                       
-                                        <td style="padding: 5px;"> ${contaCli.limite} </td>
+                                        <td style="padding: 5px;"> <fmt:formatNumber value="${contaCli.saldo}" type="currency" /></td> 
+                                        
+                                        <td style="padding: 5px;"> <fmt:formatNumber value="${contaCli.limite}" type="currency" /></td>
+                                        
                                         <c:if test="${contaCli.statusConta == true}" >
                                             <td style="padding: 5px;"> Ativa </td>
                                         </c:if>

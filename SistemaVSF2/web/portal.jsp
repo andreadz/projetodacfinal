@@ -46,8 +46,8 @@
                             <tbody>
                                 <tr>
                                     <td style="padding: 5px;"> ${conta.numConta} </td>
-                                    <td style="padding: 5px;"> ${conta.saldo} </td>
-                                    <td style="padding: 5px;"> ${conta.limite} </td>
+                                    <td style="padding: 5px;"><fmt:formatNumber value="${conta.saldo}" type="currency" /></td>
+                                    <td style="padding: 5px;"><fmt:formatNumber value="${conta.limite}" type="currency" /></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -61,7 +61,7 @@
                             <tbody>
                                 <tr>
                                     <td style="padding: 5px;">${contas.size()}</td>
-                                    <td style="padding: 5px;">${totalSaldos}</td>
+                                    <td style="padding: 5px;"><fmt:formatNumber value="${totalSaldos}" type="currency" /></td>
                                 </tr>
                             </tbody>
                         </table>
