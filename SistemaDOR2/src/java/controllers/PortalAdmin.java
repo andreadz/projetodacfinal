@@ -6,6 +6,7 @@
 package controllers;
 
 import dao.ClienteDAO;
+import dao.HistoricoDAO;
 import dao.UsuarioDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import models.Historico;
 import models.Usuario;
 import vsf.Cliente;
 
@@ -42,10 +44,15 @@ public class PortalAdmin extends HttpServlet {
         UsuarioDAO daoUsuario = new UsuarioDAO();
         ClienteDAO daoCliente = new ClienteDAO();
         HttpSession session = request.getSession();
+        Historico historico = new Historico();
+        HistoricoDAO daoHistorico = new HistoricoDAO();
+        ArrayList<Cliente> clientesNome;
+        ArrayList<Historico> historicos;
+        Cliente clienteBusca;
         Usuario usuario = new Usuario();
         Usuario usuarioSessao = (Usuario) session.getAttribute("usuario");
         ArrayList<Usuario> usuarios;
-        RequestDispatcher rd = getServletContext().getRequestDispatcher("/paginasCRUDAdmin/portalAdmin.jsp");
+        RequestDispatcher rd = getServletContext().getRequestDispatcher("/portalAdmin.jsp");
 
         if (usuarioSessao == null) {
             request.setAttribute("msg", "Não há nenhuma sessão inicializada.");
@@ -55,12 +62,12 @@ public class PortalAdmin extends HttpServlet {
             int idUsuario = Integer.parseInt(request.getParameter("idUsuario"));
             usuario = daoUsuario.pegarUsuarioById(idUsuario);
             request.setAttribute("usuario", usuario);
-            rd = getServletContext().getRequestDispatcher("/paginasCRUDAdmin/editarUsuario.jsp");
+            rd = getServletContext().getRequestDispatcher("/editarUsuario.jsp");
         } else if ("requerExcluirUsuario".equals(action)) {
             int idUsuario = Integer.parseInt(request.getParameter("idUsuario"));
             usuario = daoUsuario.pegarUsuarioById(idUsuario);
             request.setAttribute("usuario", usuario);
-            rd = getServletContext().getRequestDispatcher("/paginasCRUDAdmin/excluirUsuario.jsp");
+            rd = getServletContext().getRequestDispatcher("/excluirUsuario.jsp");
         } else if ("editarUsuario".equals(action)) {
             String nome = request.getParameter("nome");
             String email = request.getParameter("email");
@@ -81,7 +88,7 @@ public class PortalAdmin extends HttpServlet {
             daoUsuario.inativarUsuario(usuario);
             usuarios = daoUsuario.todosUsuariosAtivos();
             session.setAttribute("usuarios", usuarios);
-            request.setAttribute("msg", "Inativação realizada com sucesso.");
+            request.setAttribute("msg", "Exclusão realizada com sucesso.");
 
         } else if ("cadUsuario".equals(action)) {
             String nome = request.getParameter("nome");
@@ -97,27 +104,81 @@ public class PortalAdmin extends HttpServlet {
             request.setAttribute("msg", "Cadastro realizado com sucesso.");
             usuarios = daoUsuario.todosUsuariosAtivos();
             session.setAttribute("usuarios", usuarios);
-        } else if ("buscarCliente".equals(action)) {
+        } //Ações para Negativar ou Inativar Clientes
+        else if ("buscarCliente".equals(action)) {
             String nome = request.getParameter("buscaNome").isEmpty() ? "" : request.getParameter("buscaNome");
             String cpf = request.getParameter("buscaCPF").isEmpty() ? "" : request.getParameter("buscaCPF");
-            if (nome.isEmpty()) {
-                ArrayList<Cliente> clientesNome;
+            if (!nome.isEmpty()) {
                 clientesNome = daoCliente.buscaByNome(nome);
                 if (clientesNome.isEmpty()) {
-                    request.setAttribute("msg", "nenhum cliente com esse nome encontrado.");
+                    request.setAttribute("msg", "nenhum cliente encontrado.");
                 }
-                request.setAttribute("clientesNome", clientesNome);
+                session.setAttribute("clientesNome", clientesNome);
+                session.removeAttribute("clienteBusca");
             } else {
-                Cliente clienteBusca;
                 clienteBusca = daoCliente.buscarByCpf(cpf);
                 if (clienteBusca == null) {
-                    request.setAttribute("msg", "nenhum cliente encontrado para este CPF.");
+                    request.setAttribute("msg", "nenhum cliente encontrado.");
                 }
-                request.setAttribute("clienteBusca", clienteBusca);
+                session.setAttribute("clienteBusca", clienteBusca);
+                session.removeAttribute("clientesNome");
             }
+            rd = getServletContext().getRequestDispatcher("/clientes.jsp");
+        } else if ("requerAtivarCliente".equals(action)) {
+            int idCliente = Integer.parseInt(request.getParameter("idCliente"));
+            clienteBusca = daoCliente.pegarClienteById(idCliente);
+            session.setAttribute("clienteBusca", clienteBusca);
+            rd = getServletContext().getRequestDispatcher("/ativarCliente.jsp");
+        } else if ("requerNegativarCliente".equals(action)) {
+            int idCliente = Integer.parseInt(request.getParameter("idCliente"));
+            clienteBusca = daoCliente.pegarClienteById(idCliente);
+            session.setAttribute("clienteBusca", clienteBusca);
+            rd = getServletContext().getRequestDispatcher("/inativarCliente.jsp");
+        } else if ("ativarCliente".equals(action)) {
+            String empresa = request.getParameter("nomeEmpresa");
+            int idCliente = Integer.parseInt(request.getParameter("idCliente"));
+//            String nome = request.getParameter("nome");
+//            String email = request.getParameter("email");
+//            int perfil = Integer.parseInt(request.getParameter("perfilUsuario"));
+//            int idUsuario = Integer.parseInt(request.getParameter("idUsuario"));
+            clienteBusca = daoCliente.pegarClienteById(idCliente);
+            clienteBusca.setStatusDOR(Boolean.FALSE);
+            daoCliente.ativarCliente(clienteBusca);
+            historico.setEmpresa(empresa);
+            daoHistorico.cadastroReativacaoByDOR(clienteBusca, historico);
+            session.setAttribute("clienteBusca", clienteBusca);
+            request.setAttribute("msg", "Ativação realizada com sucesso.");
+        } else if ("inativarCliente".equals(action)) {
+            String empresa = request.getParameter("nomeEmpresa");
+            int idCliente = Integer.parseInt(request.getParameter("idCliente"));
+//            String email = request.getParameter("email");
+//            int perfil = Integer.parseInt(request.getParameter("perfilUsuario"));
+//            int idUsuario = Integer.parseInt(request.getParameter("idUsuario"));
+            clienteBusca = daoCliente.pegarClienteById(idCliente);
+            clienteBusca.setStatusDOR(Boolean.TRUE);
+            daoCliente.inativarCliente(clienteBusca);
+            historico.setEmpresa(empresa);
+            daoHistorico.cadastroInativacaoByDOR(clienteBusca, historico);
+            session.setAttribute("clienteBusca", clienteBusca);
+            request.setAttribute("msg", "Ativação realizada com sucesso.");
+        }
+         else if ("historico".equals(action)) {
+            int idCliente = Integer.parseInt(request.getParameter("idCliente"));
+//            String email = request.getParameter("email");
+//            int perfil = Integer.parseInt(request.getParameter("perfilUsuario"));
+//            int idUsuario = Integer.parseInt(request.getParameter("idUsuario"));
+            clienteBusca = daoCliente.pegarClienteById(idCliente);
+            historicos = daoHistorico.historicoByCliente(idCliente);
+            session.setAttribute("clienteBusca", clienteBusca);
+            session.setAttribute("historicos", historicos);
+            if(historicos.isEmpty()){
+                request.setAttribute("msg", "Nenhum histórico encontrado.");
+            }
+            else{
+                rd = getServletContext().getRequestDispatcher("/historicos.jsp");
+            }            
         }
 
-        //Ações para Negativar ou Inativar Clientes
         rd.forward(request, response);
     }
 

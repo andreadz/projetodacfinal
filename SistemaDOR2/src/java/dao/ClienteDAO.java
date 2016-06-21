@@ -32,6 +32,8 @@ public class ClienteDAO {
     private final String stmSelClientes = "SELECT * FROM clientes ";
     private final String stmPegarClienteJur = "SELECT * FROM clientes WHERE cnpj=?";
     private final String stmPegarClienteFis = "SELECT * FROM clientes WHERE cpf=?";
+    private final String stmPegarClienteById = "SELECT * FROM clientes WHERE id=?";
+    
 
     public Boolean cadastrarCliente(Cliente cliente) {
         Connection conexao = null;
@@ -286,6 +288,43 @@ public class ClienteDAO {
             conexao = DbConexao.getConection();
                 pstmt = conexao.prepareStatement(stmPegarClienteFis, Statement.RETURN_GENERATED_KEYS);
                 pstmt.setString(1, cpf);
+            
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                cliente.setId(rs.getInt("id"));
+                cliente.setNome(rs.getString("nome"));
+                cliente.setCpf(rs.getString("cpf"));
+                cliente.setCnpj(rs.getString("cnpj"));
+                cliente.setStatusDOR(rs.getBoolean("statusDOR"));
+            }
+            else{
+                cliente = null;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                pstmt.close();
+            } catch (Exception ex) {
+                System.out.println("Erro:" + ex.getMessage());
+            }
+            try {
+                conexao.close();
+            } catch (Exception ex) {
+                System.out.println("Erro:" + ex.getMessage());
+            }
+        }
+        return cliente;
+    }
+    
+    public Cliente pegarClienteById(int id) {
+        Connection conexao = null;
+        PreparedStatement pstmt = null;
+        Cliente cliente = new Cliente();
+        try {
+            conexao = DbConexao.getConection();
+                pstmt = conexao.prepareStatement(stmPegarClienteById, Statement.RETURN_GENERATED_KEYS);
+                pstmt.setInt(1, id);
             
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {

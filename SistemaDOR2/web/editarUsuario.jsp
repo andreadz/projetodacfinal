@@ -55,7 +55,7 @@
                                     </tr>    
                                     <tr>
                                         <td>
-                                            <input type="reset" class="btn btn-sm btn-default" value="Cancelar" />
+                                            <a href="portalAdmin.jsp" class="btn btn-default">Cancelar</a>
                                             <input type="submit" class="btn btn-sm btn-primary" value="Enviar" />
                                         </td>
                                     </tr>

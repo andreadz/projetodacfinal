@@ -22,7 +22,7 @@
                     <form action="PortalAdmin?action=excluirUsuario" method="POST">
                         <div class="panel panel-default">
                             <table class="panel-heading">
-                                <labe class="panel-title">Edição de usuário</labe>
+                                <labe class="panel-title">Exclusão de usuário</labe>
                                 <tbody class="panel-body">
                                     <tr>                                        
                                         <td class="col-md-2">
@@ -55,7 +55,7 @@
                                     </tr>    
                                     <tr>
                                         <td>
-                                            <input type="reset" class="btn btn-sm btn-default" value="Cancelar" />
+                                            <a href="portalAdmin.jsp" class="btn btn-default">Cancelar</a>
                                             <input type="submit" class="btn btn-sm btn-primary" value="Enviar" />
                                         </td>
                                     </tr>

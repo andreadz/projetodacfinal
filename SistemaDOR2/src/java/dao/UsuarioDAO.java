@@ -26,7 +26,7 @@ public class UsuarioDAO {
     private final String stmPegarUsuario = "SELECT * FROM usuarios WHERE id=?";
     private final String stmSelUsuariosAtivos = "SELECT * FROM usuarios WHERE statusUsuario=1";
     private final String stmSelTodosUsuarios = "SELECT * FROM usuarios ";
-    private final String stmInativarUsuario = "UPDATE usuarios SET statusUsuario=0 WHERE id=?";
+    private final String stmInativarUsuario = "DELETE FROM usuarios WHERE id=?";
 
     private final String stmLogin = "SELECT * FROM usuarios WHERE email=? AND senha=?";
 
