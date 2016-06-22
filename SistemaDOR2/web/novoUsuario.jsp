@@ -15,33 +15,33 @@
         <title>DOR</title>
     </head>
     <body>
-        <div class="container theme-showcase" role="main" style="padding-top: 100px;">
-            <div class="" style="padding-left: 250px;">
+       <div class="container " role="main" style="padding-top: 100px;">
+            <div class="jumbotron" style="padding-left: 250px;">
                 <h2>DOR</h2>
-                <div>
+                
                     <form action="PortalAdmin?action=cadUsuario" method="POST">
-                        <div class="panel panel-default">
-                            <table class="panel-heading">
-                                <labe class="panel-title">Cadastro de usuário</labe>
-                                <tbody class="panel-body">
+                       
+                            <table >
+                                <label>Cadastro de usuário</label>
+                                <tbody >
                                     <tr>                                        
-                                        <td class="col-md-2">
+                                        <td >
                                             <label>Nome Completo</label>
                                         </td> 
                                     </tr>
                                     <tr>                                        
-                                        <td class="col-md-2">
-                                            <input type="text" maxlength="50" size="50" name="nome" required="required" />
+                                        <td >
+                                            <input type="text" class="form-control" maxlength="50" size="50" name="nome" required="required" />
                                         </td>
                                     </tr>                                    
                                     <tr>                                        
                                         <td>
                                             <label>Email</label>
-                                            <input type="text" maxlenght="50" name="email" required="required" />
+                                            <input type="text" class="form-control" maxlenght="50" name="email" required="required" />
                                         </td>
                                         <td>
                                             <label>Perfil</label>
-                                            <select name="perfilUsuario">
+                                            <select name="perfilUsuario" class="form-control">
                                                 <option value="1">Administrador</option>
                                                 <option value="2">Usuário</option>
                                             </select>
@@ -50,13 +50,14 @@
                                     <tr>                                    
                                         <td>
                                             <label>Senha</label>
-                                            <input type="password" maxlength="10" name="senha" required="required"/>
+                                            <input type="password" class="form-control" maxlength="10" name="senha" required="required"/>
                                         </td>
                                         <td>
                                             <label>Confirma Senha</label>
-                                            <input type="password" maxlength="10" name="confirmaSenha" required="required"/>
+                                            <input type="password" class="form-control" maxlength="10" name="confirmaSenha" required="required"/>
                                         </td>
                                     </tr>
+                                    <tr><td>&nbsp; &nbsp;</td></tr>
                                     <tr>
                                         <td>
                                             <a href="portalAdmin.jsp" class="btn btn-default">Cancelar</a>
@@ -67,8 +68,8 @@
                             </table>
                     </form>
                     ${msg}
-                </div>
-            </div>
+                
+           
         </div>
     </div>
 </body>

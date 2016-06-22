@@ -15,33 +15,33 @@
         <title>DOR</title>
     </head>
     <body>
-        <div class="container theme-showcase" role="main" style="padding-top: 100px;">
-            <div class="" style="padding-left: 250px;">
+        <div class="container " role="main" style="padding-top: 100px;">
+            <div class="jumbotron" style="padding-left: 250px;">
                 <h2>DOR</h2>
                 <div>
                     <form action="PortalAdmin?action=excluirUsuario" method="POST">
-                        <div class="panel panel-default">
-                            <table class="panel-heading">
-                                <labe class="panel-title">Exclusão de usuário</labe>
-                                <tbody class="panel-body">
+                        <div >
+                            <table >
+                                <label>Exclusão de usuário</label>
+                                <tbody >
                                     <tr>                                        
-                                        <td class="col-md-2">
+                                        <td >
                                             <label>Nome Completo</label>
                                         </td> 
                                     </tr>
                                     <tr>                                        
-                                        <td class="col-md-2">
-                                            <input type="text" maxlength="50" size="50" name="nome" disabled="true" value="${usuario.nome}" />
+                                        <td >
+                                            <input type="text" class="form-control" maxlength="50" size="50" name="nome" disabled="true" value="${usuario.nome}" />
                                         </td>
                                     </tr>                                    
                                     <tr>                                        
                                         <td>
                                             <label>Email</label>
-                                            <input type="text" maxlenght="50" name="email" disabled="true" value="${usuario.email}" />
+                                            <input type="text" class="form-control" maxlenght="50" name="email" disabled="true" value="${usuario.email}" />
                                         </td>
                                         <td>
                                             <label>Perfil</label>
-                                            <select name="perfilUsuario" disabled="true">
+                                            <select name="perfilUsuario" class="form-control" disabled="true">
                                                 <c:if test="${usuario.perfil == 1}" >
                                                     <option value="1" selected="selected">Administrador</option>
                                                     <option value="2">Usuário</option>
@@ -53,6 +53,7 @@
                                             </select>
                                         </td>
                                     </tr>    
+                                    <tr><td>&nbsp; &nbsp;</td></tr>
                                     <tr>
                                         <td>
                                             <a href="portalAdmin.jsp" class="btn btn-default">Cancelar</a>

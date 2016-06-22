@@ -19,39 +19,45 @@
             <c:if test="">
                 <div class="alert alert-danger" role="alert">
                     <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                    <span class="sr-only">Error:</span>
+                    <span class="sr-only bg-danger">Error:</span>
                     ${msg}
                 </div>
             </c:if>
             <c:if test="">
                 <div class="alert alert-success" role="alert">
                     <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                    <span class="sr-only">Sucesso</span>
+                    <span class="sr-only bg-success">Sucesso</span>
                     ${msg}
                 </div>
             </c:if>
 
             <div class="jumbotron" style="padding-left: 250px;">
-                <h3>DOR - Devedores Originalmente Regulares</h3>
-                    <div>
-                        <form action="ProcessaLoginLogout?action=acessar" method="POST">
+                <h2 class="form-signin-heading">DOR - Devedores Originalmente Regulares</h2>
+                    <div class="container">
+                        <form action="ProcessaLoginLogout?action=acessar" method="POST" class="form-signin">
+                            
                             <table>
                                 <tbody>
                                     <tr>
-                                        <td style="padding: 10px;">
-                                            <label>E-mail</label>            
-                                            <input type="text" name="email" maxlength="50" required="required"  />
+                                        <td >
+                                                      
+                                            <input type="email" name="email" maxlength="50" required="required" class="form-control" placeholder="Email" />
                                         </td>
-                                        <td style="padding: 10px;">
-                                            <label>Senha</label>
-                                            <input type="password" name="senha" maxlength="15" required="required" />
-                                        </td>
-                                        <td style="padding-left: 10px;">
+                                        </tr>
+                                        <tr>
+                                        <td >
+                                            
+                                            <input type="password" name="senha" maxlength="15" required="required"  class="form-control" placeholder="Senha"/>
+                                        </td>                                        
+                                        </tr>
+                                        <tr><td>&nbsp; &nbsp;</td></tr>
+                                        <tr><td style="padding-left: 10px;">
                                             <input type="submit" class="btn btn-group-sm btn-primary" value="Acessar" />
                                         </td>
-                                    </tr>
+                                    
                                 </tbody>
                             </table>
+                            
                         </form>
                     </div>
             </div>

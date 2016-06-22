@@ -34,16 +34,18 @@
                         </table>
                     </form>
                 </div>
-                <form method="POST" action="PortalAdmin?action=buscarCliente">
+                                    
+                <form method="POST" action="PortalAdmin?action=buscarCliente" >
                     <div>
                         Buscar por CPF
-                        <input type="text" name="buscaCPF" maxlength="11" />
+                        <input type="text" style="width:50%" name="buscaCPF" maxlength="11" class="form-control" />
                     </div>
                     <div>
                         Buscar cliente por nome
-                        <input type="text" name="buscaNome" maxlength="30" />
+                        <input type="text"  style="width:50%" name="buscaNome" maxlength="30" class="form-control" />
                     </div>
-                    <input type="submit" value="Buscar" />
+                    <p></p>
+                    <input type="submit" value="Buscar" class="btn btn-primary" />
                 </form>
                     <div>
                         <table class="table-striped table-bordered">
@@ -83,6 +85,7 @@
                                 </c:forEach>
                             </tbody>
                         </table>
+                        <p></p>
                         <a href="novoUsuario.jsp" class="btn btn-primary" >Novo Usuário</a> 
                     </div>
                 ${msg}

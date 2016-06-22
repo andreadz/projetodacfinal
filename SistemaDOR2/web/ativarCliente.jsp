@@ -18,60 +18,67 @@
         <div class="container theme-showcase" role="main" style="padding-top: 100px;">
             <div class="" style="padding-left: 250px;">
                 <h2>DOR</h2>
-                <div>
+                <div class="jumbotron" >
                     <form action="PortalAdmin?action=ativarCliente" method="POST">
-                        <div class="panel panel-default">
-                            <table class="panel-heading">
-                                <labe class="panel-title">Reativação de cliente</labe>
+                       
+                            <table >
+                                <label>Reativação de cliente</label>
                                 <tbody class="panel-body">
                                     <tr>                                        
-                                        <td class="col-md-2">
+                                        <td >
                                             <label>Nome Completo</label>
                                         </td> 
                                     </tr>
                                     <tr>                                        
-                                        <td class="col-md-2">
-                                            <input type="text"  disabled="true" value="${clienteBusca.nome}" />
+                                        <td >
+                                            <input type="text"  disabled="true" value="${clienteBusca.nome}" class="form-control" />
                                         </td>
                                     </tr>                                    
+                                    <tr><td>&nbsp; &nbsp;</td></tr>
                                     <tr> 
-                                <c:choose>
-                                    <c:when test="${clienteBusca.cpf != null}">
+                                        <c:choose>
+                                            <c:when test="${clienteBusca.cpf != null}">
                                         <label>CPF</label>
-                                        <td style="padding: 10px;">
-                                            <input type="text" disabled="true" value="${clienteBusca.cpf}" />
+                                        <td >
+                                            <input type="text" disabled="true" value="${clienteBusca.cpf}" class="form-control" />
                                         </td>
                                     </c:when>
                                     <c:when test="${clienteBusca.cnpj != null}">
                                         <label>CNPJ</label>
-                                        <td style="padding: 10px;">
-                                            <input type="text"  disabled="true" value="${clienteBusca.cnpj}" />
+                                        <td >
+                                            <input type="text"  disabled="true" value="${clienteBusca.cnpj}" class="form-control" />
                                         </td>
                                     </c:when>
                                 </c:choose>
-                                <td>
+                                        <td>&nbsp; &nbsp;</td>
+                                <td >
                                     <label>Situação</label>
-                                    <input type="text" disabled="true" placeholder="Negativado" />
+                                    <input type="text" disabled="true" placeholder="Negativado" class="form-control" />
                                 </td>
+                                <td>&nbsp; &nbsp;</td>
+                                
                                 <td>
                                     <label>Empresa</label>
-                                    <input type="text"  name="nomeEmpresa" required="required"  />
+                                    <input type="text"  name="nomeEmpresa" required="required" class="form-control" maxlength="50"/>
                                 </td>
                                 </tr>    
+                                <tr><td>&nbsp; &nbsp;</td></tr>
                                 <tr>
                                     <td>
-                                       <a href="portalAdmin.jsp" class="btn btn-default">Cancelar</a>
-                                        <input type="submit" class="btn btn-sm btn-primary" value="Ativar" />
+                                        <a href="portalAdmin.jsp" class="btn  btn-default">Cancelar</a>
+                                    &nbsp; &nbsp;
+                                        <input type="submit" class="btn btn-sm btn-primary" value="Ativar"  />
                                     </td>
                                 </tr>
-                                <input type="hidden" name="idCliente" value="${clienteBusca.id}" />
+                                <input type="hidden" name="idCliente" value="${clienteBusca.id}" class="form-control" />
                                 </tbody>
                             </table>
+                        </div>
                     </form>
                     ${msg}
+
                 </div>
             </div>
         </div>
-    </div>
-</body>
+    </body>
 </html>
