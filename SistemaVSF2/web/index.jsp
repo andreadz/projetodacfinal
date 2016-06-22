@@ -47,15 +47,15 @@
                                     <tr>
                                         <td style="padding: 10px;">
                                             <label>Agência</label>            
-                                            <input type="text" name="agencia" maxlength="4" size="4"  />
+                                            <input type="text" class="form-control"  name="agencia" maxlength="4" size="4"  />
                                         </td>
                                         <td style="padding: 10px;">
                                             <label>Conta</label>
-                                            <input type="text" name="numConta" maxlength="6" size="6" /> 
+                                            <input type="text" class="form-control"  name="numConta" maxlength="6" size="6" /> 
                                         </td>
                                         <td style="padding: 10px;">
                                             <label>Senha</label>
-                                            <input type="password" name="senha" maxlength="10" />
+                                            <input type="password" class="form-control" name="senha" maxlength="10" />
                                         </td>
                                         <td style="padding-left: 10px;">
                                             <input type="submit" class="btn btn-group-sm btn-primary" value="Acessar" />

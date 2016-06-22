@@ -36,8 +36,8 @@
                     </div> 
                     <div>
                         <form method="POST" action="Portal?action=sacar">
-                            Agência/Conta<input type="text" value="${conta.numAgencia} - ${conta.numConta}" readonly="true" />&nbsp;
-                            Valor <input type="text" name="valor" required="required" pattern="[0-9]+$"  /></br>
+                            Agência/Conta<input type="text" class="form-control" style="width:50%" value="${conta.numAgencia} - ${conta.numConta}" readonly="true" />&nbsp;
+                            Valor <input type="text" class="form-control" style="width:50%" name="valor" required="required" pattern="[0-9]+$"  /></br>
                             <!--Token: <input type="text" name="token" /></br> -->
                             <input type="reset" class="btn btn-sm btn-default" value="Cancelar" /> &nbsp;
                             <input type="submit" class="btn btn-sm btn-warning" value="Sacar" />

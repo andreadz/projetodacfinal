@@ -15,10 +15,10 @@
         <title>Banco VSF</title>
     </head>
     <body>
-        <div class="container theme-showcase" role="main" style="padding-top: 100px;">
+           <div class="container " role="main" style="padding-top: 100px;">
             <div class="jumbotron" style="padding-left: 250px;">
                 <h3>Banco VSF - Virtude do Sistema Financeiro</h1>
-                    <div>
+                  
                         <form>
                             <table>
                                 <tbody>
@@ -33,24 +33,27 @@
                                 </tbody>
                             </table>
                         </form>
-                    </div>       
+                   
                     <div>
                         <form method="POST" action="Portal?action=depositar">
-                            Agência/Conta <input type="text" value="${conta.numAgencia} - ${conta.numConta}" readonly="true" /></br>
-                            Agência/Conta Destino<input type="text"  name="agenciaDeposito" required="required" maxlength="4" /> /
-                            <input type="text" name="contaDeposito" required="required" maxlength="6" />
+                            Agência/Conta <input type="text" class="form-control" style="width:50%" value="${conta.numAgencia} - ${conta.numConta}" readonly="true" /></br>
+                            Agência/Conta Destino<input type="text" class="form-control" style="width:50%"  name="agenciaDeposito" required="required" maxlength="4" /> /
+                            <input type="text" class="form-control"name="contaDeposito" style="width:50%" required="required" maxlength="6" />
                             &nbsp;
-                            Valor <input type="text" name="valor" required="required" maxlength="18" /> </br>
+                            Valor <input type="text" class="form-control" name="valor" style="width:50%" required="required" maxlength="18" /> </br>
                             <!-- <div class="input-group">
                                  <span class="input-group-addon">Valor</span>
                                  <input type="text" name class="form-control" aria-label="Amount (to the nearest dollar)">
                                  <span class="input-group-addon">.00</span>
                              </div>
                              Token: <input type="text" name="token" /></br> -->
-                            <input type="reset" class="btn btn-sm btn-default" value="Cancelar" /> &nbsp;
+                            <input type="reset"  class="btn btn-sm btn-default" value="Cancelar" /> &nbsp;
                             <input type="submit" class="btn btn-sm btn-warning" value="Depositar" />
+                            
+                            
                         </form>
                     </div>
+                            <br>
                     <div>
                         <c:url var="allContas" value="Portal?action=todasContas" />
                         <c:url var="transfers" value="transferencias.jsp" />

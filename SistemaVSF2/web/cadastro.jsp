@@ -16,60 +16,60 @@
         <title>Cadastro</title>
     </head>
     <body>
-        <div class="container theme-showcase" role="main" style="padding-top: 100px;">
-            <div class="" style="padding-left: 250px;">
+        <div class="container " role="main" style="padding-top: 100px;">
+            <div class="jumbotron" style="padding-left: 250px;">
                 <h2>Banco VSF - Virtude do Sistema Financeiro</h2>
-                <div>
+                
                     <form action="Cadastros?action=cadcliente" method="POST">
-                        <div class="panel panel-default">
-                            <table class="panel-heading">
-                                <labe class="panel-title">Cadastro de cliente</labe>
-                                <tbody class="panel-body">
+                      
+                            <table >
+                                <label >Cadastro de cliente</label>
+                                <tbody>
                                     <tr>                                        
-                                        <td class="col-md-2">
+                                        <td >
                                             <label>Nome Completo</label>
                                         </td> 
-                                        <td class="col-md-1">
+                                        <td >
                                             <label>RG</label>
                                         </td> 
                                     </tr>
                                     <tr>                                        
-                                        <td class="col-md-2">
-                                            <input type="text" maxlength="50" size="50" name="nome" required="required" />
+                                        <td >
+                                            <input type="text" class="form-control" maxlength="50" size="50" name="nome" required="required" />
                                         </td>
-                                        <td class="col-md-1">                                        
-                                            <input type="text" maxlength="9" name="rg" required="required"/>
+                                        <td >                                        
+                                            <input type="text" class="form-control" maxlength="9" name="rg" required="required"/>
                                         </td>
                                     </tr>
                                     <tr>
 
                                         <td colspan="2">
                                             <label>Endereço</label>
-                                            <input type="text" maxlenght="40" name="endereco" required="required"/>
+                                            <input type="text" class="form-control" maxlenght="40" name="endereco" required="required"/>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>
                                             <label>Número</label>
-                                            <input type="text" maxlenght="5" name="numero" required="required"/>
+                                            <input type="text" class="form-control" maxlenght="5" name="numero" required="required"/>
                                         </td>
                                         <td>
                                             <label>Complemento</label>
-                                            <input type="text" maxlenght="15" name="complemento" required="required"/>
+                                            <input type="text" class="form-control" maxlenght="15" name="complemento" required="required"/>
                                         </td>
                                         <td>
                                             <label>CEP</label>
-                                            <input type="text" maxlenght="8" name="cep" required="required" />
+                                            <input type="text" class="form-control" maxlenght="8" name="cep" required="required" />
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>
                                             <label>Telefone</label>
-                                            <input type="text" maxlenght="11" name="telefone" required="required" />
+                                            <input type="text" class="form-control" maxlenght="11" name="telefone" required="required" />
                                         </td>
                                         <td>
                                             <label>Email</label>
-                                            <input type="text" maxlenght="25" name="email" required="required" />
+                                            <input type="text" class="form-control" maxlenght="25" name="email" required="required" />
                                         </td>
                                     </tr>
                                     <tr>
@@ -93,7 +93,7 @@
                                                 <span class="input-group-addon">
                                                     <input type="radio" name="tipoConta" value="J" checked="true"  />
                                                 </span>
-                                                <input id="cnpj" type="text" name="cnpj" class="form-control" value="${cnpj}"  readonly="true"  />
+                                                <input id="cnpj" type="text" class="form-control" name="cnpj" class="form-control" value="${cnpj}"  readonly="true"  />
                                                 <span class="input-group-addon">
                                                     CNPJ - Conta Jurídica
                                                 </span>
@@ -110,19 +110,20 @@
                                 <tr>
                                     <td>
                                         <label>Renda</label>
-                                        <input type="text" maxlength="18" name="renda" required="required"/>
+                                        <input type="text"  class="form-control"maxlength="18" name="renda" required="required"/>
                                     </td>
                                     <td>
                                         <label>Senha</label>
-                                        <input type="password" maxlength="10" name="senha" required="required"/>
+                                        <input type="password" class="form-control" maxlength="10" name="senha" required="required"/>
                                     </td>
                                     <td>
                                         <label>Confirma Senha</label>
-                                        <input type="password" maxlength="10" name="confirmaSenha" required="required"/>
+                                        <input type="password" class="form-control" maxlength="10" name="confirmaSenha" required="required"/>
                                     </td>
                                     <td>
                                     </td>
                                 </tr>
+                                <td>&nbsp; &nbsp;</td>
                                 <tr>
                                     <td>
                                         <input type="reset" class="btn btn-sm btn-default" value="Cancelar" />
@@ -134,8 +135,8 @@
                             <div>
                                 </form>
                             </div>
-                        </div>
-                </div>
+                        
+                
             </div>
     </body>
 </html>

@@ -19,7 +19,7 @@
 
         <div class="container theme-showcase" role="main" style="padding-top: 100px;">
             <div class="jumbotron" style="padding-left: 250px;">
-                <h3>Banco VSF - Virtude do Sistema Financeiro</h1>
+                <h3>Banco VSF - Verifica Existência</h3>
                     <div>
                         <form action="Portal?action=acessar" method="POST">
                             <table>
@@ -46,7 +46,7 @@
                                     </c:if>
                                 </c:forEach>                            
                             </select>    &nbsp;
-                            Valor <input type="text" name="valor" required="required" /></br>
+                            Valor <input type="text" name="valor"  class="form-control" style="width:50%"  required="required" /></br>
                             <!--Token: <input type="text" name="token" /></br>-->
                             <input type="reset" class="btn btn-sm btn-default" value="Cancelar" /> &nbsp;
                             <input type="submit" class="btn btn-sm btn-warning" value="Transferir" />

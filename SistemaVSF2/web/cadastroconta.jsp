@@ -15,18 +15,18 @@
         <title>Cadastro</title>
     </head>
     <body>
-        <div class="container theme-showcase" role="main" style="padding-top: 100px;">
-            <div class="" style="padding-left: 250px;">
+         <div class="container " role="main" style="padding-top: 100px;">
+            <div class="jumbotron" style="padding-left: 250px;">
                 <h2>Banco VSF - Virtude do Sistema Financeiro</h2>
-                <div>
+               
                         <form action="Cadastros?action=cadconta" method="POST">
-                        <div class="panel panel-default">
-                            <table class="panel-heading">
-                                <labe class="panel-title">Abertura de conta corrente</labe>
-                                <tbody class="panel-body">
+                        
+                            <table >
+                                <label>Abertura de conta corrente</label>
+                                <tbody>
                                     <tr>                                        
-                                        <td class="col-md-2">
-                                            <select name="agencia" class="focus">
+                                        <td >
+                                            <select name="agencia" class="focus" class="form-control">
                                                 <option value="7859">Agência Agrárias - Cabral</option>
                                                 <option value="7055">Agência Santos Andrade - Centro</option>
                                                 <option value="7089">Agência Reitoria - Centro</option>
@@ -38,7 +38,7 @@
                                     <tr>
                                         ${msg}
                                     </tr>
-                                        
+                                        <td>&nbsp; &nbsp;</td>
                                     <tr>
                                         <td>
                                             <input type="reset" class="btn btn-sm btn-default" value="Cancelar" />
@@ -50,7 +50,7 @@
                             <div>
                                 </form>
                             </div>
-                        </div>
-                </div>
+                        
+               
                 </body>
 </html>

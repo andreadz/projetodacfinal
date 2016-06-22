@@ -16,7 +16,7 @@
     <body>
         <div class="container theme-showcase" role="main" style="padding-top: 100px;">
             <div class="jumbotron" style="padding-left: 250px;">
-                <h3>Banco VSF - Virtude do Sistema Financeiro</h1>
+                <h3>Banco VSF - Verifica Existência</h3>
                     <form action="Verificacoes?action=verificaExistencia" method="POST">                        
                         <div class="row">
                             <div class="col-lg-4">

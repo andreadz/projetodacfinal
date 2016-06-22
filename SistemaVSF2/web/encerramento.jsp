@@ -36,11 +36,12 @@
                     </div>  
                     <div>
                         <form method="POST" action="Portal?action=encerrar">
-                            Tem certeza que deseja encerrar a conta ?      </br>                       
+                            Tem certeza que deseja encerrar a conta ?      </br>  </br>                           
                             <input type="button" class="btn btn-sm btn-default" value="Voltar" href="portal.jsp" /> &nbsp;
                             <input type="submit" class="btn btn-sm btn-warning" value="Encerrar" />
                         </form>
                     </div>
+                <br>
                     <div>
                         <c:url var="allContas" value="Portal?action=todasContas" />
                         <c:url var="transfers" value="transferencias.jsp" />
