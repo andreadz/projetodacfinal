@@ -55,8 +55,11 @@
                                     <c:url var="negativar" value="PortalAdmin?action=requerNegativarCliente" >
                                         <c:param name="idCliente" value="${clientesNome.id}" />
                                     </c:url>
-                                    <c:url var="relatorioHistorico" value="PortalAdmin?action=historico">
-                                        <c:param name="idCliente" value="${clienteBusca.id}" />
+                                    <c:url var="relatorioHistorico" value="RelatoriosController?action=RelHistorico">
+                                        <c:param name="idCliente" value="${clientesNome.id}" />
+                                    </c:url>
+                                    <c:url var="relatorioEmpresa" value="RelatoriosController?action=RelEmpresa">
+                                        <c:param name="idCliente" value="${clientesNome.id}" />
                                     </c:url>
                                     <tr>                                        
                                         <td style="padding: 10px;">${clientesNome.id}</td>
@@ -72,6 +75,7 @@
                                             </c:when>
                                         </c:choose>
                                         <td><a href="${relatorioHistorico}">Histórico</a></td>
+                                        <td><a href="${relatorioEmpresa}">Relatório</a></td>
                                     </tr>
                                 </c:forEach>
                             </tbody>
@@ -99,10 +103,13 @@
                                 <c:url var="negativar" value="PortalAdmin?action=requerNegativarCliente" >
                                     <c:param name="idCliente" value="${clienteBusca.id}" />
                                 </c:url>
-                                <c:url var="relatorioHistorico" value="PortalAdmin?action=historico">
+                                <%-- <c:url var="relatorioHistorico" value="PortalAdmin?action=historico">
+                                    <c:param name="idCliente" value="${clienteBusca.id}" />
+                                </c:url> --%>
+                                <c:url var="relatorioHistorico" value="RelatoriosController?action=RelHistorico">
                                     <c:param name="idCliente" value="${clienteBusca.id}" />
                                 </c:url>
-                                <c:url var="relatorioEmpresa" value="RelatorioController?action=empresa">
+                                <c:url var="relatorioEmpresa" value="RelatoriosController?action=RelEmpresa">
                                     <c:param name="idCliente" value="${clienteBusca.id}" />
                                 </c:url>
                                 <tr>                                        
@@ -148,10 +155,13 @@
                                 <c:url var="negativar" value="PortalAdmin?action=requerNegativarCliente" >
                                     <c:param name="idCliente" value="${clienteBusca.id}" />
                                 </c:url>
-                                <c:url var="relatorioHistorico" value="PortalAdmin?action=historico">
+                                <%-- <c:url var="relatorioHistorico" value="PortalAdmin?action=historico">
+                                     <c:param name="idCliente" value="${clienteBusca.id}" />
+                                 </c:url> --%>
+                                <c:url var="relatorioHistorico" value="RelatoriosController?action=RelHistorico">
                                     <c:param name="idCliente" value="${clienteBusca.id}" />
                                 </c:url>
-                                <c:url var="relatorioEmpresa" value="RelatorioController?action=empresa">
+                                <c:url var="relatorioEmpresa" value="RelatoriosController?action=RelEmpresa">
                                     <c:param name="idCliente" value="${clienteBusca.id}" />
                                 </c:url>
                                 <tr>                                        
