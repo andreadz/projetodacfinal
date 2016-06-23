@@ -77,6 +77,7 @@
                         <c:url var="extCompleto" value="Portal?action=extratos" />
                         <c:url var="extQuinzeDias" value="Portal?action=extratos15" />
                         <c:url var="extTrintaDias" value="Portal?action=extratos30" />
+                        <a href="portal.jsp">Portal</a> |
                         <a href="${cadastrarConta}" >Cadastrar Nova Conta</a> |
                         <a href="${allContas}" >Todas Contas</a> |
                         <a href="${extCompleto}"  >Extrato Completo</a> |

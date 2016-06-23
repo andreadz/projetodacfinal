@@ -36,14 +36,15 @@
                     </div> 
                     <div>
                         <form method="POST" action="Portal?action=sacar">
-                            Agência/Conta<input type="text" class="form-control" style="width:50%" value="${conta.numAgencia} - ${conta.numConta}" readonly="true" />&nbsp;
-                            Valor <input type="text" class="form-control" style="width:50%" name="valor" required="required" pattern="[0-9]+$"  /></br>
+                            Agência/Conta<input type="text" class="form-control" style="width:20%" value="${conta.numAgencia} - ${conta.numConta}" readonly="true" />&nbsp;
+                            Valor <input type="text" class="form-control" style="width:20%" name="valor" required="required" pattern="[0-9]+$"  /></br>
                             <!--Token: <input type="text" name="token" /></br> -->
                             <input type="reset" class="btn btn-sm btn-default" value="Cancelar" /> &nbsp;
                             <input type="submit" class="btn btn-sm btn-warning" value="Sacar" />
                         </form>
                     </div>
                     <div>
+                        <c:url var="cadastrarConta" value="cadastroNovaConta.jsp" />
                         <c:url var="allContas" value="Portal?action=todasContas" />
                         <c:url var="transfers" value="transferencias.jsp" />
                         <c:url var="transfTerc" value="transfTerceiros.jsp" />
@@ -59,6 +60,8 @@
                         <c:url var="extTrintaDias" value="Portal?action=extratos" >
                             <c:param name="extrato" value="30" />
                         </c:url>
+                        <a href="portal.jsp">Portal</a> |
+                        <a href="${cadastrarConta}" >Cadastrar Nova Conta</a> |
                         <a href="${allContas}" >Todas Contas</a> |
                         <a href="${extCompleto}"  >Extrato Completo</a> |
                         <a href="${extQuinzeDias}" >Extrato Últimos 15 dias</a> | 

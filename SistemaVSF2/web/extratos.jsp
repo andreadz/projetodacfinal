@@ -101,6 +101,7 @@
                         <c:url var="extTrintaDias" value="Portal?action=extratos" >
                             <c:param name="extrato" value="30" />
                         </c:url>
+                        <a href="portal.jsp">Portal</a>
                         <a href="${allContas}" >Todas Contas</a> |
                         <a href="${extCompleto}"  >Extrato Completo</a> |
                         <a href="${extQuinzeDias}" >Extrato Últimos 15 dias</a> | 
