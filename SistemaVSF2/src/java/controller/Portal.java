@@ -61,12 +61,23 @@ public class Portal extends HttpServlet {
             rd.forward(request, response);
         }
         if ("extratos".equals(action)) {
-            int periodo = request.getParameter("extrato") == null || request.getParameter("extrato").isEmpty() ? 0 : Integer.parseInt(request.getParameter("extrato"));
-            if (periodo == 30 || periodo == 15) {
-                transacoes = daoConta.extrato(periodo, conta.getId());
-            } else {
-                transacoes = daoConta.extrato(conta.getId());
-            }
+
+            transacoes = daoConta.extrato(conta.getId());
+
+            request.setAttribute("msg", "");
+            request.setAttribute("transacoes", transacoes);
+            rd = getServletContext().getRequestDispatcher("/extratos.jsp");
+        } else if ("extratos15".equals(action)) {
+            int periodo = 15;
+            transacoes = daoConta.extrato(periodo, conta.getId());
+
+            request.setAttribute("msg", "");
+            request.setAttribute("transacoes", transacoes);
+            rd = getServletContext().getRequestDispatcher("/extratos.jsp");
+        } else if ("extratos30".equals(action)) {
+            int periodo = 30;
+            transacoes = daoConta.extrato(periodo, conta.getId());
+
             request.setAttribute("msg", "");
             request.setAttribute("transacoes", transacoes);
             rd = getServletContext().getRequestDispatcher("/extratos.jsp");
@@ -152,7 +163,7 @@ public class Portal extends HttpServlet {
                 daoTrans.salvarTransacao(trans);
                 session.setAttribute("conta", conta);
                 request.setAttribute("msg", "Depósito realizado com sucesso, motoboy passará receber o dinheiro");
-                
+
                 //quantidadeDias = daoConta.verificaStatusDOR(cliente, conta);
                 if (conta.getSaldo() >= 0) {
                     boolean verifica = liberaClienteDOR(cliente);
@@ -161,7 +172,7 @@ public class Portal extends HttpServlet {
                         session.setAttribute("conta", conta);
                     }
                 }
-                
+
             } else if (!verificaSaldo(conta, valor)) {
                 request.setAttribute("msg", "Valor de depósito é maior que o saldo e limite disponíveis.");
             } else {
@@ -179,8 +190,8 @@ public class Portal extends HttpServlet {
                 trans.setSaldoConta(conta.getSaldo());
                 daoTrans.salvarTransacao(trans);
                 session.setAttribute("conta", conta);
-                request.setAttribute("msg", "Depósito realizado com sucesso, motoboy passará receber o dinheiro");               
-               
+                request.setAttribute("msg", "Depósito realizado com sucesso, motoboy passará receber o dinheiro");
+
                 quantidadeDias = daoConta.verificaStatusDOR(cliente, conta);
                 if (quantidadeDias >= 10) {
                     cliente = insereClienteDOR(conta.getCliente());
@@ -292,7 +303,7 @@ public class Portal extends HttpServlet {
                 daoTrans.salvarTransacao(trans);
                 session.setAttribute("conta", conta);
                 request.setAttribute("msg", "Transferência realizada com sucesso");
-                
+
                 quantidadeDias = daoConta.verificaStatusDOR(cliente, conta);
                 if (quantidadeDias >= 10) {
                     cliente = insereClienteDOR(conta.getCliente());
@@ -311,7 +322,7 @@ public class Portal extends HttpServlet {
                         request.setAttribute("mensagemDOR", "Cliente que recebeu depósito foi removido da lista de Devedores do DOR.");
                     }
                 }
-                
+
             }
 
             rd = getServletContext().getRequestDispatcher("/transfTerceiros.jsp");
@@ -334,7 +345,7 @@ public class Portal extends HttpServlet {
             contas = daoConta.pegarTodasContasByCliente(cliente);
             if (contas.size() > 0) {
                 session.setAttribute("contas", contas);
-            }   
+            }
             rd = getServletContext().getRequestDispatcher("/todasContas.jsp");
         }
         rd.forward(request, response);

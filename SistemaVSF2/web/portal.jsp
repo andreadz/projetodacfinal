@@ -74,15 +74,9 @@
                         <c:url var="depositos" value="depositos.jsp" />
                         <c:url var="encerrar" value="encerramento.jsp" />
                         <c:url var="sacar" value="saques.jsp" />
-                        <c:url var="extCompleto" value="Portal?action=extratos" >
-                            <param name="extrato" value="" />
-                        </c:url>
-                        <c:url var="extQuinzeDias" value="Portal?action=extratos" >
-                            <param name="extrato" value="15" />
-                        </c:url>
-                        <c:url var="extTrintaDias" value="Portal?action=extratos" >
-                            <param name="extrato" value="30" />
-                        </c:url>
+                        <c:url var="extCompleto" value="Portal?action=extratos" />
+                        <c:url var="extQuinzeDias" value="Portal?action=extratos15" />
+                        <c:url var="extTrintaDias" value="Portal?action=extratos30" />
                         <a href="${cadastrarConta}" >Cadastrar Nova Conta</a> |
                         <a href="${allContas}" >Todas Contas</a> |
                         <a href="${extCompleto}"  >Extrato Completo</a> |
