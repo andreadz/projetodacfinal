@@ -45,8 +45,8 @@
                                         <option value="${minhaConta.numAgencia}/${minhaConta.numConta}">${minhaConta.numAgencia}/${minhaConta.numConta}</option>
                                     </c:if>
                                 </c:forEach>                            
-                            </select>    &nbsp;
-                            Valor <input type="text" name="valor"  class="form-control" style="width:50%"  required="required" /></br>
+                            </select>    &nbsp;<br>
+                            Valor <input type="text" name="valor"  class="form-control" style="width:20%"  required="required" /></br>
                             <!--Token: <input type="text" name="token" /></br>-->
                             <input type="reset" class="btn btn-sm btn-default" value="Cancelar" /> &nbsp;
                             <input type="submit" class="btn btn-sm btn-warning" value="Transferir" />
