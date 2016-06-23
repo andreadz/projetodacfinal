@@ -37,11 +37,11 @@
                     <div>
                         <form method="POST" action="Portal?action=confirmaTransferencia">
 
-                            Agência/Conta <input type="text" class="form-control" style="width:50%"  value="${conta.numAgencia}/${conta.numConta}" readonly="true" />&nbsp;
-                            Agência/Conta Destino <input type="text" class="form-control" style="width:50%"  name="agenciaDestino" required="required" />/
-                            <input type="text" name="contaDestino"  class="form-control" style="width:50%" required="required" />
+                            Agência/Conta <input type="text" class="form-control" style="width:20%"  value="${conta.numAgencia}/${conta.numConta}" readonly="true" />&nbsp;
+                            Agência <input type="text" class="form-control" style="width:20%"  name="agenciaDestino" required="required" />
+                          Conta Destino  <input type="text" name="contaDestino"  class="form-control" style="width:20%" required="required" />
                             </br>
-                            Valor &nbsp;<input type="text" class="form-control" style="width:50%" name="valor" required="required" /></br>
+                            Valor &nbsp;<input type="text" class="form-control" style="width:20%" name="valor" required="required" /></br>
                             <!--Token: <input type="text" name="token" /></br> -->
                             <input type="reset" class="btn btn-sm btn-default" value="Cancelar" /> &nbsp;
                             <input type="submit" class="btn btn-sm btn-warning" value="Transferir" />
@@ -49,18 +49,18 @@
                         </br></br>
                         <c:if test="${contaRecebeTransf != null}">
                             <form method="POST" action="Portal?action=transferirTerceiros">
-                                Transferência de: <input type="text" value="${conta.numAgencia}/${conta.numConta}" readonly="true" /> </br></br>
-                                Para: &nbsp;<input type="text" name="agenciaContaDestino"  value="${contaRecebeTransf.numAgencia}/${contaRecebeTransf.numConta}" readonly="true" /> &nbsp;
-                                Nome: &nbsp;<input type="text"  value="${clienteRecebeTransf.nome}" readonly="true" /> 
+                                Transferência de: <input type="text" style="width:20%" value="${conta.numAgencia}/${conta.numConta}" readonly="true" class="form-control" /> </br></br>
+                                Para: &nbsp;<input type="text" class="form-control"  style="width:20%" name="agenciaContaDestino"  value="${contaRecebeTransf.numAgencia}/${contaRecebeTransf.numConta}" readonly="true" /> &nbsp;
+                                Nome: &nbsp;<input type="text" class="form-control" style="width:20%"   value="${clienteRecebeTransf.nome}" readonly="true" /> 
 
                                 <c:if test="${clienteRecebeTransf.cnpj != null}">
-                                    CNPJ &nbsp;<input type="text"  value="${clienteRecebeTransf.cnpj}" readonly="true" /></br> </br>
+                                    CNPJ &nbsp;<input type="text"  value="${clienteRecebeTransf.cnpj}" style="width:20%"  readonly="true" /></br> </br>
                                 </c:if>
                                 <c:if test="${clienteRecebeTransf.cpf != null}">
-                                    CPF: &nbsp;<input type="text"  value="${clienteRecebeTransf.cpf}" readonly="true" /></br> </br>
+                                    CPF: &nbsp;<input type="text" class="form-control" style="width:20%"  value="${clienteRecebeTransf.cpf}" readonly="true" /></br> </br>
                                 </c:if>
 
-                                Valor de : &nbsp;<input type="text" name="valorTransferencia" value="${valorTransferencia}" readonly="true" /></br>
+                                Valor de : &nbsp;<input type="text"  class="form-control" style="width:20%"  name="valorTransferencia" value="${valorTransferencia}" readonly="true" /></br>
                                 <a href="transfTerceiros.jsp" class="btn btn-sm btn-default" >Cancelar </a> &nbsp;
                                 <input type="submit" class="btn btn-sm btn-warning" value="Confirmar" />
                             </form>

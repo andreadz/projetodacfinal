@@ -36,11 +36,11 @@
                    
                     <div>
                         <form method="POST" action="Portal?action=depositar">
-                            Agência/Conta <input type="text" class="form-control" style="width:50%" value="${conta.numAgencia} - ${conta.numConta}" readonly="true" /></br>
-                            Agência/Conta Destino<input type="text" class="form-control" style="width:50%"  name="agenciaDeposito" required="required" maxlength="4" /> /
-                            <input type="text" class="form-control"name="contaDeposito" style="width:50%" required="required" maxlength="6" />
+                            Agência/Conta <input type="text" class="form-control" style="width:20%" value="${conta.numAgencia} - ${conta.numConta}" readonly="true" /></br>
+                            Agência<input type="text" class="form-control" style="width:20%"  name="agenciaDeposito" required="required" maxlength="4" /> 
+                            Conta Destino<input type="text" class="form-control"name="contaDeposito" style="width:20%" required="required" maxlength="6" />
                             &nbsp;
-                            Valor <input type="text" class="form-control" name="valor" style="width:50%" required="required" maxlength="18" /> </br>
+                            Valor <input type="text" class="form-control" name="valor" style="width:20%" required="required" maxlength="18" /> </br>
                             <!-- <div class="input-group">
                                  <span class="input-group-addon">Valor</span>
                                  <input type="text" name class="form-control" aria-label="Amount (to the nearest dollar)">
